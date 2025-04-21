@@ -9,7 +9,5 @@ class MstDropdowns extends Model
 {
     use HasFactory;
     protected $table = 'mst_dropdowns';
-    protected $guarded = [
-        'id'
-    ];
+    protected $guarded = ['id'];
 }

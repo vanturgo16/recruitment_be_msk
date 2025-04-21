@@ -9,7 +9,5 @@ class MstRules extends Model
 {
     use HasFactory;
     protected $table = 'mst_rules';
-    protected $guarded = [
-        'id'
-    ];
+    protected $guarded = ['id'];
 }

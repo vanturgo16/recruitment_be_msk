@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('district')->nullable(); // Nullable
             $table->string('subdistrict')->nullable(); // Nullable
             $table->string('postal_code')->nullable(); // Nullable
+            $table->boolean('is_active'); // NOT NULL
             $table->timestamps();
         });
     }

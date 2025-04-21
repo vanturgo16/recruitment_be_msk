@@ -9,7 +9,5 @@ class AuditLog extends Model
 {
     use HasFactory;
     protected $table = 'audit_logs';
-    protected $guarded=[
-        'id'
-    ];
+    protected $guarded = ['id'];
 }

@@ -84,18 +84,6 @@
                             <span>{{ Auth::user()->email ?? '-' }}</span>
                         </div>
                         <div class="col-lg-6 mb-3">
-                            <div class="fw-bold"><span>{{ __('messages.dealer_type') }} :</span></div>
-                            <span>{{ Auth::user()->dealer_type ?? '-' }}</span>
-                        </div>
-                        <div class="col-lg-6 mb-3">
-                            <div class="fw-bold"><span>{{ __('messages.dealer_name') }} :</span></div>
-                            <span>{{ Auth::user()->dealer_name ?? '-' }}</span>
-                        </div>
-                        <div class="col-lg-6 mb-3">
-                            <div class="fw-bold"><span>{{ __('messages.department') }} :</span></div>
-                            <span>{{ Auth::user()->department ?? '-' }}</span>
-                        </div>
-                        <div class="col-lg-6 mb-3">
                             <div class="fw-bold"><span>{{ __('messages.role_in_system') }} :</span></div>
                             <span>{{ Auth::user()->role ?? '-' }}</span>
                         </div>

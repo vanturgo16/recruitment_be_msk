@@ -152,12 +152,6 @@
                     searchable: false,
                     className: 'align-top text-center',
                 },
-                {
-                    data: 'dealer_type',
-                    name: 'dealer_type',
-                    searchable: true,
-                    visible: false
-                },
             ],
         });
         $('#vertical-menu-btn').on('click', function() {

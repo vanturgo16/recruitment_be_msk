@@ -163,35 +163,45 @@
                             </li>
 
                             <li class="menu-title mt-2" data-key="t-menu">Master Data</li>
-                            <li>
-                                <a href="{{ route('office.index') }}" class="{{ request()->is('office*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-office-building"></i><span>{{ __('messages.mst_office') }}</span>
+                            @php
+                                $isBusinessActive = request()->is('office*') || request()->is('division*') || request()->is('department*') || request()->is('position*') || request()->is('employee*') || request()->is('blacklist*');
+                            @endphp
+                            <li class="{{ $isBusinessActive ? 'mm-active' : '' }}">
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i class="mdi mdi-domain"></i><span>Business Entities</span>
                                 </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('division.index') }}" class="{{ request()->is('division*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-source-branch"></i><span>{{ __('messages.mst_div') }}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('department.index') }}" class="{{ request()->is('department*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-view-module"></i><span>{{ __('messages.mst_dept') }}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('position.index') }}" class="{{ request()->is('position*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-briefcase-outline"></i><span>{{ __('messages.mst_position') }}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('employee.index') }}" class="{{ request()->is('employee*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-badge-account-horizontal"></i><span>{{ __('messages.emp_list') }}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('blacklist.index') }}" class="{{ request()->is('blacklist*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-account-cancel"></i><span>{{ __('messages.blacklist') }}</span>
-                                </a>
+                                <ul class="sub-menu {{ $isBusinessActive ? 'mm-show' : '' }}" aria-expanded="{{ $isBusinessActive ? 'true' : 'false' }}">
+                                    <li>
+                                        <a href="{{ route('office.index') }}" class="{{ request()->is('office*') ? 'bg-light active' : '' }}">
+                                            <i class="mdi mdi-office-building"></i><span>{{ __('messages.mst_office') }}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('division.index') }}" class="{{ request()->is('division*') ? 'bg-light active' : '' }}">
+                                            <i class="mdi mdi-source-branch"></i><span>{{ __('messages.mst_div') }}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('department.index') }}" class="{{ request()->is('department*') ? 'bg-light active' : '' }}">
+                                            <i class="mdi mdi-view-module"></i><span>{{ __('messages.mst_dept') }}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('position.index') }}" class="{{ request()->is('position*') ? 'bg-light active' : '' }}">
+                                            <i class="mdi mdi-briefcase-outline"></i><span>{{ __('messages.mst_position') }}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('employee.index') }}" class="{{ request()->is('employee*') ? 'bg-light active' : '' }}">
+                                            <i class="mdi mdi-badge-account-horizontal"></i><span>{{ __('messages.emp_list') }}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('blacklist.index') }}" class="{{ request()->is('blacklist*') ? 'bg-light active' : '' }}">
+                                            <i class="mdi mdi-account-cancel"></i><span>{{ __('messages.blacklist') }}</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         @endif
 
