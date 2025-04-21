@@ -11,6 +11,15 @@ return [
     'mng_user' => 'Manage Users',
     'mng_rule' => 'Manage Rules',
     'mng_dropdown' => 'Manage Dropdowns',
+
+    'mst_office' => 'Master Office',
+    'mst_div' => 'Master Division',
+    'mst_dept' => 'Master Department',
+    'mst_position' => 'Master Position',
+    'emp_list' => 'Employee List',
+    'blacklist' => 'Employee BlackList',
+    'job_list' => 'Job List',
+
     'applicants_list' => 'Applicants List',
     'other' => 'Other',
     'audit_log' => 'Audit Log',

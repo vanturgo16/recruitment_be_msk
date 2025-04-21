@@ -6,9 +6,9 @@
         <div class="col-lg-4 order-lg-2">
             <div class="card mb-4">
                 <div class="text-center align-middle">
-                    <button type="button" class="btn btn-sm btn-info waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#updProfile">
+                    {{-- <button type="button" class="btn btn-sm btn-info waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#updProfile">
                         <i class="mdi mdi-update label-icon"></i> {{ __('messages.update') }} {{ __('messages.photo_profile') }}
-                    </button>
+                    </button> --}}
                 </div>
                 {{-- Modal Update --}}
                 <div class="modal fade" id="updProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">

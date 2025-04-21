@@ -18,18 +18,14 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken(); // varchar(100) nullable
-            $table->string('dealer_type')->nullable();
-            $table->string('dealer_name')->nullable();
-            $table->string('department')->nullable();
             $table->string('role')->nullable();
             $table->dateTime('last_login')->nullable();
             $table->integer('login_counter')->nullable();
             $table->timestamp('last_seen')->nullable();
             $table->text('last_session')->nullable();
-            $table->text('photo_path')->nullable();
             $table->string('is_darkmode', 1)->nullable();
             $table->string('language', 5)->nullable();
-            $table->boolean('is_active')->nullable();
+            $table->boolean('is_active'); // NOT NULL
             $table->timestamps(); // created_at and updated_at
         });
 

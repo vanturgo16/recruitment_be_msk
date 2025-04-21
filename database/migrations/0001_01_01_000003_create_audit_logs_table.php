@@ -18,8 +18,7 @@ return new class extends Migration
             $table->text('location'); // not nullable
             $table->string('access_from'); // not nullable
             $table->text('activity'); // not nullable
-            $table->timestamp('created_at')->nullable(); // nullable
-            $table->timestamp('updated_at')->nullable(); // nullable
+            $table->timestamps();
         });
     }
 

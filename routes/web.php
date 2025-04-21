@@ -9,12 +9,18 @@ use App\Http\Middleware\UpdateLastSeen;
 // CONTROLLER
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlacklistController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\MstDepartmentController;
+use App\Http\Controllers\MstDivisionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MstDropdownController;
+use App\Http\Controllers\MstPositionController;
 use App\Http\Controllers\MstRuleController;
 use App\Http\Controllers\MstUserController;
+use App\Http\Controllers\OfficeController;
 
 // LOGIN
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -73,6 +79,43 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/deactivate/{id}', 'deactivate')->name('user.deactivate');
             Route::post('/delete/{id}', 'delete')->name('user.delete');
             Route::post('/check_email_employee', 'check_email')->name('user.check_email_employee');
+        });
+    });
+    // OFFICE
+    Route::middleware(['role:Admin,Super Admin'])->controller(OfficeController::class)->group(function () {
+        Route::prefix('office')->group(function () {
+            Route::get('/', 'index')->name('office.index');
+        });
+    });
+    // DIVISION
+    Route::middleware(['role:Admin,Super Admin'])->controller(MstDivisionController::class)->group(function () {
+        Route::prefix('division')->group(function () {
+            Route::get('/', 'index')->name('division.index');
+        });
+    });
+    // DEPARTMENT
+    Route::middleware(['role:Admin,Super Admin'])->controller(MstDepartmentController::class)->group(function () {
+        Route::prefix('department')->group(function () {
+            Route::get('/', 'index')->name('department.index');
+        });
+    });
+    // POSITION
+    Route::middleware(['role:Admin,Super Admin'])->controller(MstPositionController::class)->group(function () {
+        Route::prefix('position')->group(function () {
+            Route::get('/', 'index')->name('position.index');
+        });
+    });
+    // EMPLOYEE
+    Route::middleware(['role:Admin,Super Admin'])->controller(EmployeeController::class)->group(function () {
+        Route::prefix('employee')->group(function () {
+            Route::get('/', 'index')->name('employee.index');
+            Route::get('/detail/{id}', 'detail')->name('employee.detail');
+        });
+    });
+    // BLACKLIST
+    Route::middleware(['role:Admin,Super Admin'])->controller(BlacklistController::class)->group(function () {
+        Route::prefix('blacklist')->group(function () {
+            Route::get('/', 'index')->name('blacklist.index');
         });
     });
     // AUDIT LOG

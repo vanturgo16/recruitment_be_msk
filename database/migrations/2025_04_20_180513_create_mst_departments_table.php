@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mst_dropdowns', function (Blueprint $table) {
-            $table->id(); // bigint unsigned auto-increment
-            $table->string('category'); // NOT NULL
-            $table->string('name_value'); // NOT NULL
-            $table->string('code_format'); // NOT NULL
-            $table->boolean('is_active'); // NOT NULL
+        Schema::create('mst_departments', function (Blueprint $table) {
+            $table->id();
+            $table->integer('id_div'); // NOT NULL
+            $table->string('dept_name'); // NOT NULL
+            $table->text('notes')->nullable(); // Nullable
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mst_dropdowns');
+        Schema::dropIfExists('mst_departments');
     }
 };

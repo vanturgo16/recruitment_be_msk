@@ -30,28 +30,6 @@
                                                     <input class="form-control" type="email" name="email" placeholder="Input Email.." required>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">{{ __('messages.dealer_type') }}</label> <label class="text-danger">*</label>
-                                                    <select class="form-control select2" name="dealer_type" required>
-                                                        <option value="" disabled selected>- {{ __('messages.select') }} {{ __('messages.dealer_type') }} -</option>
-                                                        @foreach($dealerTypes as $item)
-                                                            <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">{{ __('messages.dealer_name') }}</label><label style="color: darkred">*</label>
-                                                    <input class="form-control" type="text" name="dealer_name" placeholder="Input {{ __('messages.dealer_name') }}.." required>
-                                                </div>
-                                                <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">{{ __('messages.department') }}</label> <label class="text-danger">*</label>
-                                                    <select class="form-control select2" name="department" required>
-                                                        <option value="" disabled selected>- {{ __('messages.select') }} {{ __('messages.department') }} -</option>
-                                                        @foreach($departments as $item)
-                                                            <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Role</label> <label class="text-danger">*</label>
                                                     <select class="form-control select2" name="role" required>
                                                         <option value="" disabled selected>- {{ __('messages.select') }} Role -</option>
@@ -86,10 +64,10 @@
                     <tr>
                         <th class="align-middle text-center">No</th>
                         <th class="align-middle text-center">{{ __('messages.name') }}</th>
-                        <th class="align-middle text-center">Dealer</th>
-                        <th class="align-middle text-center">{{ __('messages.department') }}</th>
                         <th class="align-middle text-center">Role</th>
-                        <th class="align-middle text-center">Status</th>
+                        <th class="align-middle text-center">Login Counter</th>
+                        <th class="align-middle text-center">Last Seen</th>
+                        <th class="align-middle text-center">Account Status</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
                 </thead>
@@ -122,27 +100,36 @@
                     },
                 },
                 {
-                    data: 'dealer_name',
-                    name: 'dealer_name',
-                    orderable: true,
-                    searchable: true,
-                    className: 'align-top',
-                    render: function(data, type, row) {
-                        return row.dealer_type + '<br>' + data;
-                    },
-                },
-                {
-                    data: 'department',
-                    name: 'department',
-                    orderable: true,
-                    searchable: true,
-                    className: 'align-top',
-                },
-                {
                     orderable: true,
                     data: 'role',
                     name: 'role',
                     className: 'align-top fw-bold',
+                },
+                {
+                    data: 'login_counter',
+                    name: 'login_counter',
+                    orderable: true,
+                    searchable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'last_seen',
+                    name: 'last_seen',
+                    searchable: true,
+                    orderable: true,
+                    className: 'align-top',
+                    render: function(data, type, row) {
+                        var statusLogin = '';
+                        var lastSeen = new Date(data);
+                        var now = new Date();
+                        var diffMinutes = (now - lastSeen) / 60000;
+                        if (data && diffMinutes <= 5) {
+                            statusLogin = '<span class="badge bg-success text-white"><i class="fas fa-circle"></i> Online</span>';
+                        } else {
+                            statusLogin = '<span class="badge bg-secondary text-white"><i class="fas fa-circle-notch"></i> Offline</span>';
+                        }
+                        return statusLogin + '<br>' + (data ? data : '-');
+                    },
                 },
                 {
                     data: 'is_active',
