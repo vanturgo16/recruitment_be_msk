@@ -15,6 +15,7 @@ return [
     'success' => 'Suksés',
     'fail' => 'Gagal',
     'info' => 'Inpormasi',
+    'detail' => 'Detail',
     'warning' => 'Peringatan',
     'just_now' => 'Saurna ayeuna',
     'action' => 'Lakon',

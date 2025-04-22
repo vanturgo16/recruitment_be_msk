@@ -132,6 +132,9 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
     Route::middleware(['role:Admin,Super Admin'])->controller(BlacklistController::class)->group(function () {
         Route::prefix('blacklist')->group(function () {
             Route::get('/', 'index')->name('blacklist.index');
+            Route::post('/store', 'store')->name('blacklist.store');
+            Route::post('/update/{id}', 'update')->name('blacklist.update');
+            Route::post('/delete/{id}', 'delete')->name('blacklist.delete');
         });
     });
 

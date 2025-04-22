@@ -15,6 +15,7 @@ return [
     'success' => 'Berhasil',
     'fail' => 'Gagal',
     'info' => 'Info',
+    'detail' => 'Detail',
     'warning' => 'Warning',
     'just_now' => 'Baru Saja',
     'action' => 'Aksi',

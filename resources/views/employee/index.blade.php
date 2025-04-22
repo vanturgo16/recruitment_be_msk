@@ -21,7 +21,6 @@
                     <tr>
                         <th class="align-middle text-center">No</th>
                         <th class="align-middle text-center">Emp. No</th>
-                        <th class="align-middle text-center">Name</th>
                         <th class="align-middle text-center">Email</th>
                         <th class="align-middle text-center">Position</th>
                         <th class="align-middle text-center">Placement</th>
@@ -63,19 +62,13 @@
                     className: 'align-top',
                 },
                 {
-                    data: 'email',
+                    data: 'position_name',
                     orderable: true,
                     searchable: true,
                     className: 'align-top',
                 },
                 {
-                    data: 'id_position',
-                    orderable: true,
-                    searchable: true,
-                    className: 'align-top',
-                },
-                {
-                    data: 'placement_id',
+                    data: 'office_name',
                     orderable: true,
                     searchable: true,
                     className: 'align-top',

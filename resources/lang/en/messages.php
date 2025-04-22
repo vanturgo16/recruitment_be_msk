@@ -31,6 +31,7 @@ return [
     'success' => 'Success',
     'fail' => 'Fail',
     'info' => 'Info',
+    'detail' => 'Detail',
     'warning' => 'Warning',
     'just_now' => 'Just Now',
     'action' => 'Action',

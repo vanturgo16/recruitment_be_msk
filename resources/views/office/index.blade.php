@@ -23,7 +23,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">Office Type</label><label style="color: darkred">*</label>
-                                                    <select class="form-select js-example-basic-single" style="width: 100%" name="type" required>
+                                                    <select class="form-select select2" style="width: 100%" name="type" required>
                                                         <option value="" selected>-- Select Type --</option>
                                                         <option disabled>──────────</option>
                                                         @foreach($officeTypes as $item)
@@ -44,7 +44,7 @@
                                                     <textarea class="form-control" rows="3" type="text" class="form-control" name="address" placeholder="(Input Office Address, Ex. Street/Unit/Floor/No)" required>{{ old('address') }}</textarea>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <select class="form-select js-example-basic-single" style="width: 100%" name="province" id="province" class="form-control" required>
+                                                    <select class="form-select select2" style="width: 100%" name="province" id="province" class="form-control" required>
                                                         <option value="" selected>-- Select Province --</option>
                                                         @foreach ($listProvinces as $item)
                                                             <option value="{{ $item['nama'] }}" data-idProv="{{ $item['id'] }}">
@@ -54,17 +54,17 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <select class="form-select js-example-basic-single" style="width: 100%" name="city" id="city" class="form-control" required>
+                                                    <select class="form-select select2" style="width: 100%" name="city" id="city" class="form-control" required>
                                                         <option value="" selected>- Select City -</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <select class="form-select js-example-basic-single" style="width: 100%" name="district" id="district" class="form-control" required>
+                                                    <select class="form-select select2" style="width: 100%" name="district" id="district" class="form-control" required>
                                                         <option value="" selected>- Select District -</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <select class="form-select js-example-basic-single" style="width: 100%" name="subdistrict" id="subdistrict" class="form-control" required>
+                                                    <select class="form-select select2" style="width: 100%" name="subdistrict" id="subdistrict" class="form-control" required>
                                                         <option value="" selected>- Select Subdistrict -</option>
                                                     </select>
                                                 </div>
