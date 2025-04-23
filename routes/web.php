@@ -146,8 +146,12 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/', 'index')->name('joblist.index');
             Route::post('/store', 'store')->name('joblist.store');
             Route::get('/detail/{id}', 'detail')->name('joblist.detail');
+            Route::get('/applicant-list/{id}', 'applicantList')->name('joblist.applicantList');
             Route::post('/update/{id}', 'update')->name('joblist.update');
             Route::post('/delete/{id}', 'delete')->name('joblist.delete');
+            Route::post('/activate/{id}', 'activate')->name('joblist.activate');
+            Route::post('/deactivate/{id}', 'deactivate')->name('joblist.deactivate');
+            Route::get('/get-users-by-position/{id}', 'getUsersByPosition')->name('joblist.getuser');
         });
     });
 

@@ -4,7 +4,7 @@ return [
     'title_tab_login' => 'Login | Dashboard Recruitment',
     'title_tab_main' => 'Dashboard Recruitment | AHASS BANTEN',
     'footer_copyright' => '© Dashboard Recruitment PT Mitra Sendang Kemakmuran Banten 2025',
-    'app_name' => '"Recruitment Dashboard"',
+    'app_name' => '"Human Resource (HR) Dashboard"',
     'company_name' => 'PT Mitra Sendang Kemakmuran Banten Regional',
 
     // Left Bar

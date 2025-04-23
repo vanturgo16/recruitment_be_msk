@@ -11,33 +11,85 @@
                         <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#addNew"><i class="mdi mdi-plus label-icon"></i> {{ __('messages.add_new') }}</button>
                         {{-- Modal Add --}}
                         <div class="modal fade" id="addNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-top" role="document">
+                            <div class="modal-dialog modal-dialog-top modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="staticBackdropLabel">{{ __('messages.add_new') }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form class="formLoad" action="{{ route('blacklist.store') }}" id="formadd" method="POST" enctype="multipart/form-data">
+                                    <form class="formLoad" action="{{ route('joblist.store') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
-                                        <div class="modal-body">
+                                        <div class="modal-body py-8 px-4" style="max-height: 67vh; overflow-y: auto;">
                                             <div class="row">
-                                                <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Employee</label><label style="color: darkred">*</label>
-                                                    <select class="form-select select2" style="width: 100%" name="id_emp" required>
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">Position</label> <label class="text-danger">*</label>
+                                                    <select class="form-select select2" style="width: 100%" name="id_position" required>
                                                         <option value="" selected>-- Select --</option>
                                                         <option disabled>──────────</option>
-                                                        @foreach($employees as $item)
-                                                            <option value="{{ $item->id }}" {{ old('id_emp') == $item->email ? 'selected' : '' }}> {{ $item->email }} </option>
+                                                        @foreach($positions as $item)
+                                                            <option value="{{ $item->id }}" {{ old('id_position') == $item->id ? 'selected' : '' }}>
+                                                                {{ strtoupper($item->dept_name) }} - {{ $item->position_name }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Reason</label> <label class="text-danger">*</label>
-                                                    <input class="form-control" type="text" name="reason" placeholder="Input Reason.." required>
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">User (Request By)</label> <label class="text-danger">*</label>
+                                                    <select class="form-select select2" style="width: 100%" name="position_req_user" required>
+                                                        <option value="" selected>-- Select --</option>
+                                                        <option disabled>──────────</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">Recruitment Date Start</label> <label class="text-danger">*</label>
+                                                    <input class="form-control" type="date" name="rec_date_start" required>
+                                                </div>
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">Recruitment Date End</label>
+                                                    <input class="form-control" type="date" name="rec_date_end">
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Notes</label>
-                                                    <textarea name="rule_value" class="form-control" rows="5" placeholder="Input Notes..."></textarea>
+                                                    <label class="form-label">Job Description</label> <label class="text-danger">*</label>
+                                                    <textarea class="summernote-editor" name="jobdesc" placeholder="Input Job Description..." required></textarea>
+                                                </div>
+                                                <div class="col-lg-12 mb-3">
+                                                    <label class="form-label">Requirement</label> <label class="text-danger">*</label>
+                                                    <textarea class="summernote-editor" name="requirement" placeholder="Input Requirement..." required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-4 mb-3">
+                                                    <label class="form-label">Min Education</label>
+                                                    <select class="form-select select2" style="width: 100%" name="min_education" required>
+                                                        <option value="" selected>-- Select --</option>
+                                                        <option disabled>──────────</option>
+                                                        @foreach($educations as $item)
+                                                            <option value="{{ $item->name_value }}" {{ old('min_education') == $item->name_value ? 'selected' : '' }}> {{ $item->name_value }} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-4 mb-3">
+                                                    <label class="form-label">Min Years of Experience</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" placeholder=".." name="min_yoe">
+                                                        <span class="input-group-text">Years</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 mb-3">
+                                                    <label class="form-label">Min Age</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" placeholder=".." name="min_age">
+                                                        <span class="input-group-text">Years</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 mb-3">
+                                                    <label class="form-label">Max Candidate</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" placeholder=".." name="max_candidate">
+                                                        <span class="input-group-text">Applicants</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -53,7 +105,7 @@
                 </div>
                 <div class="col-4">
                     <div class="text-center">
-                        <h4 class="text-bold">{{ __('messages.blacklist') }}</h4>
+                        <h4 class="text-bold">{{ __('messages.job_list') }}</h4>
                     </div>
                 </div>
                 <div class="col-4"></div>
@@ -64,9 +116,13 @@
                 <thead class="table-light">
                     <tr>
                         <th class="align-middle text-center">No</th>
-                        <th class="align-middle text-center">Email</th>
-                        <th class="align-middle text-center">Reason</th>
-                        <th class="align-middle text-center">Notes</th>
+                        <th class="align-middle text-center">Position</th>
+                        <th class="align-middle text-center">Request By</th>
+                        <th class="align-middle text-center">Rec. Start Date</th>
+                        <th class="align-middle text-center">Rec. End Date</th>
+                        <th class="align-middle text-center">Max Candidate</th>
+                        <th class="align-middle text-center">Applicant</th>
+                        <th class="align-middle text-center">Status</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
                 </thead>
@@ -81,7 +137,7 @@
             processing: true,
             serverSide: true,
             scrollY: '100vh',
-            ajax: '{!! route('blacklist.index') !!}',
+            ajax: '{!! route('joblist.index') !!}',
             columns: [{
                 data: null,
                     render: function(data, type, row, meta) {
@@ -92,22 +148,60 @@
                     className: 'align-top text-center',
                 },
                 {
+                    data: 'position_name',
+                    orderable: true,
+                    searchable: true,
+                    className: 'align-top',
+                    render: function(data, type, row) {
+                        return '<b>' +data + '</b><br>' + row.dept_name;
+                    },
+                },
+                {
                     data: 'email',
                     orderable: true,
                     searchable: true,
-                    className: 'align-top text-bold',
-                },
-                {
-                    data: 'reason',
-                    orderable: true,
-                    searchable: true,
                     className: 'align-top',
                 },
                 {
-                    data: 'notes',
+                    data: 'rec_date_start',
                     orderable: true,
                     searchable: true,
-                    className: 'align-top',
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'rec_date_end',
+                    orderable: true,
+                    searchable: true,
+                    className: 'align-top text-center',
+                    render: function (data, type, row) {
+                        return data ? data : '-';
+                    }
+                },
+                {
+                    data: 'max_candidate',
+                    orderable: true,
+                    searchable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'number_of_applicant',
+                    orderable: true,
+                    searchable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'is_active',
+                    orderable: true,
+                    className: 'align-top text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.is_active == 1){
+                            html = '<span class="badge bg-success text-white">Active</span>';
+                        } else {
+                            html = '<span class="badge bg-danger text-white">Inactive</span>';
+                        }
+                        return html;
+                    },
                 },
                 {
                     data: 'action',
@@ -126,5 +220,36 @@
         });
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('select[name="id_position"]').on('change', function () {
+            var positionId = $(this).val();
+            var $userSelect = $('select[name="position_req_user"]');
+            
+            if (positionId) {
+                $.ajax({
+                    url: '{{ route("joblist.getuser", ":id") }}'.replace(':id', positionId),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        $userSelect.empty();
+                        $userSelect.append('<option value="" selected>-- Select --</option>');
+                        $userSelect.append('<option disabled>──────────</option>');
+
+                        $.each(data, function (key, value) {
+                            $userSelect.append('<option value="' + key + '">' + value + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $userSelect.empty();
+                $userSelect.append('<option value="" selected>-- Select --</option>');
+                $userSelect.append('<option disabled>──────────</option>');
+            }
+        });
+    });
+</script>
+
 
 @endsection

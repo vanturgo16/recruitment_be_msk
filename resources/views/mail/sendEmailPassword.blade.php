@@ -65,7 +65,7 @@
 
         <br>
         <br>
-        <br> [RECRUITMENT DASHBOARD MSK] <br>
+        <br> [HUMAN RESOURCE DASHBOARD MSK] <br>
 
     </span>
 </body>

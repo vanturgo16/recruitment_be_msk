@@ -1472,9 +1472,11 @@ body[data-layout="horizontal"][data-layout-size="boxed"] .navbar-header {
     --bs-sidebar-menu-sub-item-color: #545a6d;
     --bs-sidebar-menu-item-icon-color: #545a6d;
     --bs-sidebar-menu-item-icon-effact-color: rgba(84, 90, 109, 0.2);
-    --bs-sidebar-menu-item-hover-color: #5156be;
+    /* --bs-sidebar-menu-item-hover-color: #5156be; */
+    --bs-sidebar-menu-item-hover-color: #ff000d;
     --bs-sidebar-menu-item-hover-effact-color: rgba(81, 86, 190, 0.2);
-    --bs-sidebar-menu-item-active-color: #5156be;
+    /* --bs-sidebar-menu-item-active-color: #5156be; */
+    --bs-sidebar-menu-item-active-color: #ff000dbc;
     --bs-sidebar-menu-item-active-effact-color: rgba(81, 86, 190, 0.2);
     --bs-sidebar-border-color: #e9e9ef;
     --bs-sidebar-menu-item-active-bg-color: #f3f8fb;
