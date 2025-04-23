@@ -17,6 +17,14 @@
     padding-right: 0.1rem;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.586);
 }
+[data-bs-theme="dark"] .dropdown-menu2 {
+    background-color: #2c2f33;
+    border: 0.1rem solid #888;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
 .truncate-text {
     white-space: normal;
 }

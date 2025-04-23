@@ -1,14 +1,14 @@
 <div class="btn-group" role="group">
     <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Action <i class="mdi mdi-chevron-down"></i>
+        {{ __('messages.action') }} <i class="mdi mdi-chevron-down"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu2">
-        <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#detail{{ $data->id }}"><span class="mdi mdi-information"></span> | Detail</a></li>
-        <li><a class="dropdown-item drpdwn" href="{{ route('office.edit', encrypt($data->id)) }}"><span class="mdi mdi-file-edit"></span> | Edit</a></li>
+        <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#detail{{ $data->id }}"><span class="mdi mdi-information"></span> | {{ __('messages.detail') }}</a></li>
+        <li><a class="dropdown-item drpdwn" href="{{ route('office.edit', encrypt($data->id)) }}"><span class="mdi mdi-file-edit"></span> | {{ __('messages.edit') }}</a></li>
         @if($data->is_active == 1)
-            <li><a class="dropdown-item drpdwn-dgr" href="#" data-bs-toggle="modal" data-bs-target="#deactivate{{ $data->id }}"><span class="mdi mdi-close-circle"></span> | Deactivate</a></li>
+            <li><a class="dropdown-item drpdwn-dgr" href="#" data-bs-toggle="modal" data-bs-target="#deactivate{{ $data->id }}"><span class="mdi mdi-close-circle"></span> | {{ __('messages.deactivate') }}</a></li>
         @else
-            <li><a class="dropdown-item drpdwn-scs" href="#" data-bs-toggle="modal" data-bs-target="#activate{{ $data->id }}"><span class="mdi mdi-check-circle"></span> | Activate</a></li>
+            <li><a class="dropdown-item drpdwn-scs" href="#" data-bs-toggle="modal" data-bs-target="#activate{{ $data->id }}"><span class="mdi mdi-check-circle"></span> | {{ __('messages.activate') }}</a></li>
         @endif
     </ul>
 </div>

@@ -1,10 +1,10 @@
 <div class="btn-group" role="group">
     <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Action <i class="mdi mdi-chevron-down"></i>
+        {{ __('messages.action') }} <i class="mdi mdi-chevron-down"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu2">
-        <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#detail{{ $data->id }}"><span class="mdi mdi-information"></span> | Detail</a></li>
-        <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#edit{{ $data->id }}"><span class="mdi mdi-file-edit"></span> | Edit</a></li>
+        <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#detail{{ $data->id }}"><span class="mdi mdi-information"></span> | {{ __('messages.detail') }}</a></li>
+        <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#edit{{ $data->id }}"><span class="mdi mdi-file-edit"></span> | {{ __('messages.edit') }}</a></li>
     </ul>
 </div>
 

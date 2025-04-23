@@ -107,7 +107,7 @@ class MstRuleController extends Controller
             // Audit Log
             $this->auditLogs('Delete Selected Rule ID: ' . $id);
             DB::commit();
-            return redirect()->back()->with('success', __('messages.success_delete'));
+            return redirect()->back()->with(['success' => __('messages.success_delete')]);
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with(['fail' => __('messages.fail_delete')]);

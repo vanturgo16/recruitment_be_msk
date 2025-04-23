@@ -74,7 +74,7 @@ class JoblistController extends Controller
                 'max_candidate' => $request->max_candidate,
                 'position_req_user' => $request->position_req_user,
                 'number_of_applicant' => 0,
-                'is_active' => 0
+                'is_active' => 1
             ]);
 
             // Audit Log
@@ -90,6 +90,12 @@ class JoblistController extends Controller
     public function detail($id)
     {
         $id = decrypt($id);
+        $positions = MstPosition::select('mst_positions.id', 'mst_positions.position_name', 'mst_departments.dept_name')
+            ->leftjoin('mst_departments', 'mst_positions.id_dept', 'mst_departments.id')
+            ->orderBy('mst_positions.id_dept')
+            ->get();
+        $educations = MstDropdowns::where('category', 'Education')->get();
+
         $data = Joblist::select('joblists.*', 'mst_positions.position_name', 'mst_departments.dept_name', 'employees.email')
             ->leftjoin('mst_positions', 'joblists.id_position', 'mst_positions.id')
             ->leftjoin('mst_departments', 'mst_positions.id_dept', 'mst_departments.id')
@@ -97,9 +103,20 @@ class JoblistController extends Controller
             ->where('joblists.id', $id)
             ->first();
 
+        $deptId = optional(MstPosition::find($data->id_position))->id_dept;
+        if (!$deptId) {
+            $listEmployee = collect();
+        } else {
+            $listEmployee = Employee::select('id', 'email')->whereIn('id_position', function ($query) use ($deptId) {
+                $query->select('id')
+                    ->from('mst_positions')
+                    ->where('id_dept', $deptId);
+            })->get();
+        }
+
         //Audit Log
         $this->auditLogs('View Detail Joblist ID (' . $id . ')');
-        return view('joblist.detail', compact('data'));
+        return view('joblist.detail', compact('positions', 'educations', 'data', 'listEmployee'));
     }
 
     public function applicantList($id)
@@ -162,7 +179,7 @@ class JoblistController extends Controller
                 // Audit Log
                 $this->auditLogs('Update Selected Joblist ID: ' . $id);
                 DB::commit();
-                return redirect()->back()->with('success', __('messages.success_update'));
+                return redirect()->back()->with(['success', __('messages.success_update')]);
             } catch (Exception $e) {
                 DB::rollBack();
                 return redirect()->back()->with(['fail' => __('messages.fail_update')]);
@@ -182,10 +199,10 @@ class JoblistController extends Controller
             // Audit Log
             $this->auditLogs('Activate Joblist ID (' . $id . ')');
             DB::commit();
-            return redirect()->back()->with(['success' => __('messages.success_activate') . $nameValue]);
+            return redirect()->back()->with(['success' => __('messages.success_activate') . ' Joblist']);
         } catch (Exception $e) {
             DB::rollback();
-            return redirect()->back()->with(['fail' => __('messages.fail_activate') . $nameValue . '!']);
+            return redirect()->back()->with(['fail' => __('messages.fail_activate') . ' Joblist']);
         }
     }
 
@@ -221,7 +238,7 @@ class JoblistController extends Controller
             // Audit Log
             $this->auditLogs('Delete Selected Joblist ID: ' . $id);
             DB::commit();
-            return redirect()->back()->with('success', __('messages.success_delete'));
+            return redirect()->back()->with(['success' => __('messages.success_delete')]);
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with(['fail' => __('messages.fail_delete')]);
@@ -230,7 +247,7 @@ class JoblistController extends Controller
 
     public function getUsersByPosition($id)
     {
-        $deptId = MstPosition::find($id)?->id_dept;
+        $deptId = optional(MstPosition::find($id))->id_dept;
         if (!$deptId) {
             return response()->json([]);
         }
