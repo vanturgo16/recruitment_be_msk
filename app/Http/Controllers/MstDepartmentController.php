@@ -24,7 +24,6 @@ class MstDepartmentController extends Controller
             $datas = MstDepartment::select('mst_departments.*', 'mst_divisions.div_name')
                 ->leftjoin('mst_divisions', 'mst_departments.id_div', 'mst_divisions.id')
                 ->orderBy('mst_departments.id_div')
-                ->orderBy('mst_departments.created_at')
                 ->get();
             return DataTables::of($datas)
                 ->addColumn('action', function ($data) use ($listDivisions) {

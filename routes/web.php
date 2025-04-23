@@ -22,6 +22,7 @@ use App\Http\Controllers\MstRuleController;
 use App\Http\Controllers\MstUserController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\AjaxMappingRegional;
+use App\Http\Controllers\JoblistController;
 
 // LOGIN
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -135,6 +136,18 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/store', 'store')->name('blacklist.store');
             Route::post('/update/{id}', 'update')->name('blacklist.update');
             Route::post('/delete/{id}', 'delete')->name('blacklist.delete');
+        });
+    });
+
+    // RECRUITMENT
+    // JOBLIST
+    Route::middleware(['role:Admin,Super Admin'])->controller(JoblistController::class)->group(function () {
+        Route::prefix('joblist')->group(function () {
+            Route::get('/', 'index')->name('joblist.index');
+            Route::post('/store', 'store')->name('joblist.store');
+            Route::get('/detail/{id}', 'detail')->name('joblist.detail');
+            Route::post('/update/{id}', 'update')->name('joblist.update');
+            Route::post('/delete/{id}', 'delete')->name('joblist.delete');
         });
     });
 

@@ -211,11 +211,11 @@
                                 <i class="mdi mdi-clipboard-list"></i><span>{{ __('messages.job_list') }}</span>
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
                                 <i class="mdi mdi-account-group"></i><span>{{ __('messages.applicants_list') }}</span>
                             </a>
-                        </li>
+                        </li> --}}
 
                         @if(in_array(auth()->user()->role, ['Super Admin', 'Admin']))
                             <li class="menu-title mt-2" data-key="t-menu">{{ __('messages.other') }}</li>

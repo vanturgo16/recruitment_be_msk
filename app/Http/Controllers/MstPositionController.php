@@ -24,7 +24,6 @@ class MstPositionController extends Controller
             $datas = MstPosition::select('mst_positions.*', 'mst_departments.dept_name')
                 ->leftjoin('mst_departments', 'mst_positions.id_dept', 'mst_departments.id')
                 ->orderBy('mst_positions.id_dept')
-                ->orderBy('mst_positions.created_at')
                 ->get();
             return DataTables::of($datas)
                 ->addColumn('action', function ($data) use ($listDepartments) {
