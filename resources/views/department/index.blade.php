@@ -22,7 +22,7 @@
                                         <div class="modal-body py-8 px-4" style="max-height: 67vh; overflow-y: auto;">
                                             <div class="row">
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Division</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.div_name') }}</label> <label class="text-danger">*</label>
                                                     <select class="form-control select2" name="id_div" required>
                                                         <option value="" disabled selected>- {{ __('messages.select') }} -</option>
                                                         @foreach($listDivisions as $item)
@@ -31,11 +31,11 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Department Name</label><label style="color: darkred">*</label>
+                                                    <label class="form-label">{{ __('messages.dept_name') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" name="dept_name" type="text" value="{{ old('dept_name') }}" placeholder="Input Department Name.." required>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Note</label>
+                                                    <label class="form-label">{{ __('messages.notes') }}</label>
                                                     <textarea class="form-control" rows="3" type="text" class="form-control" name="notes" placeholder="(Input Note For This Department)">{{ old('notes') }}</textarea>
                                                 </div>
                                             </div>
@@ -65,9 +65,9 @@
                 <thead class="table-light">
                     <tr>
                         <th class="align-middle text-center">No</th>
-                        <th class="align-middle text-center">Division</th>
-                        <th class="align-middle text-center">Department Name</th>
-                        <th class="align-middle text-center">Notes</th>
+                        <th class="align-middle text-center">{{ __('messages.div_name') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.dept_name') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.notes') }}</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
                 </thead>

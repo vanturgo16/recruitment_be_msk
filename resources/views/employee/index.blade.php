@@ -20,10 +20,10 @@
                 <thead class="table-light">
                     <tr>
                         <th class="align-middle text-center">No</th>
-                        <th class="align-middle text-center">Emp. No</th>
+                        <th class="align-middle text-center">{{ __('messages.emp_no') }}</th>
                         <th class="align-middle text-center">Email</th>
-                        <th class="align-middle text-center">Position</th>
-                        <th class="align-middle text-center">Placement</th>
+                        <th class="align-middle text-center">{{ __('messages.position') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.placement') }}</th>
                         <th class="align-middle text-center">Status</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>

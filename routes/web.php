@@ -81,8 +81,8 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/', 'index')->name('dropdown.index');
             Route::post('/store', 'store')->name('dropdown.store');
             Route::post('/update/{id}', 'update')->name('dropdown.update');
-            Route::post('/disable/{id}', 'disable')->name('dropdown.disable');
-            Route::post('/enable/{id}', 'enable')->name('dropdown.enable');
+            Route::post('/activate/{id}', 'activate')->name('dropdown.activate');
+            Route::post('/deactivate/{id}', 'deactivate')->name('dropdown.deactivate');
         });
     });
 

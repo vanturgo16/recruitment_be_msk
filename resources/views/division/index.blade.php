@@ -22,11 +22,11 @@
                                         <div class="modal-body py-8 px-4" style="max-height: 67vh; overflow-y: auto;">
                                             <div class="row">
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Division Name</label><label style="color: darkred">*</label>
+                                                    <label class="form-label">{{ __('messages.div_name') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" name="div_name" type="text" value="{{ old('div_name') }}" placeholder="Input Division Name.." required>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Note</label>
+                                                    <label class="form-label">{{ __('messages.notes') }}</label>
                                                     <textarea class="form-control" rows="3" type="text" class="form-control" name="notes" placeholder="(Input Note For This Division)">{{ old('notes') }}</textarea>
                                                 </div>
                                             </div>
@@ -56,8 +56,8 @@
                 <thead class="table-light">
                     <tr>
                         <th class="align-middle text-center">No</th>
-                        <th class="align-middle text-center">Division Name</th>
-                        <th class="align-middle text-center">Notes</th>
+                        <th class="align-middle text-center">{{ __('messages.div_name') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.notes') }}</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
                 </thead>

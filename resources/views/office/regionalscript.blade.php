@@ -1,4 +1,8 @@
 <script>
+    var messages = {
+        selects: "{{ __('messages.select') }}",
+    };
+
     function resetSelect(selector, placeholder) {
         $(selector).empty().append(`<option value="" selected>${placeholder}</option>`);
     }
@@ -25,13 +29,13 @@
         const idProv = $(this).find('option:selected').data('idprov');
         const url = '{{ route("mappingCity", ":id") }}'.replace(':id', idProv);
 
-        resetSelect('#city', '- Select City -');
-        resetSelect('#district', '- Select District -');
-        resetSelect('#subdistrict', '- Select Subdistrict -');
+        resetSelect('#city', '- ' + messages.selects + ' City -');
+        resetSelect('#district', '- ' + messages.selects + ' District -');
+        resetSelect('#subdistrict', '- ' + messages.selects + ' Subdistrict -');
         $('#postal_code').val('');
 
         if (idProv) {
-            loadOptions(url, '#city', '- Select City -', 'data-idCity=":id"');
+            loadOptions(url, '#city', '- ' + messages.selects + ' City -', 'data-idCity=":id"');
         }
     });
 
@@ -39,12 +43,12 @@
         const idCity = $(this).find('option:selected').data('idcity');
         const url = '{{ route("mappingDistrict", ":id") }}'.replace(':id', idCity);
 
-        resetSelect('#district', '- Select District -');
-        resetSelect('#subdistrict', '- Select Subdistrict -');
+        resetSelect('#district', '- ' + messages.selects + ' District -');
+        resetSelect('#subdistrict', '- ' + messages.selects + ' Subdistrict -');
         $('#postal_code').val('');
 
         if (idCity) {
-            loadOptions(url, '#district', '- Select District -', 'data-idDistrict=":id"');
+            loadOptions(url, '#district', '- ' + messages.selects + ' District -', 'data-idDistrict=":id"');
         }
     });
 
@@ -52,11 +56,11 @@
         const idDistrict = $(this).find('option:selected').data('iddistrict');
         const url = '{{ route("mappingSubDistrict", ":id") }}'.replace(':id', idDistrict);
 
-        resetSelect('#subdistrict', '- Select Subdistrict -');
+        resetSelect('#subdistrict', '- ' + messages.selects + ' Subdistrict -');
         $('#postal_code').val('');
 
         if (idDistrict) {
-            loadOptions(url, '#subdistrict', '- Select Subdistrict -', 'data-postalCode=":kodepos" data-idSubDistrict=":id"');
+            loadOptions(url, '#subdistrict', '- ' + messages.selects + ' Subdistrict -', 'data-postalCode=":kodepos" data-idSubDistrict=":id"');
         }
     });
 

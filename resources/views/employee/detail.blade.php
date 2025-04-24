@@ -101,7 +101,7 @@
                     <div class="row">
                         <div class="col-lg-4 mb-3">
                             <div class="form-group">
-                                <div><span class="fw-bold">Employee No :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.emp_no') }} :</span></div>
                                 <span>
                                     <span>{{ $data->emp_no }}</span>
                                 </span>
@@ -120,7 +120,7 @@
                     <div class="row">
                         <div class="col-lg-12 mb-3">
                             <div class="form-group">
-                                <div><span class="fw-bold">Office :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.placement') }} :</span></div>
                                 <span>
                                     <span>{{ $data->office_name }}</span>
                                 </span>
@@ -128,7 +128,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                             <div class="form-group">
-                                <div><span class="fw-bold">Division :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.div_name') }} :</span></div>
                                 <span>
                                     <span>{{ $data->div_name }}</span>
                                 </span>
@@ -136,7 +136,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                             <div class="form-group">
-                                <div><span class="fw-bold">Department :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.dept_name') }} :</span></div>
                                 <span>
                                     <span>{{ $data->dept_name }}</span>
                                 </span>
@@ -144,7 +144,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                             <div class="form-group">
-                                <div><span class="fw-bold">Position :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.position') }} :</span></div>
                                 <span>
                                     <span>{{ $data->position_name }}</span>
                                 </span>
@@ -187,7 +187,7 @@
             <div class="row">
                 <div class="col-lg-6 mb-2">
                     <div class="form-group">
-                        <div><span class="fw-bold">Created At :</span></div>
+                        <div><span class="fw-bold">{{ __('messages.created_at') }} :</span></div>
                         <span>
                             <span>{{ $data->created_at }}</span>
                         </span>
@@ -195,7 +195,7 @@
                 </div>
                 <div class="col-lg-6 mb-2">
                     <div class="form-group">
-                        <div><span class="fw-bold">Last Updated At :</span></div>
+                        <div><span class="fw-bold">{{ __('messages.last_updated') }} :</span></div>
                         <span>
                             <span>{{ $data->updated_at }}</span>
                         </span>

@@ -22,7 +22,7 @@
                                         <div class="modal-body py-8 px-4" style="max-height: 67vh; overflow-y: auto;">
                                             <div class="row">
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Department</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.dept_name') }}</label> <label class="text-danger">*</label>
                                                     <select class="form-control select2" name="id_dept" required>
                                                         <option value="" disabled selected>- {{ __('messages.select') }} -</option>
                                                         @foreach($listDepartments as $item)
@@ -31,15 +31,15 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Position Name</label><label style="color: darkred">*</label>
+                                                    <label class="form-label">{{ __('messages.position_name') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" name="position_name" type="text" value="{{ old('position_name') }}" placeholder="Input Position Name.." required>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Hierarchy Level</label><label style="color: darkred">*</label>
+                                                    <label class="form-label">{{ __('messages.hie_level') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" name="hie_level" type="text" value="{{ old('hie_level') }}" placeholder="Input Hierarchy Level.." required>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Note</label>
+                                                    <label class="form-label">{{ __('messages.notes') }}</label>
                                                     <textarea class="form-control" rows="3" type="text" class="form-control" name="notes" placeholder="(Input Note For This Position)">{{ old('notes') }}</textarea>
                                                 </div>
                                             </div>
@@ -69,10 +69,10 @@
                 <thead class="table-light">
                     <tr>
                         <th class="align-middle text-center">No</th>
-                        <th class="align-middle text-center">Department</th>
-                        <th class="align-middle text-center">Position Name</th>
-                        <th class="align-middle text-center">Hierarcy Level</th>
-                        <th class="align-middle text-center">Notes</th>
+                        <th class="align-middle text-center">{{ __('messages.dept_name') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.position_name') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.hie_level') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.notes') }}</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
                 </thead>

@@ -21,15 +21,15 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-12 mb-3">
-                                <label class="form-label">Employee</label><label style="color: darkred">*</label>
+                                <label class="form-label">{{ __('messages.emp') }}</label> <label class="text-danger">*</label>
                                 <input class="form-control" type="text" value="{{ $data->email }}" placeholder="Input Employee.." readonly>
                             </div>
                             <div class="col-lg-12 mb-3">
-                                <label class="form-label">Reason</label><label style="color: darkred">*</label>
+                                <label class="form-label">{{ __('messages.reason') }}</label> <label class="text-danger">*</label>
                                 <input class="form-control" name="reason" type="text" value="{{ $data->reason }}" placeholder="Input Reason.." required>
                             </div>
                             <div class="col-lg-12 mb-3">
-                                <label class="form-label">Notes</label>
+                                <label class="form-label">{{ __('messages.notes') }}</label>
                                 <textarea name="notes" class="form-control" rows="5" placeholder="Input Notes...">{{ $data->notes }}</textarea>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                     <div class="modal-body">
                         <div class="text-center">
                             {{ __('messages.are_u_sure') }} <b>{{ __('messages.delete') }}</b>
-                            <p class="text-center"><b>{{ $data->email }}</b></p>?
+                            <p class="text-center"><b>{{ $data->email }}</b>?</p>
                         </div>
                     </div>
                     <div class="modal-footer">

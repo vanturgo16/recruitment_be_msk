@@ -22,9 +22,9 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Employee</label><label style="color: darkred">*</label>
+                                                    <label class="form-label">{{ __('messages.emp') }}</label> <label class="text-danger">*</label>
                                                     <select class="form-select select2" style="width: 100%" name="id_emp" required>
-                                                        <option value="" selected>-- Select --</option>
+                                                        <option value="" selected>-- {{ __('messages.select') }} --</option>
                                                         <option disabled>──────────</option>
                                                         @foreach($employees as $item)
                                                             <option value="{{ $item->id }}" {{ old('id_emp') == $item->email ? 'selected' : '' }}> {{ $item->email }} </option>
@@ -32,11 +32,11 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Reason</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.reason') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" type="text" name="reason" placeholder="Input Reason.." required>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Notes</label>
+                                                    <label class="form-label">{{ __('messages.notes') }}</label>
                                                     <textarea name="rule_value" class="form-control" rows="5" placeholder="Input Notes..."></textarea>
                                                 </div>
                                             </div>
@@ -65,8 +65,8 @@
                     <tr>
                         <th class="align-middle text-center">No</th>
                         <th class="align-middle text-center">Email</th>
-                        <th class="align-middle text-center">Reason</th>
-                        <th class="align-middle text-center">Notes</th>
+                        <th class="align-middle text-center">{{ __('messages.reason') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.notes') }}</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
                 </thead>

@@ -22,9 +22,9 @@
                                         <div class="modal-body py-8 px-4" style="max-height: 67vh; overflow-y: auto;">
                                             <div class="row">
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">Position</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.position') }}</label> <label class="text-danger">*</label>
                                                     <select class="form-select select2" style="width: 100%" name="id_position" required>
-                                                        <option value="" selected>-- Select --</option>
+                                                        <option value="" selected>-- {{ __('messages.select') }} --</option>
                                                         <option disabled>──────────</option>
                                                         @foreach($positions as $item)
                                                             <option value="{{ $item->id }}" {{ old('id_position') == $item->id ? 'selected' : '' }}>
@@ -34,34 +34,34 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">User (Request By)</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.request_by') }}</label> <label class="text-danger">*</label>
                                                     <select class="form-select select2" style="width: 100%" name="position_req_user" required>
-                                                        <option value="" selected>-- Select --</option>
+                                                        <option value="" selected>-- {{ __('messages.select') }} --</option>
                                                         <option disabled>──────────</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">Recruitment Date Start</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.rec_date_start') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" type="date" name="rec_date_start" required>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">Recruitment Date End</label>
+                                                    <label class="form-label">{{ __('messages.rec_date_end') }}</label>
                                                     <input class="form-control" type="date" name="rec_date_end">
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Job Description</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.jobdesc') }}</label> <label class="text-danger">*</label>
                                                     <textarea class="summernote-editor" name="jobdesc" placeholder="Input Job Description..." required></textarea>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Requirement</label> <label class="text-danger">*</label>
+                                                    <label class="form-label">{{ __('messages.requirement') }}</label> <label class="text-danger">*</label>
                                                     <textarea class="summernote-editor" name="requirement" placeholder="Input Requirement..." required></textarea>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-4 mb-3">
-                                                    <label class="form-label">Min Education</label>
+                                                    <label class="form-label">{{ __('messages.min_education') }}</label>
                                                     <select class="form-select select2" style="width: 100%" name="min_education" required>
-                                                        <option value="" selected>-- Select --</option>
+                                                        <option value="" selected>-- {{ __('messages.select') }} --</option>
                                                         <option disabled>──────────</option>
                                                         @foreach($educations as $item)
                                                             <option value="{{ $item->name_value }}" {{ old('min_education') == $item->name_value ? 'selected' : '' }}> {{ $item->name_value }} </option>
@@ -71,24 +71,24 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-4 mb-3">
-                                                    <label class="form-label">Min Years of Experience</label>
+                                                    <label class="form-label">{{ __('messages.min_yoe') }}</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control" placeholder=".." name="min_yoe">
-                                                        <span class="input-group-text">Years</span>
+                                                        <span class="input-group-text">{{ __('messages.years') }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 mb-3">
-                                                    <label class="form-label">Min Age</label>
+                                                    <label class="form-label">{{ __('messages.min_age') }}</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control" placeholder=".." name="min_age">
-                                                        <span class="input-group-text">Years</span>
+                                                        <span class="input-group-text">{{ __('messages.years') }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 mb-3">
-                                                    <label class="form-label">Max Candidate</label>
+                                                    <label class="form-label">{{ __('messages.max_candidate') }}</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control" placeholder=".." name="max_candidate">
-                                                        <span class="input-group-text">Applicants</span>
+                                                        <span class="input-group-text">{{ __('messages.applicants') }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -116,12 +116,12 @@
                 <thead class="table-light">
                     <tr>
                         <th class="align-middle text-center">No</th>
-                        <th class="align-middle text-center">Position</th>
-                        <th class="align-middle text-center">Request By</th>
-                        <th class="align-middle text-center">Rec. Start Date</th>
-                        <th class="align-middle text-center">Rec. End Date</th>
-                        <th class="align-middle text-center">Max Candidate</th>
-                        <th class="align-middle text-center">Applicant</th>
+                        <th class="align-middle text-center">{{ __('messages.position') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.request_by') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.rec_date_start') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.rec_date_end') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.max_candidate') }}</th>
+                        <th class="align-middle text-center">{{ __('messages.applicants') }}</th>
                         <th class="align-middle text-center">Status</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>

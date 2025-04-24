@@ -4,7 +4,7 @@
     </button>
     <ul class="dropdown-menu dropdown-menu2">
         <li><a class="dropdown-item drpdwn" href="{{ route('joblist.detail', encrypt($data->id)) }}"><span class="mdi mdi-information"></span> | {{ __('messages.detail') }}</a></li>
-        <li><a class="dropdown-item drpdwn" href="{{ route('joblist.applicantList', encrypt($data->id)) }}"><span class="mdi mdi-account-group"></span> | Applicant List</a></li>
+        <li><a class="dropdown-item drpdwn" href="{{ route('joblist.applicantList', encrypt($data->id)) }}"><span class="mdi mdi-account-group"></span> | {{ __('messages.applicants_list') }}</a></li>
         @if($data->is_active == 1)
             <li><a class="dropdown-item drpdwn-dgr" href="#" data-bs-toggle="modal" data-bs-target="#deactivate{{ $data->id }}"><span class="mdi mdi-close-circle"></span> | {{ __('messages.deactivate') }}</a></li>
         @else

@@ -20,11 +20,11 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-12 mb-3">
-                                <label class="form-label">{{ __('messages.rule_name') }}</label><label style="color: darkred">*</label>
+                                <label class="form-label">{{ __('messages.rule_name') }}</label> <label class="text-danger">*</label>
                                 <input class="form-control" name="rule_name" type="text" value="{{ $data->rule_name }}" placeholder="Input {{ __('messages.rule_name') }}.." required>
                             </div>
                             <div class="col-lg-12 mb-3">
-                                <label class="form-label">{{ __('messages.rule_value') }}</label><label style="color: darkred">*</label>
+                                <label class="form-label">{{ __('messages.rule_value') }}</label> <label class="text-danger">*</label>
                                 <textarea name="rule_value" class="form-control" rows="5" placeholder="Input {{ __('messages.rule_value') }}..." required>{{ $data->rule_value }}</textarea>
                             </div>
                         </div>

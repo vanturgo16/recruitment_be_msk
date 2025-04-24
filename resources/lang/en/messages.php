@@ -11,7 +11,6 @@ return [
     'mng_user' => 'Manage Users',
     'mng_rule' => 'Manage Rules',
     'mng_dropdown' => 'Manage Dropdowns',
-
     'mst_office' => 'Master Office',
     'mst_div' => 'Master Division',
     'mst_dept' => 'Master Department',
@@ -19,7 +18,6 @@ return [
     'emp_list' => 'Employee List',
     'blacklist' => 'Employee BlackList',
     'job_list' => 'Job List',
-
     'applicants_list' => 'Applicants List',
     'other' => 'Other',
     'audit_log' => 'Audit Log',
@@ -60,6 +58,7 @@ return [
     'switch_to' => 'Switch To',
     'apply' => 'Apply',
     'logout_text' => 'Select "Logout" below if you are ready to end your current session.',
+    'this_data' => 'This Data',
     'same_data' => 'Nothing Change, The data entered is the same as the previous one!',
     'fail_add' => 'Failed To Add Data',
     'fail_duplicate' => 'Duplicate data entry is not allowed!',
@@ -76,11 +75,16 @@ return [
     'success_delete' => 'Success Deleted data Selected',
     'success_switch_theme' => 'Success, Theme Switched',
     'success_update_language' => 'Success, Language Updated',
+    'created_at' => 'Created At',
+    'last_updated' => 'Last Updated At',
     // Manage Users
     'name' => 'Name',
     'dealer_type' => 'Dealer Type',
     'dealer_name' => 'Dealer Name',
     'department' => 'Department',
+    'login_counter' => 'Login Counter',
+    'last_seen' => 'Last Seen',
+    'account_status' => 'Account Status',
     'this_user' => 'This User',
     'user_fail1' => 'Failed, You Do Not Have Access to Add Role as Super Admin',
     'user_fail2' => 'Email Was Already Registered As User',
@@ -96,6 +100,39 @@ return [
     'code_format' => 'Code Format',
     'new_cat' => 'New Category',
     'this_dropdown' => 'This Dropdown',
+    // Office
+    'office_type' => 'Office Type',
+    'code' => 'Code',
+    'address' => 'Address',
+    'address' => 'Address',
+    // Division
+    'div_name' => 'Division Name',
+    'notes' => 'Notes',
+    // Department
+    'dept_name' => 'Department Name',
+    // Position
+    'position_name' => 'Position Name',
+    'hie_level' => 'Hierarchy Level',
+    // Employee
+    'emp' => 'Employee',
+    'emp_no' => 'Employee No',
+    'position' => 'Position',
+    'placement' => 'Placement',
+    // Blacklist
+    'reason' => 'Reason',
+    // Joblist
+    'request_by' => 'User (Request By)',
+    'rec_date_start' => 'Recruitment Date Start',
+    'rec_date_end' => 'Recruitment Date End',
+    'jobdesc' => 'Job Description',
+    'requirement' => 'Requirement',
+    'min_education' => 'Min. Education',
+    'min_yoe' => 'Min. Years of Experience',
+    'years' => 'Years',
+    'min_age' => 'Min. Age',
+    'max_candidate' => 'Max. Candidate',
+    'applicants' => 'Applicants',
+    'applicants_list' => 'Applicant List',
     // Profile
     'photo_profile' => 'Photo Profile',
     'update_pp' => 'Update Your Photo Profile',

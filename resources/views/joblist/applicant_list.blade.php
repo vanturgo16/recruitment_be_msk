@@ -13,7 +13,7 @@
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
                         <li class="breadcrumb-item"><a href="{{ route('joblist.index') }}">{{ __('messages.job_list') }}</a></li>
-                        <li class="breadcrumb-item active"> Applicant List</li>
+                        <li class="breadcrumb-item active"> {{ __('messages.applicants_list') }}</li>
                     </ol>
                 </div>
             </div>
@@ -23,7 +23,7 @@
     {{-- MAIN CARD --}}
     <div class="card">
         <div class="card-header bg-light">
-            <h4 class="text-bold">Applicant List</h4>
+            <h4 class="text-bold">{{ __('messages.applicants_list') }}</h4>
         </div>
         <div class="card-body">
             

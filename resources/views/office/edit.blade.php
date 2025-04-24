@@ -29,9 +29,9 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Office Type</label><label style="color: darkred">*</label>
+                        <label class="form-label">{{ __('messages.office_type') }}</label> <label class="text-danger">*</label>
                         <select class="form-select select2" style="width: 100%" name="type" required>
-                            <option value="" selected>-- Select Type --</option>
+                            <option value="" selected>-- {{ __('messages.select') }} Type --</option>
                             <option disabled>──────────</option>
                             @foreach($officeTypes as $item)
                                 <option value="{{ $item->name_value }}" {{ $data->type == $item->name_value ? 'selected' : '' }}> {{ $item->name_value }} </option>
@@ -39,20 +39,20 @@
                         </select>
                     </div>
                     <div class="col-lg-6 mb-3">
-                        <label class="form-label">Code</label><label style="color: darkred">*</label>
+                        <label class="form-label">{{ __('messages.code') }}</label> <label class="text-danger">*</label>
                         <input class="form-control" name="code" type="text" value="{{ $data->code }}" placeholder="Input Office Code.." required>
                     </div>
                     <div class="col-lg-6 mb-3">
-                        <label class="form-label">Name</label><label style="color: darkred">*</label>
+                        <label class="form-label">{{ __('messages.name') }}</label> <label class="text-danger">*</label>
                         <input class="form-control" name="name" type="text" value="{{ $data->name }}" placeholder="Input Office Name.." required>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <label class="form-label">Address</label><label style="color: darkred">*</label>
+                        <label class="form-label">{{ __('messages.address') }}</label> <label class="text-danger">*</label>
                         <textarea class="form-control" rows="3" type="text" class="form-control" name="address" placeholder="(Input Office Address, Ex. Street/Unit/Floor/No)" required>{{ $data->address }}</textarea>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <select class="form-select select2" style="width: 100%" name="province" id="province" class="form-control" required>
-                            <option value="" selected>-- Select Province --</option>
+                            <option value="" selected>-- {{ __('messages.select') }} Province --</option>
                             @foreach ($listProvinces as $item)
                                 <option value="{{ $item['nama'] }}" {{ $data->province == $item['nama'] ? 'selected' : '' }} data-idProv="{{ $item['id'] }}">
                                     {{ $item['nama'] }}
@@ -62,7 +62,7 @@
                     </div>
                     <div class="col-lg-6 mb-3">
                         <select class="form-select select2" style="width: 100%" name="city" id="city" class="form-control" required>
-                            <option value="" selected>- Select City -</option>
+                            <option value="" selected>- {{ __('messages.select') }} City -</option>
                             @foreach ($listCities as $item)
                                 <option value="{{ $item['nama'] }}" {{ $data->city == $item['nama'] ? 'selected' : '' }} data-idcity="{{ $item['id'] }}">
                                     {{ $item['nama'] }}
@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-lg-6 mb-3">
                         <select class="form-select select2" style="width: 100%" name="district" id="district" class="form-control" required>
-                            <option value="" selected>- Select District -</option>
+                            <option value="" selected>- {{ __('messages.select') }} District -</option>
                             @foreach ($listDistricts as $item)
                                 <option value="{{ $item['nama'] }}" {{ $data->district == $item['nama'] ? 'selected' : '' }} data-iddistrict="{{ $item['id'] }}">
                                     {{ $item['nama'] }}
@@ -82,7 +82,7 @@
                     </div>
                     <div class="col-lg-6 mb-3">
                         <select class="form-select select2" style="width: 100%" name="subdistrict" id="subdistrict" class="form-control" required>
-                            <option value="" selected>- Select Subdistrict -</option>
+                            <option value="" selected>- {{ __('messages.select') }} Subdistrict -</option>
                             @foreach ($listSubDistricts as $item)
                                 <option value="{{ $item['nama'] }}" {{ $data->subdistrict == $item['nama'] ? 'selected' : '' }} data-postalCode="{{ $item['kodepos'] }}">
                                     {{ $item['nama'] }}

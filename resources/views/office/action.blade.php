@@ -20,14 +20,14 @@
         <div class="modal-dialog modal-dialog-top modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Detail</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">{{ __('messages.detail') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-6 mb-2">
                             <div class="form-group">
-                                <div><span class="fw-bold">Code :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.code') }} :</span></div>
                                 <span>
                                     <span>{{ $data->code }}</span>
                                 </span>
@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-lg-6 mb-2">
                             <div class="form-group">
-                                <div><span class="fw-bold">Type :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.office_type') }} :</span></div>
                                 <span>
                                     <span>{{ $data->type }}</span>
                                 </span>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="col-lg-6 mb-2">
                             <div class="form-group">
-                                <div><span class="fw-bold">Name :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.name') }} :</span></div>
                                 <span>
                                     <span>{{ $data->name }}</span>
                                 </span>
@@ -51,7 +51,7 @@
                         </div>
                         <div class="col-lg-12 mb-2">
                             <div class="form-group">
-                                <div><span class="fw-bold">Address :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.address') }} :</span></div>
                                 <span>
                                     <span>
                                         @php
@@ -74,7 +74,7 @@
                     <div class="row">
                         <div class="col-lg-6 mb-2">
                             <div class="form-group">
-                                <div><span class="fw-bold">Created At :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.created_at') }} :</span></div>
                                 <span>
                                     <span>{{ $data->created_at }}</span>
                                 </span>
@@ -82,7 +82,7 @@
                         </div>
                         <div class="col-lg-6 mb-2">
                             <div class="form-group">
-                                <div><span class="fw-bold">Last Updated At :</span></div>
+                                <div><span class="fw-bold">{{ __('messages.last_updated') }} :</span></div>
                                 <span>
                                     <span>{{ $data->updated_at }}</span>
                                 </span>
@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
                 </div>
             </div>
         </div>
@@ -102,21 +102,21 @@
         <div class="modal-dialog modal-dialog-top" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Activate</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">{{ __('messages.activate') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form class="formLoad" action="{{ route('office.activate', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="text-center">
-                            Are You Sure to <b>Activate</b> This Data?
+                            {{ __('messages.are_u_sure') }} <b>{{ __('messages.activate') }}</b> {{ __('messages.this_data') }}?
                             <p class="text-center"><b>{{ $data->name }}</b></p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
                         <button type="submit" class="btn btn-success waves-effect btn-label waves-light">
-                            <i class="mdi mdi-check-circle label-icon"></i>Activate
+                            <i class="mdi mdi-check-circle label-icon"></i>{{ __('messages.activate') }}
                         </button>
                     </div>
                 </form>
@@ -129,21 +129,21 @@
         <div class="modal-dialog modal-dialog-top" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Deactivate</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">{{ __('messages.deactivate') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form class="formLoad" action="{{ route('office.deactivate', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="text-center">
-                            Are You Sure to <b>Deactivate</b> This Data?
+                            {{ __('messages.are_u_sure') }} <b>{{ __('messages.deactivate') }}</b> {{ __('messages.this_data') }}?
                             <p class="text-center"><b>{{ $data->name }}</b></p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
                         <button type="submit" class="btn btn-danger waves-effect btn-label waves-light">
-                            <i class="mdi mdi-close-circle label-icon"></i>Deactivate
+                            <i class="mdi mdi-close-circle label-icon"></i>{{ __('messages.deactivate') }}
                         </button>
                     </div>
                 </form>
