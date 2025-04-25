@@ -51,6 +51,7 @@ class JoblistController extends Controller
         $request->validate([
             'id_position' => 'required',
             'rec_date_start' => 'required',
+            'rec_date_end' => 'nullable|date|after_or_equal:rec_date_start',
             'jobdesc' => 'required',
             'requirement' => 'required',
             'position_req_user' => 'required',
@@ -133,6 +134,7 @@ class JoblistController extends Controller
         $request->validate([
             'id_position' => 'required',
             'rec_date_start' => 'required',
+            'rec_date_end' => 'nullable|date|after_or_equal:rec_date_start',
             'jobdesc' => 'required',
             'requirement' => 'required',
             'position_req_user' => 'required',

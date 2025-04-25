@@ -11,7 +11,7 @@
                         <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#addNew"><i class="mdi mdi-plus label-icon"></i> {{ __('messages.add_new') }}</button>
                         {{-- Modal Add --}}
                         <div class="modal fade" id="addNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-top modal-lg" role="document">
+                            <div class="modal-dialog modal-dialog-top modal-xl" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="staticBackdropLabel">{{ __('messages.add_new') }}</h5>
@@ -40,14 +40,45 @@
                                                         <option disabled>──────────</option>
                                                     </select>
                                                 </div>
-                                                <div class="col-lg-6 mb-3">
+                                                {{-- <div class="col-lg-6 mb-3">
                                                     <label class="form-label">{{ __('messages.rec_date_start') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" type="date" name="rec_date_start" required>
                                                 </div>
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">{{ __('messages.rec_date_end') }}</label>
                                                     <input class="form-control" type="date" name="rec_date_end">
+                                                </div> --}}
+
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">{{ __('messages.rec_date_start') }}</label> <label class="text-danger">*</label>
+                                                    <input class="form-control" type="date" name="rec_date_start" id="rec_date_start" required>
                                                 </div>
+                                                <div class="col-lg-6 mb-3">
+                                                    <label class="form-label">{{ __('messages.rec_date_end') }}</label>
+                                                    <input class="form-control" type="date" name="rec_date_end" id="rec_date_end">
+                                                    <small id="date-error" class="text-danger d-none">End date cannot be earlier than start date.</small>
+                                                </div>
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function () {
+                                                        const startDate = document.getElementById('rec_date_start');
+                                                        const endDate = document.getElementById('rec_date_end');
+                                                        const errorMsg = document.getElementById('date-error');
+                                                
+                                                        function validateDates() {
+                                                            if (startDate.value && endDate.value && endDate.value < startDate.value) {
+                                                                errorMsg.classList.remove('d-none');
+                                                                endDate.classList.add('is-invalid');
+                                                            } else {
+                                                                errorMsg.classList.add('d-none');
+                                                                endDate.classList.remove('is-invalid');
+                                                            }
+                                                        }
+                                                
+                                                        startDate.addEventListener('change', validateDates);
+                                                        endDate.addEventListener('change', validateDates);
+                                                    });
+                                                </script>
+                                                
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">{{ __('messages.jobdesc') }}</label> <label class="text-danger">*</label>
                                                     <textarea class="summernote-editor" name="jobdesc" placeholder="Input Job Description..." required></textarea>

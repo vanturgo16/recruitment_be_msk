@@ -12,6 +12,7 @@ use App\Traits\AuditLogsTrait;
 // Model
 use App\Models\Blacklist;
 use App\Models\Employee;
+use App\Models\MstDropdowns;
 
 class BlacklistController extends Controller
 {
@@ -22,6 +23,7 @@ class BlacklistController extends Controller
         $employees = Employee::select('id', 'email')->whereNotIn('id', function($query) {
             $query->select('id_emp')->from('blacklists');
         })->get();
+        $listReasons = MstDropdowns::where('category', 'Reason Blacklist')->get();
 
         if ($request->ajax()) {
             $datas = Blacklist::select('blacklists.*', 'employees.email')
@@ -30,14 +32,14 @@ class BlacklistController extends Controller
                 ->get();
 
             return DataTables::of($datas)
-                ->addColumn('action', function ($data) {
-                    return view('blacklist.action', compact('data'));
+                ->addColumn('action', function ($data) use ($listReasons) {
+                    return view('blacklist.action', compact('data', 'listReasons'));
                 })->toJson();
         }
 
         //Audit Log
         $this->auditLogs('View List Employee Blacklist');
-        return view('blacklist.index', compact('employees'));
+        return view('blacklist.index', compact('employees', 'listReasons'));
     }
 
     public function store(Request $request)

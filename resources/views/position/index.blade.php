@@ -36,7 +36,14 @@
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">{{ __('messages.hie_level') }}</label> <label class="text-danger">*</label>
-                                                    <input class="form-control" name="hie_level" type="text" value="{{ old('hie_level') }}" placeholder="Input Hierarchy Level.." required>
+                                                    <select class="form-control select2" name="hie_level" required>
+                                                        <option value="" disabled selected>- {{ __('messages.select') }} -</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">{{ __('messages.notes') }}</label>

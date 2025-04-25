@@ -33,7 +33,12 @@
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">{{ __('messages.reason') }}</label> <label class="text-danger">*</label>
-                                                    <input class="form-control" type="text" name="reason" placeholder="Input Reason.." required>
+                                                    <select class="form-control select2" name="reason" required>
+                                                        <option value="" disabled selected>- {{ __('messages.select') }} -</option>
+                                                        @foreach($listReasons as $item)
+                                                            <option value="{{ $item->name_value }}" @if( old('reason') == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">{{ __('messages.notes') }}</label>
