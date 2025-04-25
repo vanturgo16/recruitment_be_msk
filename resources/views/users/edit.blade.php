@@ -29,38 +29,12 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-6 mb-3">
-                        <label class="form-label">{{ __('messages.name') }}</label><label style="color: darkred">*</label>
+                        <label class="form-label">{{ __('messages.name') }}</label> <label class="text-danger">*</label>
                         <input class="form-control" type="text" name="name" value="{{ $data->name }}" placeholder="Input {{ __('messages.name') }}.." required>
                     </div>
                     <div class="col-lg-6 mb-3">
-                        <label class="form-label">Email</label><label style="color: darkred">*</label>
+                        <label class="form-label">Email</label> <label class="text-danger">*</label>
                         <input class="form-control" type="email" name="email" value="{{ $data->email }}" placeholder="Input Email.." required>
-                    </div>
-                    <div class="col-lg-6 mb-3">
-                        <label class="form-label">{{ __('messages.dealer_type') }}</label> <label class="text-danger">*</label>
-                        <select class="form-control select2" name="dealer_type" required>
-                            <option value="" disabled selected>- {{ __('messages.select') }} {{ __('messages.dealer_type') }} -</option>
-                            @foreach($dealerTypes as $item)
-                                <option value="{{ $item->name_value }}" {{ $data->dealer_type == $item->name_value ? 'selected' : '' }}>
-                                    {{ $item->name_value }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-lg-6 mb-3">
-                        <label class="form-label">{{ __('messages.dealer_name') }}</label><label style="color: darkred">*</label>
-                        <input class="form-control" type="text" name="dealer_name" value="{{ $data->dealer_name }}" placeholder="Input {{ __('messages.dealer_name') }}.." required>
-                    </div>
-                    <div class="col-lg-6 mb-3">
-                        <label class="form-label">{{ __('messages.department') }}</label> <label class="text-danger">*</label>
-                        <select class="form-control select2" name="department" required>
-                            <option value="" disabled selected>- {{ __('messages.select') }} {{ __('messages.department') }} -</option>
-                            @foreach($departments as $item)
-                                <option value="{{ $item->name_value }}" {{ $data->department == $item->name_value ? 'selected' : '' }}>
-                                    {{ $item->name_value }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label class="form-label">Role</label> <label class="text-danger">*</label>

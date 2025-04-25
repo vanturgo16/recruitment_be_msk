@@ -31,7 +31,7 @@
                     <i class="mdi mdi-cog spin-left display-4 cog-icon"></i>
                 </div>
                 <h3 class="mt-4">Site is Under Development</h3>
-                <p>Please wait....</p>
+                <p><i class="fas fa-tools me-2"></i>Hang tight while we finish things up. 👌</p>
             </div>
         </div>
     </div>

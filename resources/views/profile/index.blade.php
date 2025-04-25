@@ -6,9 +6,9 @@
         <div class="col-lg-4 order-lg-2">
             <div class="card mb-4">
                 <div class="text-center align-middle">
-                    <button type="button" class="btn btn-sm btn-info waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#updProfile">
+                    {{-- <button type="button" class="btn btn-sm btn-info waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#updProfile">
                         <i class="mdi mdi-update label-icon"></i> {{ __('messages.update') }} {{ __('messages.photo_profile') }}
-                    </button>
+                    </button> --}}
                 </div>
                 {{-- Modal Update --}}
                 <div class="modal fade" id="updProfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -82,18 +82,6 @@
                         <div class="col-lg-6 mb-3">
                             <div class="fw-bold"><span>E-Mail :</span></div>
                             <span>{{ Auth::user()->email ?? '-' }}</span>
-                        </div>
-                        <div class="col-lg-6 mb-3">
-                            <div class="fw-bold"><span>{{ __('messages.dealer_type') }} :</span></div>
-                            <span>{{ Auth::user()->dealer_type ?? '-' }}</span>
-                        </div>
-                        <div class="col-lg-6 mb-3">
-                            <div class="fw-bold"><span>{{ __('messages.dealer_name') }} :</span></div>
-                            <span>{{ Auth::user()->dealer_name ?? '-' }}</span>
-                        </div>
-                        <div class="col-lg-6 mb-3">
-                            <div class="fw-bold"><span>{{ __('messages.department') }} :</span></div>
-                            <span>{{ Auth::user()->department ?? '-' }}</span>
                         </div>
                         <div class="col-lg-6 mb-3">
                             <div class="fw-bold"><span>{{ __('messages.role_in_system') }} :</span></div>

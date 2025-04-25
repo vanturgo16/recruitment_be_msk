@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,12 +27,10 @@ class MstUserController extends Controller
     public function index()
     {
         $roleUsers = MstDropdowns::where('category', 'Role User')->where('is_active', 1)->get();
-        $dealerTypes = MstDropdowns::where('category', 'Type Dealer')->where('is_active', 1)->get();
-        $departments = MstDropdowns::where('category', 'Department')->where('is_active', 1)->get();
 
         //Audit Log
         $this->auditLogs('View List Manage User');
-        return view('users.index', compact('roleUsers', 'dealerTypes', 'departments'));
+        return view('users.index', compact('roleUsers'));
     }
 
     public function datas(Request $request)
@@ -64,9 +61,6 @@ class MstUserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required',
-            'dealer_type' => 'required',
-            'dealer_name' => 'required',
-            'department' => 'required',
             'role' => 'required',
         ]);
         //Prevent Create Role Super Admin, If Not Super Admin
@@ -90,9 +84,6 @@ class MstUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($password),
-                'dealer_type' => $request->dealer_type,
-                'dealer_name' => $request->dealer_name,
-                'department' => $request->department,
                 'is_active' => 1,
                 'role' => $request->role
             ]);
@@ -147,12 +138,10 @@ class MstUserController extends Controller
         $id = decrypt($id);
         $data = User::where('id', $id)->first();
         $roleUsers = MstDropdowns::where('category', 'Role User')->where('is_active', 1)->orWhere('name_value', $data->role)->get();
-        $dealerTypes = MstDropdowns::where('category', 'Type Dealer')->where('is_active', 1)->orWhere('name_value', $data->dealer_type)->get();
-        $departments = MstDropdowns::where('category', 'Department')->where('is_active', 1)->orWhere('name_value', $data->department)->get();
 
         //Audit Log
         $this->auditLogs('View Edit User ID (' . $id . ')');
-        return view('users.edit', compact('data', 'roleUsers', 'dealerTypes', 'departments'));
+        return view('users.edit', compact('data', 'roleUsers'));
     }
 
     public function update(Request $request, $id)
@@ -161,9 +150,6 @@ class MstUserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required',
-            'dealer_type' => 'required',
-            'dealer_name' => 'required',
-            'department' => 'required',
             'role' => 'required',
         ]);
         //Prevent Create Role Super Admin, If Not Super Admin
@@ -175,9 +161,6 @@ class MstUserController extends Controller
         $dataBefore = User::where('id', $iduser)->first();
         $dataBefore->name = $request->name;
         $dataBefore->email = $request->email;
-        $dataBefore->dealer_type = $request->dealer_type;
-        $dataBefore->dealer_name = $request->dealer_name;
-        $dataBefore->department = $request->department;
         $dataBefore->role = $request->role;
 
         if ($dataBefore->isDirty()) {
@@ -186,9 +169,6 @@ class MstUserController extends Controller
                 User::where('id', $iduser)->update([
                     'name' => $request->name,
                     'email' => $request->email,
-                    'dealer_type' => $request->dealer_type,
-                    'dealer_name' => $request->dealer_name,
-                    'department' => $request->department,
                     'role' => $request->role
                 ]);
 

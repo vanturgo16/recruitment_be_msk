@@ -22,7 +22,7 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Email</label><label style="color: darkred">*</label>
+                                                    <label class="form-label">Email</label> <label class="text-danger">*</label>
                                                     <div id="emailWarning"></div>
                                                     <input class="form-control" id="checkEmail" name="email" type="email" value="" placeholder="Input Email.." required>
                                                 </div>

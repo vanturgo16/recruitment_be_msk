@@ -105,7 +105,7 @@ class MstDropdownController extends Controller
         }
     }
 
-    public function enable($id)
+    public function activate($id)
     {
         $id = decrypt($id);
         DB::beginTransaction();
@@ -114,7 +114,7 @@ class MstDropdownController extends Controller
             $nameValue = MstDropdowns::where('id', $id)->first()->name_value;
 
             // Audit Log
-            $this->auditLogs('Enable Selected Dropdown ID: ' . $id);
+            $this->auditLogs('Activate Selected Dropdown ID: ' . $id);
             DB::commit();
             return redirect()->back()->with(['success' => __('messages.success_activate') . $nameValue]);
         } catch (Exception $e) {
@@ -123,7 +123,7 @@ class MstDropdownController extends Controller
         }
     }
 
-    public function disable($id)
+    public function deactivate($id)
     {
         $id = decrypt($id);
         DB::beginTransaction();
@@ -132,7 +132,7 @@ class MstDropdownController extends Controller
             $nameValue = MstDropdowns::where('id', $id)->first()->name_value;
 
             // Audit Log
-            $this->auditLogs('Disable Selected Dropdown ID: ' . $id);
+            $this->auditLogs('Deactivate Selected Dropdown ID: ' . $id);
             DB::commit();
             return redirect()->back()->with(['success' => __('messages.success_deactivate') . $nameValue]);
         } catch (Exception $e) {

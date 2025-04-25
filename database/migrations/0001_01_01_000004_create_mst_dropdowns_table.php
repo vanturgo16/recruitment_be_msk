@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id(); // bigint unsigned auto-increment
             $table->string('category'); // NOT NULL
             $table->string('name_value'); // NOT NULL
-            $table->string('code_format'); // NOT NULL
-            $table->boolean('is_active')->nullable(); // Nullable
-            $table->timestamp('created_at')->nullable(); // Nullable
-            $table->timestamp('updated_at')->nullable(); // Nullable
+            $table->string('code_format')->nullable(); // Nullable
+            $table->boolean('is_active'); // NOT NULL
+            $table->timestamps();
         });
     }
 

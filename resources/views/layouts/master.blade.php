@@ -26,6 +26,9 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}"/>
     <!-- JQUERY SCRIPT -->
     <script type="text/javascript" src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
+    {{-- SUMMERNOTE --}}
+    <link href="{{ asset('assets/css/summernote-bs4.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('assets/js/summernote-bs4.min.js') }}"></script>
 </head>
 
 {{-- <body> --}}
@@ -60,7 +63,7 @@
                     <button type="button" class="btn btn-sm px-3 font-size-16 header-item" id="vertical-menu-btn"><i class="fa fa-fw fa-bars"></i></button>
                     <form class="app-search d-none d-lg-block">
                         <div class="position-relative">
-                            <h3 class="d-inline-block me-2"><span class="badge bg-info text-white">{{ Auth::user()->role }}</span></h3>
+                            <h3 class="d-inline-block me-2"><span class="badge bg-danger text-white">{{ Auth::user()->role }}</span></h3>
                         </div>
                     </form>
                     <!-- Role-->
@@ -133,69 +136,10 @@
         </header>
         <!-- ========== Left Sidebar ========== -->
         <div class="vertical-menu">
-            <div data-simplebar class="h-100">
-                <div id="sidebar-menu">
-                    <ul class="metismenu list-unstyled" id="side-menu">
-                        <li>
-                            <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard*') ? 'bg-light active' : '' }}">
-                                <i class="mdi mdi-home"></i><span>Dashboard</span>
-                            </a>
-                        </li>
-
-                        @if(in_array(auth()->user()->role, ['Super Admin', 'Admin']))
-                            <li class="menu-title mt-2" data-key="t-menu">Configuration</li>
-                            <li>
-                                <a href="{{ route('user.index') }}" class="{{ request()->is('user*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-account-supervisor"></i><span>{{ __('messages.mng_user') }}</span>
-                                </a>
-                            </li>
-                            @if(auth()->user()->role == 'Super Admin')
-                            <li>
-                                <a href="{{ route('rule.index') }}" class="{{ request()->is('rule*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-cog-box"></i><span>{{ __('messages.mng_rule') }}</span>
-                                </a>
-                            </li>
-                            @endif
-                            <li>
-                                <a href="{{ route('dropdown.index') }}" class="{{ request()->is('dropdown*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-package-down"></i><span>{{ __('messages.mng_dropdown') }}</span>
-                                </a>
-                            </li>
-
-                            <li class="menu-title mt-2" data-key="t-menu">Master</li>
-                            <li>
-                                <a href="#" class="{{ request()->is('master_1*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-list-status"></i><span>Master 1</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="{{ request()->is('master_2*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-list-status"></i><span>Master 2</span>
-                                </a>
-                            </li>
-                        @endif
-
-                        <li class="menu-title mt-2" data-key="t-menu">Recruitment</li>
-                        <li>
-                            <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
-                                <i class="mdi mdi-account-group"></i><span>{{ __('messages.applicants_list') }}</span>
-                            </a>
-                        </li>
-
-                        @if(in_array(auth()->user()->role, ['Super Admin', 'Admin']))
-                            <li class="menu-title mt-2" data-key="t-menu">{{ __('messages.other') }}</li>
-                            <li>
-                                <a href="{{ route('auditlog.index') }}" class="{{ request()->is('auditlog*') ? 'bg-light active' : '' }}">
-                                    <i class="mdi mdi-chart-donut"></i><span>{{ __('messages.audit_log') }}</span>
-                                </a>
-                            </li>
-                        @endif
-                    </ul>
-                </div>
-            </div>
+            @include('layouts.sidebar')
         </div>
         <!-- ========== Main Content ========== -->
-        <div class="main-content">
+        <div class="main-content bg-company">
             @yield('konten')
             <footer class="footer" style="position: fixed; z-index: 10;">
                 <div class="container-fluid">
@@ -407,7 +351,7 @@
                 if (windowHeight < 550) { maxHeight = '10vh'; } 
                 else if (windowHeight < 600) { maxHeight = '19vh'; } 
                 else if (windowHeight < 700) { maxHeight = '29vh'; } 
-                else if (windowHeight < 800) { maxHeight = '36vh'; } 
+                else if (windowHeight < 800) { maxHeight = '35vh'; } 
                 else if (windowHeight < 900) { maxHeight = '42vh'; } 
                 else if (windowHeight < 1000) { maxHeight = '44vh'; }
                 $('#ssTable_wrapper .dataTables_scrollBody').css('max-height', maxHeight);
@@ -424,6 +368,14 @@
                     margin-bottom: 20px; /* Add space between table body and pagination */
                 }
             `).appendTo('head');
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.summernote-editor').each(function() {
+                $(this).summernote();
+            });
         });
     </script>
 </body>

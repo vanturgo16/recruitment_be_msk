@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id(); // bigint unsigned auto-increment
             $table->string('rule_name'); // NOT NULL
             $table->string('rule_value'); // NOT NULL
-            $table->boolean('is_active')->nullable(); // Nullable
-            $table->timestamp('created_at')->nullable(); // Nullable
-            $table->timestamp('updated_at')->nullable(); // Nullable
+            $table->boolean('is_active'); // NOT NULL
+            $table->timestamps();
         });
     }
 

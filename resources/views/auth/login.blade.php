@@ -82,7 +82,8 @@
                     </div>
                     <!-- Background Login -->
                     <div class="col-xxl-9 col-lg-8 col-md-7">
-                        <div class="auth-bg pt-md-5 p-4 d-flex" style="background-image: url('{{ asset('assets/images/loginPage/auth-bg.jpg') }}');">
+                        {{-- <div class="auth-bg pt-md-5 p-4 d-flex" style="background-image: url('{{ asset('assets/images/loginPage/auth-bg.jpg') }}');"> --}}
+                        <div class="auth-bg pt-md-5 p-4 d-flex" style="background-image: url('{{ asset('assets/images/background/MSK.png') }}');">
                             <div class="bg-overlay bg-primary"></div>
                             <ul class="bg-bubbles">
                                 <li></li>
