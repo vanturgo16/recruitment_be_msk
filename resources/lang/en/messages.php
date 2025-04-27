@@ -118,6 +118,7 @@ return [
     'emp_no' => 'Employee No',
     'position' => 'Position',
     'placement' => 'Placement',
+    'inactive_date' => 'Inactive Date',
     // Blacklist
     'reason' => 'Reason',
     // Joblist
