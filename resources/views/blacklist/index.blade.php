@@ -6,56 +6,7 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-4">
-                    @if(Auth::user()->role == 'Super Admin')
-                        <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#addNew"><i class="mdi mdi-plus label-icon"></i> {{ __('messages.add_new') }}</button>
-                        {{-- Modal Add --}}
-                        <div class="modal fade" id="addNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-top" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="staticBackdropLabel">{{ __('messages.add_new') }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form class="formLoad" action="{{ route('blacklist.store') }}" id="formadd" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">{{ __('messages.emp') }}</label> <label class="text-danger">*</label>
-                                                    <select class="form-select select2" style="width: 100%" name="id_emp" required>
-                                                        <option value="" selected>-- {{ __('messages.select') }} --</option>
-                                                        <option disabled>──────────</option>
-                                                        @foreach($employees as $item)
-                                                            <option value="{{ $item->id }}" {{ old('id_emp') == $item->email ? 'selected' : '' }}> {{ $item->email }} </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">{{ __('messages.reason') }}</label> <label class="text-danger">*</label>
-                                                    <select class="form-control select2" name="reason" required>
-                                                        <option value="" disabled selected>- {{ __('messages.select') }} -</option>
-                                                        @foreach($listReasons as $item)
-                                                            <option value="{{ $item->name_value }}" @if( old('reason') == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">{{ __('messages.notes') }}</label>
-                                                    <textarea name="rule_value" class="form-control" rows="5" placeholder="Input Notes..."></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
-                                            <button type="submit" class="btn btn-success waves-effect btn-label waves-light"><i class="mdi mdi-plus label-icon"></i>{{ __('messages.add') }}</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
+                <div class="col-4"></div>
                 <div class="col-4">
                     <div class="text-center">
                         <h4 class="text-bold">{{ __('messages.blacklist') }}</h4>

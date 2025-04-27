@@ -110,6 +110,7 @@ return [
     'emp_no' => 'Nomor Karyawan',
     'position' => 'Posisi',
     'placement' => 'Penempatan',
+    'inactive_date' => 'Tanggal Tidak Aktif',
     // Blacklist
     'reason' => 'Alasan',
     // Joblist

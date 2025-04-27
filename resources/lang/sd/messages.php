@@ -110,6 +110,7 @@ return [
     'emp_no' => 'Nomor Pagawé',
     'position' => 'Kalungguhan',
     'placement' => 'Pangpenclokan',
+    'inactive_date' => 'Tanggal Teu Aktif',
     // Blacklist
     'reason' => 'Alesan',
     // Joblist

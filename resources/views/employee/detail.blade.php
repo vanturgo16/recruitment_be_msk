@@ -93,7 +93,22 @@
     {{-- MAIN CARD --}}
     <div class="card">
         <div class="card-header bg-light">
-            <h4 class="text-bold">{{ __('messages.detail') }}</h4>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h4 class="text-bold">{{ __('messages.detail') }}</h4>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-end">
+                        <h4>
+                            @if($data->is_active == 0)
+                                <span class="badge bg-danger text-white"><i class="fas fa-window-close"></i> Inactive</span>
+                            @else
+                                <span class="badge bg-success text-white"><i class="fas fa-check"></i> Active</span>
+                            @endif
+                        </h4>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="row">
@@ -115,6 +130,16 @@
                                 </span>
                             </div>
                         </div>
+                        @if($data->is_active == 0)
+                            <div class="col-lg-4 mb-3">
+                                <div class="form-group">
+                                    <div><span class="fw-bold">{{ __('messages.inactive_date') }} :</span></div>
+                                    <span>
+                                        <span>{{ $data->inactive_date }}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <hr>
                     <div class="row">

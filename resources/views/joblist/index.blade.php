@@ -40,15 +40,6 @@
                                                         <option disabled>──────────</option>
                                                     </select>
                                                 </div>
-                                                {{-- <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">{{ __('messages.rec_date_start') }}</label> <label class="text-danger">*</label>
-                                                    <input class="form-control" type="date" name="rec_date_start" required>
-                                                </div>
-                                                <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">{{ __('messages.rec_date_end') }}</label>
-                                                    <input class="form-control" type="date" name="rec_date_end">
-                                                </div> --}}
-
                                                 <div class="col-lg-6 mb-3">
                                                     <label class="form-label">{{ __('messages.rec_date_start') }}</label> <label class="text-danger">*</label>
                                                     <input class="form-control" type="date" name="rec_date_start" id="rec_date_start" required>

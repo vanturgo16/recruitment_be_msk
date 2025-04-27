@@ -127,6 +127,8 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         Route::prefix('employee')->group(function () {
             Route::get('/', 'index')->name('employee.index');
             Route::get('/detail/{id}', 'detail')->name('employee.detail');
+            Route::post('/activate/{id}', 'activate')->name('employee.activate');
+            Route::post('/deactivate/{id}', 'deactivate')->name('employee.deactivate');
         });
     });
     // BLACKLIST

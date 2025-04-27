@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('reportline_4')->nullable(); // Nullable
             $table->string('reportline_5')->nullable(); // Nullable
             $table->boolean('is_active'); // NOT NULL
+            $table->date('inactive_date')->nullable(); // Nullable
             $table->timestamps();
         });
     }
