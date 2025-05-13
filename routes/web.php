@@ -9,6 +9,7 @@ use App\Http\Middleware\UpdateLastSeen;
 // CONTROLLER
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\BlacklistController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\DashboardController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\JoblistController;
 
 // LOGIN
 Route::get('/', [AuthController::class, 'login'])->name('login');
+Route::get('/captcha/generate', [CaptchaController::class, 'generate'])->name('captcha.generate');
 Route::post('auth/login', [AuthController::class, 'postlogin'])->name('postlogin')->middleware("throttle:5,2");
 // LOGOUT
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

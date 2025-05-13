@@ -18,6 +18,13 @@ class AuthController extends Controller
 
     public function postlogin(Request $request)
     {
+        $request->validate([
+            'captcha_input' => 'required|in:' . session('captcha_code'),
+        ], [
+            'captcha_input.required' => 'Kode CAPTCHA harus diisi.',
+            'captcha_input.in' => 'Kode CAPTCHA yang dimasukkan tidak sesuai.',
+        ]);
+        
         $email = $request->email;
         $password = $request->password;
         $credentials = [

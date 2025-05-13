@@ -13,6 +13,9 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/icons.min.css') }}"/>
         <!-- PRELOADER CSS -->
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/preloader.min.css') }}"/>
+
+        <!-- CAPTCHA CSS -->
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/captcha.css') }}"/>
     </head>
 
     <body>
@@ -39,22 +42,39 @@
                                         </div>
                                         <form class="formLoad" action="{{ route('postlogin') }}" id="login" method="POST" enctype="multipart/form-data">
                                             @csrf
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label class="form-label">Email / Username</label>
                                                 <input type="text" class="form-control" name="email" id="username" placeholder="Enter email / username">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <div class="d-flex align-items-start">
                                                     <div class="flex-grow-1">
                                                         <label class="form-label">Password</label>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="input-group auth-pass-inputgroup">
                                                     <input type="password" class="form-control" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon" name="password">
                                                     <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
                                                 </div>
                                             </div>
+                                            
+                                            <!-- CAPTCHA display and refresh -->
+                                            <div class="mb-3">
+                                                <label class="form-label">Captcha<span class="text-danger">*</span></label>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="captcha-container me-2">
+                                                        <div class="captcha" id="captcha-text">
+                                                            @foreach(str_split(session('captcha_code')) as $index => $char)
+                                                                <span class="captcha-char" style="--i:{{ $index }}; --rand:{{ rand(0, 4) }};">{{ $char }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                        <div class="middle-line"></div>
+                                                    </div>
+                                                    <button type="button" id="refresh-captcha" title="Refresh Kode Captcha">↻</button>
+                                                </div>
+                                                <input type="text" class="form-control mt-2" name="captcha_input" placeholder="Masukkan kode CAPTCHA" required/>
+                                            </div>
+
                                             <div class="row mb-4">
                                                 <div class="col">
                                                     <div class="form-check">
@@ -114,5 +134,7 @@
         <script src="{{ asset('assets/js/formLoad.js') }}"></script>
         <!-- PW ADDON INIT -->
         <script src="{{ asset('assets/js/pages/pass-addon.init.js') }}"></script>
+        <!-- CAPTCHA JS -->
+        <script src="{{ asset('assets/js/captcha.js') }}"></script>
     </body>
 </html>
