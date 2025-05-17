@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 // MIDDLEWARE
 use App\Http\Middleware\Authenticate;
@@ -29,6 +30,11 @@ use App\Http\Controllers\JoblistController;
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/captcha/generate', [CaptchaController::class, 'generate'])->name('captcha.generate');
 Route::post('auth/login', [AuthController::class, 'postlogin'])->name('postlogin')->middleware("throttle:5,2");
+
+// Ubah Password
+Route::get('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
+Route::post('/password/update', [AuthController::class, 'updatePassword'])->name('password.update');
+
 // LOGOUT
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/expired-logout', [AuthController::class, 'expiredlogout'])->name('expiredlogout');

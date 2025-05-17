@@ -128,6 +128,7 @@ class MstUserController extends Controller
         try {
             User::where('id', $id)->update([
                 'password' => Hash::make($password),
+                'last_modified_password_at' => now(),
             ]);
 
             // [ MAILING ]
