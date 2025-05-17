@@ -10,8 +10,13 @@
             @if(in_array(auth()->user()->role, ['Super Admin', 'Admin']))
                 <li class="menu-title mt-2" data-key="t-menu">Configuration</li>
                 <li>
-                    <a href="{{ route('user.index') }}" class="{{ request()->is('user*') ? 'bg-light active' : '' }}">
+                    <a href="{{ route('user.index') }}" class="{{ request()->is('user*') && !request()->is('user/candidates') ? 'bg-light active' : '' }}">
                         <i class="mdi mdi-account-supervisor"></i><span>{{ __('messages.mng_user') }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('user.candidates') }}" class="{{ request()->is('user/candidates') ? 'bg-light active' : '' }}">
+                        <i class="mdi mdi-account-group"></i><span>Candidate Users</span>
                     </a>
                 </li>
                 @if(auth()->user()->role == 'Super Admin')

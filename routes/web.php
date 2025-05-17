@@ -72,6 +72,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/deactivate/{id}', 'deactivate')->name('user.deactivate');
             Route::post('/delete/{id}', 'delete')->name('user.delete');
             Route::post('/check_email_employee', 'check_email')->name('user.check_email_employee');
+            Route::get('/candidates', 'candidates')->name('user.candidates');
         });
     });
     // RULE CONFIGURATION
