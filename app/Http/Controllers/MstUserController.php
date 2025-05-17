@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 // Mail
 use App\Mail\SendEmailPassword;
-
+use App\Models\Employee;
 // Traits
 use App\Traits\AuditLogsTrait;
 
@@ -60,7 +60,14 @@ class MstUserController extends Controller
         // Validate Request
         $request->validate([
             'name' => 'required',
-            'email' => 'required',
+            'email' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!Employee::where('email', $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'role' => 'required',
         ]);
         //Prevent Create Role Super Admin, If Not Super Admin
@@ -80,7 +87,11 @@ class MstUserController extends Controller
         DB::beginTransaction();
         try {
             $password = $this->generateRandomPassword(8);
+            //search id_emp by email
+            $id_emp = Employee::where('email', $request->email)->value('id'); 
+
             User::create([
+                'id_emp' => $id_emp,
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($password),
