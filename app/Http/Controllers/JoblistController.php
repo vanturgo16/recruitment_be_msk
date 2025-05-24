@@ -13,6 +13,7 @@ use App\Traits\AuditLogsTrait;
 use App\Models\Joblist;
 use App\Models\MstPosition;
 use App\Models\Employee;
+use App\Models\JobApply;
 use App\Models\MstDropdowns;
 
 class JoblistController extends Controller
@@ -259,5 +260,146 @@ class JoblistController extends Controller
                 ->where('id_dept', $deptId);
         })->pluck('email', 'id');
         return response()->json($employee);
+    }
+
+    public function jobApplied(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::select('
+                SELECT 
+                job_applies.id,
+                joblists.id_position,
+                mst_positions.position_name,
+                mst_departments.dept_name,
+                noa.count_noa,
+                unreviewed.count_unreviewed,
+                CASE
+                    WHEN unseen.count_unseen is null THEN "0"
+                    ELSE unseen.count_unseen
+                END AS count_unseen,
+                CASE
+                    WHEN seen.count_seen is null THEN "0"
+                    ELSE seen.count_seen
+                END AS count_seen
+                FROM job_applies
+
+                LEFT JOIN joblists on job_applies.id_joblist=joblists.id
+
+                LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
+                
+                LEFT JOIN mst_departments on mst_positions.id_dept=mst_departments.id
+
+                LEFT JOIN (
+                    SELECT 
+                    joblists.id_position ,
+                    count(*) as count_noa
+                    FROM kemakm01_recruitment_msk.job_applies
+                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
+                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
+                    group by 1
+                    ) as noa on noa.id_position=joblists.id_position
+
+                LEFT JOIN(
+                    SELECT 
+                    joblists.id_position ,
+                    count(*) as count_unreviewed
+                    FROM kemakm01_recruitment_msk.job_applies
+                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
+                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
+                    WHERE job_applies.is_approved_1 is null
+                    group by 1
+                    )as unreviewed on unreviewed.id_position=joblists.id_position
+
+                LEFT JOIN(
+                    SELECT 
+                    joblists.id_position ,
+                    count(*) as count_unseen
+                    FROM kemakm01_recruitment_msk.job_applies
+                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
+                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
+                    WHERE job_applies.is_seen = 0
+                    group by 1
+                    )as unseen on unseen.id_position=joblists.id_position
+
+                LEFT JOIN(
+                    SELECT 
+                    joblists.id_position ,
+                    count(*) as count_seen
+                    FROM kemakm01_recruitment_msk.job_applies
+                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
+                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
+                    WHERE job_applies.is_seen = 1
+                    group by 1
+                    )as seen on seen.id_position=joblists.id_position
+                GROUP BY position_name
+            ');
+            return DataTables::of(collect($data))
+                ->addColumn('position', function($row) {
+                    return $row->position_name . ' (<b>' . $row->dept_name . '</b>)';
+                })
+                ->addColumn('number_of_applicant', function($row) {
+                    return $row->count_noa . ' (<span style="color:red">' . $row->count_unseen . '</span>)';
+                })
+                ->addColumn('unreviewed', function($row) {
+                    return $row->count_unreviewed;
+                })
+                ->addColumn('action', function ($row) {
+                    return '<a href="'.route('jobapplied.detail', encrypt($row->id_position)).'" class="btn btn-info btn-sm">Show All Applicant</a>';
+                })
+                ->rawColumns(['action', 'position', 'number_of_applicant'])
+                ->toJson();
+        }
+        return view('job_applied.index');
+    }
+
+    public function jobAppliedDetail($id)
+    {
+        $id = decrypt($id);
+        $datas = JobApply::select(
+            'job_applies.*',
+            'joblists.id_position',
+            'mst_positions.position_name',
+            'mst_departments.dept_name',
+            'candidate.candidate_first_name',
+            'candidate.candidate_last_name',
+            'candidate.email',
+            )
+            ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
+            ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
+            ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+            ->leftJoin('candidate', 'job_applies.id_candidate', '=', 'candidate.id')
+            ->where('joblists.id_position', $id)
+            ->get();
+        return view('job_applied.detail', compact('datas'));
+    }
+
+    public function jobAppliedSeen($id)
+    {
+        $jobApply = JobApply::findOrFail($id);
+        $jobApply->is_seen = 1;
+        $jobApply->save();
+        // Redirect to detail info page for this applicant
+        return redirect()->route('jobapplied.applicantinfo', $id)
+            ->with('success', 'Applicant marked as seen.');
+    }
+
+    public function jobAppliedApplicantInfo($id)
+    {
+        $applicant = JobApply::select(
+            'job_applies.*',
+            'joblists.id_position',
+            'mst_positions.position_name',
+            'mst_departments.dept_name',
+            'candidate.candidate_first_name',
+            'candidate.candidate_last_name',
+            'candidate.email',
+        )
+        ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
+        ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
+        ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+        ->leftJoin('candidate', 'job_applies.id_candidate', '=', 'candidate.id')
+        ->where('job_applies.id', $id)
+        ->firstOrFail();
+        return view('job_applied.applicant_info', compact('applicant'));
     }
 }

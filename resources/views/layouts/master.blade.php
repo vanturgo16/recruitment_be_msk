@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="d-flex">
-                    <div class="dropdown d-none d-sm-inline-block">
+                    {{-- <div class="dropdown d-none d-sm-inline-block">
                         <button type="button" class="btn header-item" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img id="header-lang-img" src="{{ asset('assets/images/flags/' . (App::getLocale() == 'id' ? 'id.png' : (App::getLocale() == 'sd' ? 'sunda.jpg' : 'us.jpg'))) }}" alt="Header Language" height="16">
                         </button>
@@ -95,7 +95,7 @@
                                 <span class="align-middle">Sunda</span>
                             </a>
                         </div>                        
-                    </div>                    
+                    </div>                     --}}
                     <div class="dropdown d-none d-sm-inline-block">
                         <button type="button" class="btn header-item" data-bs-toggle="modal" data-bs-target="#switchTheme">
                             <i data-feather="moon" class="icon-lg layout-mode-dark"></i>

@@ -165,6 +165,15 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/get-users-by-position/{id}', 'getUsersByPosition')->name('joblist.getuser');
         });
     });
+    // JOB APPLIED
+    Route::middleware(['role:Admin,Super Admin'])->controller(JoblistController::class)->group(function () {
+        Route::prefix('job-applied')->group(function () {
+            Route::get('/', 'jobApplied')->name('jobapplied.index');
+            Route::get('/{id}/detail', 'jobAppliedDetail')->name('jobapplied.detail');
+            Route::post('/{id}/seen', 'jobAppliedSeen')->name('jobapplied.seen'); // update is_seen
+            Route::get('/{id}/info', 'jobAppliedApplicantInfo')->name('jobapplied.applicantinfo'); // detail info per applicant
+        });
+    });
 
     // OTHER
     // AUDIT LOG

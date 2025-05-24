@@ -81,6 +81,11 @@
                     <i class="mdi mdi-clipboard-list"></i><span>{{ __('messages.job_list') }}</span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('jobapplied.index') }}" class="{{ request()->is('job-applied*') ? 'bg-light active' : '' }}">
+                    <i class="mdi mdi-clipboard-check"></i><span>Job Applied</span>
+                </a>
+            </li>
             {{-- <li>
                 <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
                     <i class="mdi mdi-account-group"></i><span>{{ __('messages.applicants_list') }}</span>
