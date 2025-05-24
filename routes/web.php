@@ -60,7 +60,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
 
     // CONFIGURATION
     // USER CONFIGURATION
-    Route::middleware(['role:Admin,Super Admin'])->controller(MstUserController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(MstUserController::class)->group(function () {
         Route::prefix('user')->group(function () {
             Route::get('/', 'index')->name('user.index');
             Route::get('/datas', 'datas')->name('user.datas');
@@ -85,7 +85,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // DROPDOWN CONFIGURATION
-    Route::middleware(['role:Admin,Super Admin'])->controller(MstDropdownController::class)->group(function () {
+    Route::middleware(['role:Admin,Super Admin,Admin HR'])->controller(MstDropdownController::class)->group(function () {
         Route::prefix('dropdown')->group(function () {
             Route::get('/', 'index')->name('dropdown.index');
             Route::post('/store', 'store')->name('dropdown.store');
@@ -97,7 +97,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
 
     // MASTER DATA
     // OFFICE
-    Route::middleware(['role:Admin,Super Admin'])->controller(OfficeController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(OfficeController::class)->group(function () {
         Route::prefix('office')->group(function () {
             Route::get('/', 'index')->name('office.index');
             Route::post('/store', 'store')->name('office.store');
@@ -108,7 +108,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // DIVISION
-    Route::middleware(['role:Admin,Super Admin'])->controller(MstDivisionController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(MstDivisionController::class)->group(function () {
         Route::prefix('division')->group(function () {
             Route::get('/', 'index')->name('division.index');
             Route::post('/store', 'store')->name('division.store');
@@ -116,7 +116,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // DEPARTMENT
-    Route::middleware(['role:Admin,Super Admin'])->controller(MstDepartmentController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(MstDepartmentController::class)->group(function () {
         Route::prefix('department')->group(function () {
             Route::get('/', 'index')->name('department.index');
             Route::post('/store', 'store')->name('department.store');
@@ -124,7 +124,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // POSITION
-    Route::middleware(['role:Admin,Super Admin'])->controller(MstPositionController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(MstPositionController::class)->group(function () {
         Route::prefix('position')->group(function () {
             Route::get('/', 'index')->name('position.index');
             Route::post('/store', 'store')->name('position.store');
@@ -132,7 +132,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // EMPLOYEE
-    Route::middleware(['role:Admin,Super Admin'])->controller(EmployeeController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(EmployeeController::class)->group(function () {
         Route::prefix('employee')->group(function () {
             Route::get('/', 'index')->name('employee.index');
             Route::get('/detail/{id}', 'detail')->name('employee.detail');
@@ -141,7 +141,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // BLACKLIST
-    Route::middleware(['role:Admin,Super Admin'])->controller(BlacklistController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(BlacklistController::class)->group(function () {
         Route::prefix('blacklist')->group(function () {
             Route::get('/', 'index')->name('blacklist.index');
             Route::post('/store', 'store')->name('blacklist.store');
@@ -152,7 +152,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
 
     // RECRUITMENT
     // JOBLIST
-    Route::middleware(['role:Admin,Super Admin'])->controller(JoblistController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(JoblistController::class)->group(function () {
         Route::prefix('joblist')->group(function () {
             Route::get('/', 'index')->name('joblist.index');
             Route::post('/store', 'store')->name('joblist.store');
@@ -166,7 +166,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
         });
     });
     // JOB APPLIED
-    Route::middleware(['role:Admin,Super Admin'])->controller(JoblistController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin,Employee'])->controller(JoblistController::class)->group(function () {
         Route::prefix('job-applied')->group(function () {
             Route::get('/', 'jobApplied')->name('jobapplied.index');
             Route::get('/{id}/detail', 'jobAppliedDetail')->name('jobapplied.detail');

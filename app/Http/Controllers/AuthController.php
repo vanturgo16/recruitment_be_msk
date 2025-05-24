@@ -50,7 +50,7 @@ class AuthController extends Controller
         $dologin = Auth::attempt($credentials);
         if ($dologin) {
             $user = User::where('email', $request->email)->first();
-            if ($user->role === 'Candidate' || $user->role === 'Employee') {
+            if ($user->role === 'Candidate') {
                 Auth::logout();
                 return redirect()->route('login')->with('fail', 'Login is not allowed for your role.');
             }

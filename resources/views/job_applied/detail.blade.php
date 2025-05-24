@@ -12,40 +12,56 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            <table class="table table-bordered dt-responsive w-100" id="jobAppliedDetailTable">
-                <thead class="table-light">
-                    <tr>
-                        <th class="align-middle text-center">ID</th>
-                        <th class="align-middle text-center">Applicant Name</th>
-                        <th class="align-middle text-center">Applicant Email</th>
-                        <th class="align-middle text-center">Applied At</th>
-                        <th class="align-middle text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($datas as $data)
+            <div class="table-responsive">
+                <table class="table table-bordered dt-responsive w-100" id="jobAppliedDetailTable">
+                    <thead class="table-light">
                         <tr>
-                            <td>{{ $data->id }}</td>
-                            <td>{{ $data->candidate_first_name . " " . $data->candidate_last_name }}</td>
-                            <td>{{ $data->email }}</td>
-                            <td>{{ $data->created_at }}</td>
-                            <td>
-                                @if ($data->is_seen == '0')
-                                    <span class="badge bg-warning text-dark" title="Not seen yet">Not Seen Yet</span>
-                                @else
-                                    <span class="badge bg-success" title="Already seen">Already Seen</span>
-                                @endif
-                                <form action="{{ route('jobapplied.seen', $data->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-info btn-sm ms-2">
-                                        Detail Info
-                                    </button>
-                                </form>
-                            </td>
+                            <th class="align-middle text-center">ID</th>
+                            <th class="align-middle text-center">Applicant Name</th>
+                            <th class="align-middle text-center">Applicant Email</th>
+                            <th class="align-middle text-center">Applied At</th>
+                            <th class="align-middle text-center">Status</th>
+                            <th class="align-middle text-center">Action</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($datas as $data)
+                            <tr>
+                                <td>{{ $data->id }}</td>
+                                <td>
+                                    {{ $data->candidate_first_name . " " . $data->candidate_last_name }}
+                                    @if ($data->is_seen == '0')
+                                        <span class="align-middle ms-2" title="Not seen yet">
+                                            <span style="display:inline-block;width:10px;height:10px;background:#dc3545;border-radius:50%;margin-right:3px;"></span>
+                                        </span>
+                                    @else
+                                        <span class="align-middle ms-2" title="Already seen">
+                                            <span style="display:inline-block;width:10px;height:10px;background:#28a745;border-radius:50%;margin-right:3px;"></span>
+                                        </span>
+                                    @endif
+                                </td>
+                                <td>{{ $data->email }}</td>
+                                <td>{{ $data->created_at }}</td>
+                                <td>
+                                    @if($data->progress_status)
+                                        <span class="badge bg-primary">{{ $data->progress_status }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <form action="{{ route('jobapplied.seen', encrypt($data->id)) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-info btn-sm ms-2">
+                                            Detail Info
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             <a href="{{ route('jobapplied.index') }}" class="btn btn-secondary mt-3">Back to Job Applied</a>
         </div>
     </div>
@@ -54,6 +70,7 @@
     $(function() {
         var dataTable = $('#jobAppliedDetailTable').DataTable({
             processing: true,
+            responsive: true,
         });
     });
 </script>

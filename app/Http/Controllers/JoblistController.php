@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Candidate;
+use App\Models\EducationInfo;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
@@ -13,13 +15,18 @@ use App\Traits\AuditLogsTrait;
 use App\Models\Joblist;
 use App\Models\MstPosition;
 use App\Models\Employee;
+use App\Models\GeneralInfo;
 use App\Models\JobApply;
+use App\Models\MainProfile;
 use App\Models\MstDropdowns;
+use App\Models\WorkExpInfo;
+use App\Traits\ProfilTrait;
+use Illuminate\Support\Facades\Auth;
 
 class JoblistController extends Controller
 {
     use AuditLogsTrait;
-
+    use ProfilTrait;
     public function index(Request $request)
     {
         $positions = MstPosition::select('mst_positions.id', 'mst_positions.position_name', 'mst_departments.dept_name')
@@ -264,75 +271,39 @@ class JoblistController extends Controller
 
     public function jobApplied(Request $request)
     {
+        $id_emp_login = Auth::user()->id_emp;
+        $deptName = Employee::select('mst_departments.dept_name')
+            ->leftJoin('mst_positions', 'employees.id_position', '=', 'mst_positions.id')
+            ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+            ->where('employees.id', $id_emp_login)
+            ->value('dept_name');
+
+        // Jika yang login role-nya Employee, tambahkan filter dept_name
+        if (Auth::user()->role === 'Employee' && $deptName) {
+            $request->merge(['filter_dept_name' => $deptName]);
+        }
+        
         if ($request->ajax()) {
-            $data = DB::select('
-                SELECT 
-                job_applies.id,
-                joblists.id_position,
-                mst_positions.position_name,
-                mst_departments.dept_name,
-                noa.count_noa,
-                unreviewed.count_unreviewed,
-                CASE
-                    WHEN unseen.count_unseen is null THEN "0"
-                    ELSE unseen.count_unseen
-                END AS count_unseen,
-                CASE
-                    WHEN seen.count_seen is null THEN "0"
-                    ELSE seen.count_seen
-                END AS count_seen
-                FROM job_applies
+            $data = JobApply::select(
+                'job_applies.id_joblist',
+                'joblists.id_position',
+                'mst_positions.position_name',
+                'mst_departments.dept_name',
+                DB::raw('COUNT(job_applies.id) as count_noa'),
+                DB::raw('SUM(CASE WHEN job_applies.is_approved_1 IS NULL THEN 1 ELSE 0 END) as count_unreviewed'),
+                DB::raw('SUM(CASE WHEN job_applies.is_seen = 0 THEN 1 ELSE 0 END) as count_unseen'),
+                DB::raw('SUM(CASE WHEN job_applies.is_seen = 1 THEN 1 ELSE 0 END) as count_seen')
+                )
+                ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
+                ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
+                ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+                // filter by department if needed
+                ->when($request->filter_dept_name ?? null, function ($query, $deptName) {
+                $query->where('mst_departments.dept_name', $deptName);
+                })
+                ->groupBy('job_applies.id_joblist')
+                ->get();
 
-                LEFT JOIN joblists on job_applies.id_joblist=joblists.id
-
-                LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
-                
-                LEFT JOIN mst_departments on mst_positions.id_dept=mst_departments.id
-
-                LEFT JOIN (
-                    SELECT 
-                    joblists.id_position ,
-                    count(*) as count_noa
-                    FROM kemakm01_recruitment_msk.job_applies
-                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
-                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
-                    group by 1
-                    ) as noa on noa.id_position=joblists.id_position
-
-                LEFT JOIN(
-                    SELECT 
-                    joblists.id_position ,
-                    count(*) as count_unreviewed
-                    FROM kemakm01_recruitment_msk.job_applies
-                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
-                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
-                    WHERE job_applies.is_approved_1 is null
-                    group by 1
-                    )as unreviewed on unreviewed.id_position=joblists.id_position
-
-                LEFT JOIN(
-                    SELECT 
-                    joblists.id_position ,
-                    count(*) as count_unseen
-                    FROM kemakm01_recruitment_msk.job_applies
-                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
-                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
-                    WHERE job_applies.is_seen = 0
-                    group by 1
-                    )as unseen on unseen.id_position=joblists.id_position
-
-                LEFT JOIN(
-                    SELECT 
-                    joblists.id_position ,
-                    count(*) as count_seen
-                    FROM kemakm01_recruitment_msk.job_applies
-                    LEFT JOIN joblists on job_applies.id_joblist=joblists.id
-                    LEFT JOIN mst_positions on joblists.id_position=mst_positions.id
-                    WHERE job_applies.is_seen = 1
-                    group by 1
-                    )as seen on seen.id_position=joblists.id_position
-                GROUP BY position_name
-            ');
             return DataTables::of(collect($data))
                 ->addColumn('position', function($row) {
                     return $row->position_name . ' (<b>' . $row->dept_name . '</b>)';
@@ -344,7 +315,7 @@ class JoblistController extends Controller
                     return $row->count_unreviewed;
                 })
                 ->addColumn('action', function ($row) {
-                    return '<a href="'.route('jobapplied.detail', encrypt($row->id_position)).'" class="btn btn-info btn-sm">Show All Applicant</a>';
+                    return '<a href="'.route('jobapplied.detail', encrypt($row->id_joblist)).'" class="btn btn-info btn-sm">Show All Applicant</a>';
                 })
                 ->rawColumns(['action', 'position', 'number_of_applicant'])
                 ->toJson();
@@ -368,38 +339,56 @@ class JoblistController extends Controller
             ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
             ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
             ->leftJoin('candidate', 'job_applies.id_candidate', '=', 'candidate.id')
-            ->where('joblists.id_position', $id)
+            ->where('job_applies.id_joblist', $id)
             ->get();
-        return view('job_applied.detail', compact('datas'));
+            return view('job_applied.detail', compact('datas'));
     }
 
     public function jobAppliedSeen($id)
     {
-        $jobApply = JobApply::findOrFail($id);
-        $jobApply->is_seen = 1;
-        $jobApply->save();
-        // Redirect to detail info page for this applicant
-        return redirect()->route('jobapplied.applicantinfo', $id)
-            ->with('success', 'Applicant marked as seen.');
-    }
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::where('id', $idJobApply)->first();
+        $idJobList = $jobApply->id_joblist;
+        if ($jobApply) {
+            $jobApply->is_seen = 1;
+            $jobApply->save();
+            $idCandidate = $jobApply->id_candidate;
+        } else {
+            $idCandidate = null;
+        }
 
-    public function jobAppliedApplicantInfo($id)
-    {
-        $applicant = JobApply::select(
-            'job_applies.*',
-            'joblists.id_position',
-            'mst_positions.position_name',
-            'mst_departments.dept_name',
-            'candidate.candidate_first_name',
-            'candidate.candidate_last_name',
-            'candidate.email',
-        )
-        ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
-        ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
-        ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
-        ->leftJoin('candidate', 'job_applies.id_candidate', '=', 'candidate.id')
-        ->where('job_applies.id', $id)
-        ->firstOrFail();
-        return view('job_applied.applicant_info', compact('applicant'));
+        $candidate = Candidate::where('id', $idCandidate)->first();
+        $mainProfile = MainProfile::where('id_candidate', $idCandidate)->first();
+        $generalInfo = GeneralInfo::where('id_candidate', $idCandidate)->first();
+        $eduInfo = EducationInfo::where('id_candidate', $idCandidate)->get();
+        $workExpInfo = WorkExpInfo::where('id_candidate', $idCandidate)->get();
+
+        // Cannot Edit When Any Apllication In Progress
+        $isEditable = !$this->checkApplicationIP($idCandidate);
+
+        $gender = MstDropdowns::where('category', 'Gender')->pluck('name_value');
+        $marriageStatus = MstDropdowns::where('category', 'Marriage Status')->pluck('name_value');
+        $grade = MstDropdowns::where('category', 'Education')->pluck('name_value');
+        $optionYN = MstDropdowns::where('category', 'OptionYN')->pluck('name_value');
+        $sourceInfo = MstDropdowns::where('category', 'Source Info')->pluck('name_value');
+        $expInfo = MstDropdowns::where('category', 'Exp Info')->pluck('name_value');
+        
+        // Redirect to detail info page for this applicant
+        return view('job_applied.applicant_info', compact(
+            'idJobList',
+            'idJobApply',
+            'candidate',
+            'mainProfile',
+            'generalInfo',
+            'eduInfo',
+            'workExpInfo',
+            'isEditable',
+            'gender',
+            'marriageStatus',
+            'grade',
+            'optionYN',
+            'sourceInfo',
+            'expInfo'))
+            ->with('success', 'Applicant marked as seen.');
     }
 }

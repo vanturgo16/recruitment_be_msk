@@ -7,7 +7,8 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-4">
-                    @if(Auth::user()->role == 'Super Admin')
+                    @if(Auth::user()->role == 'Super Admin' || 'Admin HR')
+                        {{-- Button Add --}}
                         <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#addNew"><i class="mdi mdi-plus label-icon"></i> {{ __('messages.add_new') }}</button>
                         {{-- Modal Add --}}
                         <div class="modal fade" id="addNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">

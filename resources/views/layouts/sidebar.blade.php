@@ -7,7 +7,7 @@
                 </a>
             </li>
 
-            @if(in_array(auth()->user()->role, ['Super Admin', 'Admin']))
+            @if(in_array(auth()->user()->role, ['Super Admin', 'Admin','Admin HR']))
                 <li class="menu-title mt-2" data-key="t-menu">Configuration</li>
                 <li>
                     <a href="{{ route('user.index') }}" class="{{ request()->is('user*') && !request()->is('user/candidates') ? 'bg-light active' : '' }}">
@@ -74,23 +74,27 @@
                     </ul>
                 </li>
             @endif
-
-            <li class="menu-title mt-2" data-key="t-menu">Recruitment</li>
-            <li>
-                <a href="{{ route('joblist.index') }}" class="{{ request()->is('joblist*') ? 'bg-light active' : '' }}">
-                    <i class="mdi mdi-clipboard-list"></i><span>{{ __('messages.job_list') }}</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('jobapplied.index') }}" class="{{ request()->is('job-applied*') ? 'bg-light active' : '' }}">
-                    <i class="mdi mdi-clipboard-check"></i><span>Job Applied</span>
-                </a>
-            </li>
-            {{-- <li>
-                <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
-                    <i class="mdi mdi-account-group"></i><span>{{ __('messages.applicants_list') }}</span>
-                </a>
-            </li> --}}
+            
+            @if(in_array(auth()->user()->role, ['Super Admin', 'Admin', 'Admin HR','Employee']))
+                <li class="menu-title mt-2" data-key="t-menu">Recruitment</li>
+                <li>
+                    <a href="{{ route('joblist.index') }}" class="{{ request()->is('joblist*') ? 'bg-light active' : '' }}">
+                        <i class="mdi mdi-clipboard-list"></i><span>{{ __('messages.job_list') }}</span>
+                    </a>
+                </li>
+                @if (in_array(auth()->user()->hie_level, ['2','3']))
+                    <li>
+                        <a href="{{ route('jobapplied.index') }}" class="{{ request()->is('job-applied*') ? 'bg-light active' : '' }}">
+                            <i class="mdi mdi-clipboard-check"></i><span>Job Applied</span>
+                        </a>
+                    </li>
+                @endif
+                {{-- <li>
+                    <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
+                        <i class="mdi mdi-account-group"></i><span>{{ __('messages.applicants_list') }}</span>
+                    </a>
+                </li> --}}
+            @endif
 
             @if(in_array(auth()->user()->role, ['Super Admin', 'Admin']))
                 <li class="menu-title mt-2" data-key="t-menu">{{ __('messages.other') }}</li>

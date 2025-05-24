@@ -109,11 +109,10 @@
                                 <label class="form-label">{{ __('messages.hie_level') }}</label> <label class="text-danger">*</label>
                                 <select class="form-control select2" name="hie_level" required>
                                     <option value="" disabled selected>- {{ __('messages.select') }} -</option>
-                                    <option value="1" @if($data->hie_level == 1) selected="selected" @endif>1</option>
-                                    <option value="2" @if($data->hie_level == 2) selected="selected" @endif>2</option>
-                                    <option value="3" @if($data->hie_level == 3) selected="selected" @endif>3</option>
-                                    <option value="4" @if($data->hie_level == 4) selected="selected" @endif>4</option>
-                                    <option value="5" @if($data->hie_level == 5) selected="selected" @endif>5</option>
+                                    <option value="1" @if($data->hie_level == 1) selected="selected" @endif>GM</option>
+                                    <option value="2" @if($data->hie_level == 2) selected="selected" @endif>Manager</option>
+                                    <option value="3" @if($data->hie_level == 3) selected="selected" @endif>Supervisor</option>
+                                    <option value="4" @if($data->hie_level == 4) selected="selected" @endif>Admin</option>
                                 </select>
                             </div>
                             <div class="col-lg-12 mb-3">
