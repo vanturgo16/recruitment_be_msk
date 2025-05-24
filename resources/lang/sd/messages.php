@@ -123,8 +123,8 @@ return [
     'min_yoe' => 'Min. Taun Pangalaman',
     'years' => 'Taun',
     'min_age' => 'Yuswa Minimum',
-    'max_candidate' => 'Kandidat Maksimum',
-    'applicants' => 'Pelamar',
+    'max_candidate' => 'Maks. Karyawan Dibutuhkan',
+    'applicants' => 'Karyawan',
     'applicants_list' => 'Daptar Pelamar',
     // Profil  
     'photo_profile' => 'Poto Profil',  

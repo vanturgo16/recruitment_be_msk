@@ -124,8 +124,8 @@ return [
     'min_yoe' => 'Min. Tahun Pengalaman',
     'years' => 'Tahun',
     'min_age' => 'Usia Minimum',
-    'max_candidate' => 'Maks. Kandidat',
-    'applicants' => 'Pelamar',
+    'max_candidate' => 'Maks. Karyawan Dibutuhkan',
+    'applicants' => 'Karyawan',
     'applicants_list' => 'Daftar Pelamar',
     // Profile
     'photo_profile' => 'Profil Foto',

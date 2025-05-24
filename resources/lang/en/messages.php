@@ -131,8 +131,9 @@ return [
     'min_yoe' => 'Min. Years of Experience',
     'years' => 'Years',
     'min_age' => 'Min. Age',
-    'max_candidate' => 'Max. Candidate',
-    'applicants' => 'Applicants',
+    // 'max_candidate' => 'Max. Candidate',
+    'max_candidate' => 'Max. Employee Need',
+    'applicants' => 'Employee',
     'applicants_list' => 'Applicant List',
     // Profile
     'photo_profile' => 'Photo Profile',
