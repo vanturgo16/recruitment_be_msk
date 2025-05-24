@@ -143,7 +143,7 @@
                         <th class="align-middle text-center">{{ __('messages.rec_date_start') }}</th>
                         <th class="align-middle text-center">{{ __('messages.rec_date_end') }}</th>
                         <th class="align-middle text-center">{{ __('messages.max_candidate') }}</th>
-                        <th class="align-middle text-center">{{ __('messages.applicants') }}</th>
+                        {{-- <th class="align-middle text-center">{{ __('messages.applicants') }}</th> --}}
                         <th class="align-middle text-center">Status</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
@@ -205,12 +205,12 @@
                     searchable: true,
                     className: 'align-top text-center',
                 },
-                {
-                    data: 'number_of_applicant',
-                    orderable: true,
-                    searchable: true,
-                    className: 'align-top text-center',
-                },
+                // {
+                //     data: 'number_of_applicant',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'align-top text-center',
+                // },
                 {
                     data: 'is_active',
                     orderable: true,
