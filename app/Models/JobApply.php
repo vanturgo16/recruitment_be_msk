@@ -15,13 +15,13 @@ class JobApply extends Model
         // tambahkan kolom lain jika ada
     ];
 
-    public function job()
+    public function joblist()
     {
-        return $this->belongsTo(Joblist::class, 'job_id');
+        return $this->belongsTo(Joblist::class, 'id_joblist');
     }
 
-    public function user()
+    public function candidate()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Candidate::class, 'id_candidate');
     }
 }

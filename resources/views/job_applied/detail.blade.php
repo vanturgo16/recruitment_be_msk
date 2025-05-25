@@ -61,6 +61,26 @@
                                             Detail Info
                                         </button>
                                     </form>
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'INTERVIEW')
+                                        @php
+                                            if (!function_exists('has_interview_schedule')) {
+                                                require_once app_path('Helpers/interview_schedule_helper.php');
+                                            }
+                                        @endphp
+                                        @if(has_interview_schedule($data->id))
+                                            <a href="{{ route('interview_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                                View Schedule Interview
+                                            </a>
+                                        @else
+                                            <a href="{{ route('interview_schedule.create', [
+                                                'id_jobapply' => $data->id,
+                                                'applicant_name' => $data->candidate_first_name . ' ' . $data->candidate_last_name,
+                                                'position_name' => $data->position_name
+                                            ]) }}" class="btn btn-outline-primary btn-sm ms-2">
+                                                Set Schedule Interview
+                                            </a>
+                                        @endif
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

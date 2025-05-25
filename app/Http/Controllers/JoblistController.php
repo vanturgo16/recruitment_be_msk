@@ -364,7 +364,6 @@ class JoblistController extends Controller
         $action = $request->input('approval_action');
         if ($action === 'approve') {
             $jobApply->is_approved_1 = 1;
-            $jobApply->status = null; // or keep as is if you want to keep previous status
         } else {
             $jobApply->is_approved_1 = 0;
             $jobApply->status = 2;

@@ -89,6 +89,11 @@
                         </a>
                     </li>
                 @endif
+                <li>
+                    <a href="{{ route('interview_schedule.index') }}" class="{{ request()->is('interview-schedule*') ? 'bg-light active' : '' }}">
+                        <i class="mdi mdi-clipboard-list"></i><span>Interview Schedule</span>
+                    </a>
+                </li>
                 {{-- <li>
                     <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
                         <i class="mdi mdi-account-group"></i><span>{{ __('messages.applicants_list') }}</span>
