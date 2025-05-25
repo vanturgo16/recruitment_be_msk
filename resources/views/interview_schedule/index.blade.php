@@ -10,16 +10,13 @@
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="interviewTable">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Applicant Name</th>
-                            <th>Email</th>
-                            <th>Position</th>
-                            <th>Interview Date</th>
-                            <th>Address</th>
-                            <th>Notes</th>
+                            <th>Applicant (Name & Email)</th>
+                            <th>Position Applied</th>
+                            <th>Interview Detail</th>
                             <th>Created By</th>
                             <th>Action</th>
                         </tr>
@@ -32,19 +29,63 @@
                         @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $applicant->candidate_first_name ?? '-' }} {{ $applicant->candidate_last_name ?? '' }}</td>
-                            <td>{{ $applicant->email ?? '-' }}</td>
+                            <td>
+                                {{ $applicant->candidate_first_name ?? '-' }} {{ $applicant->candidate_last_name ?? '' }}<br>
+                                <small class="text-muted">{{ $applicant->email ?? '-' }}</small>
+                            </td>
                             <td>{{ $position }}</td>
-                            <td>{{ $schedule->interview_date }}</td>
-                            <td>{{ $schedule->interview_address }}</td>
-                            <td>{{ $schedule->interview_notes }}</td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewDetailModal{{ $schedule->id }}">
+                                    View
+                                </button>
+                                <!-- Modal View Detail -->
+                                <div class="modal fade" id="viewDetailModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="viewDetailModalLabel{{ $schedule->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="viewDetailModalLabel{{ $schedule->id }}">Interview Detail</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-2">
+                                                    <strong>Interview Date:</strong><br>
+                                                    {{ $schedule->interview_date }}
+                                                </div>
+                                                <div class="mb-2">
+                                                    <strong>Address:</strong><br>
+                                                    {{ $schedule->interview_address }}
+                                                </div>
+                                                <div class="mb-2">
+                                                    <strong>Notes:</strong><br>
+                                                    {{ $schedule->interview_notes }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Modal View Detail -->
+                            </td>
                             <td>{{ $schedule->creator->name ?? '-' }}</td>
                             <td>
-                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $schedule->id }}">Edit</button>
-                                <form action="{{ route('interview_schedule.delete', $schedule->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this schedule?')">Delete</button>
-                                </form>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton{{ $schedule->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $schedule->id }}">
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $schedule->id }}">Edit</a>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('interview_schedule.delete', $schedule->id) }}" method="POST" onsubmit="return confirm('Delete this schedule?')">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-danger">Delete</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                         <!-- Modal Edit -->
@@ -96,4 +137,13 @@
         </div>
     </div>
 </div>
+<!-- DataTables CSS & JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#interviewTable').DataTable();
+    });
+</script>
 @endsection
