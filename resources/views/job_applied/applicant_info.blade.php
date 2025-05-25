@@ -2,10 +2,143 @@
 @section('konten')
 <div class="page-content">
     <div class="card">
+        @php
+            $isAdminHR = Auth::user()->role === 'Admin HR';
+            $isEmployeeHead = Auth::user()->role === 'Employee' && in_array(Auth::user()->hie_level, [2,3]);
+            $isApproved1 = (isset($mainProfile) && $mainProfile->is_approved_1 == 1) || (isset($jobApply) && $jobApply->is_approved_1 == 1);
+            $isRejected1 = (isset($jobApply) && $jobApply->is_approved_1 === 0);
+            $isApproved2 = (isset($mainProfile) && $mainProfile->is_approved_2 == 1) || (isset($jobApply) && $jobApply->is_approved_2 == 1);
+            $isRejected2 = (isset($jobApply) && $jobApply->is_approved_2 === 0);
+            $isApproved2Null = (isset($mainProfile) && is_null($mainProfile->is_approved_2)) || (isset($jobApply) && is_null($jobApply->is_approved_2));
+        @endphp
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="text-bold mb-0">Profile</h4>
+            @if($isAdminHR && !$isApproved1 && !$isRejected1)
+                <!-- Modal for Admin HR Approval Reason -->
+                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveAdminModal" id="approveAdminBtn">
+                    Approval Administration
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="approveAdminModal" tabindex="-1" aria-labelledby="approveAdminModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('jobapplied.approveadmin', encrypt($idJobApply)) }}" method="POST">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="approveAdminModalLabel">Administration Approval</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <textarea name="approved_reason_1" class="form-control mb-2" rows="3" placeholder="Enter reason for approval or rejection" required></textarea>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="approval_action" id="approveRadio" value="approve" checked>
+                                        <label class="form-check-label" for="approveRadio">Approve</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="approval_action" id="rejectRadio" value="reject">
+                                        <label class="form-check-label" for="rejectRadio">Reject</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-success">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal -->
+            @elseif($isEmployeeHead && $isApproved1 && !$isApproved2 && $isApproved2Null && !$isRejected1 && !$isRejected2)
+                <!-- Modal for Head Approval Reason -->
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#approveHeadModal" id="approveHeadBtn">
+                    Head Approval
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="approveHeadModal" tabindex="-1" aria-labelledby="approveHeadModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('jobapplied.approvehead', encrypt($idJobApply)) }}" method="POST">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="approveHeadModalLabel">Head Approval</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <textarea name="approved_reason_2" class="form-control mb-2" rows="3" placeholder="Enter reason for approval or rejection" required></textarea>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="approval_action_2" id="approveRadio2" value="approve" checked>
+                                        <label class="form-check-label" for="approveRadio2">Approve</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="approval_action_2" id="rejectRadio2" value="reject">
+                                        <label class="form-check-label" for="rejectRadio2">Reject</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal -->
+            @endif
         </div>
         <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-12 mb-2">
+                    <div class="card mb-3">
+                        <div class="card-header bg-light d-flex align-items-center">
+                            <span class="fw-bold me-2">Approval Administration Status</span>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <div class="fw-bold mb-1">HR Approval</div>
+                                    @if((isset($mainProfile) && $mainProfile->is_approved_1 == 1) || (isset($jobApply) && $jobApply->is_approved_1 == 1))
+                                        <span class="badge bg-success">Approved</span>
+                                        <span class="ms-2 text-muted small">by: {{ $approved_by_1_name ?? '-' }}</span>
+                                        <span class="ms-2 text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                                        @if($jobApply->approved_reason_1)
+                                            <div class="mt-1 text-muted small"><b>Reason:</b> {{ $jobApply->approved_reason_1 }}</div>
+                                        @endif
+                                    @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                        <span class="badge bg-danger">Rejected</span>
+                                        <span class="ms-2 text-muted small">by: {{ $approved_by_1_name ?? '-' }}</span>
+                                        <span class="ms-2 text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                                        @if($jobApply->approved_reason_1)
+                                            <div class="mt-1 text-muted small"><b>Reason:</b> {{ $jobApply->approved_reason_1 }}</div>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary">Not Approved</span>
+                                    @endif
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="fw-bold mb-1">Head Approval</div>
+                                    @if((isset($mainProfile) && $mainProfile->is_approved_2 == 1) || (isset($jobApply) && $jobApply->is_approved_2 == 1))
+                                        <span class="badge bg-success">Approved</span>
+                                        <span class="ms-2 text-muted small">by: {{ $approved_by_2_name ?? '-' }}</span>
+                                        <span class="ms-2 text-muted small">at: {{ $mainProfile->approved_at_2 ?? $jobApply->approved_at_2 ?? '-' }}</span>
+                                        @if($jobApply->approved_reason_2)
+                                            <div class="mt-1 text-muted small"><b>Reason:</b> {{ $jobApply->approved_reason_2 }}</div>
+                                        @endif
+                                    @elseif(isset($jobApply) && $jobApply->is_approved_2 === 0)
+                                        <span class="badge bg-danger">Rejected</span>
+                                        <span class="ms-2 text-muted small">by: {{ $approved_by_2_name ?? '-' }}</span>
+                                        <span class="ms-2 text-muted small">at: {{ $mainProfile->approved_at_2 ?? $jobApply->approved_at_2 ?? '-' }}</span>
+                                        @if($jobApply->approved_reason_2)
+                                            <div class="mt-1 text-muted small"><b>Reason:</b> {{ $jobApply->approved_reason_2 }}</div>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary">Not Approved</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row mb-3">
                 <div class="col-md-4 mb-2">
                     <div class="fw-bold">Photo :</div>

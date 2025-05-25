@@ -12,6 +12,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+
             <div class="table-responsive">
                 <table class="table table-bordered dt-responsive w-100" id="jobAppliedDetailTable">
                     <thead class="table-light">
@@ -44,7 +45,11 @@
                                 <td>{{ $data->created_at }}</td>
                                 <td>
                                     @if($data->progress_status)
-                                        <span class="badge bg-primary">{{ $data->progress_status }}</span>
+                                        @if(strtolower($data->progress_status) == 'rejected' || $data->status == 2)
+                                            <span class="badge bg-danger">{{ $data->progress_status }}</span>
+                                        @else
+                                            <span class="badge bg-primary">{{ $data->progress_status }}</span>
+                                        @endif
                                     @else
                                         <span class="badge bg-secondary">-</span>
                                     @endif

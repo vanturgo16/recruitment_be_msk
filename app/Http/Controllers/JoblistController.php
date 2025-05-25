@@ -19,6 +19,7 @@ use App\Models\GeneralInfo;
 use App\Models\JobApply;
 use App\Models\MainProfile;
 use App\Models\MstDropdowns;
+use App\Models\User;
 use App\Models\WorkExpInfo;
 use App\Traits\ProfilTrait;
 use Illuminate\Support\Facades\Auth;
@@ -348,14 +349,60 @@ class JoblistController extends Controller
     {
         $idJobApply = decrypt($id);
         $jobApply = JobApply::where('id', $idJobApply)->first();
-        $idJobList = $jobApply->id_joblist;
         if ($jobApply) {
             $jobApply->is_seen = 1;
             $jobApply->save();
-            $idCandidate = $jobApply->id_candidate;
-        } else {
-            $idCandidate = null;
         }
+        // Redirect ke halaman info (GET)
+        return redirect()->route('jobapplied.applicantinfo', encrypt($idJobApply));
+    }
+
+    public function jobAppliedApproveAdmin(Request $request, $id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::findOrFail($idJobApply);
+        $action = $request->input('approval_action');
+        if ($action === 'approve') {
+            $jobApply->is_approved_1 = 1;
+            $jobApply->status = null; // or keep as is if you want to keep previous status
+        } else {
+            $jobApply->is_approved_1 = 0;
+            $jobApply->status = 2;
+            $jobApply->progress_status = 'REJECTED';
+        }
+        $jobApply->approved_by_1 = Auth::user()->id;
+        $jobApply->approved_at_1 = now();
+        $jobApply->approved_reason_1 = $request->input('approved_reason_1');
+        $jobApply->save();
+        return redirect()->back()->with('success', 'Applicant administration approval processed successfully.');
+    }
+
+    public function jobAppliedApproveHead(Request $request, $id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::findOrFail($idJobApply);
+        $action = $request->input('approval_action_2');
+        if ($action === 'approve') {
+            $jobApply->is_approved_2 = 1;
+            $jobApply->progress_status = 'INTERVIEW';
+        } else {
+            $jobApply->is_approved_2 = 0;
+            $jobApply->status = 2;
+            $jobApply->progress_status = 'REJECTED';
+        }
+        $jobApply->approved_by_2 = Auth::user()->id;
+        $jobApply->approved_at_2 = now();
+        $jobApply->approved_reason_2 = $request->input('approved_reason_2');
+        $jobApply->save();
+        return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
+    }
+
+    public function jobAppliedApplicantInfo($id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::findOrFail($idJobApply);
+        $idJobList = $jobApply->id_joblist;
+        $idCandidate = $jobApply->id_candidate;
 
         $candidate = Candidate::where('id', $idCandidate)->first();
         $mainProfile = MainProfile::where('id_candidate', $idCandidate)->first();
@@ -363,7 +410,6 @@ class JoblistController extends Controller
         $eduInfo = EducationInfo::where('id_candidate', $idCandidate)->get();
         $workExpInfo = WorkExpInfo::where('id_candidate', $idCandidate)->get();
 
-        // Cannot Edit When Any Apllication In Progress
         $isEditable = !$this->checkApplicationIP($idCandidate);
 
         $gender = MstDropdowns::where('category', 'Gender')->pluck('name_value');
@@ -372,8 +418,19 @@ class JoblistController extends Controller
         $optionYN = MstDropdowns::where('category', 'OptionYN')->pluck('name_value');
         $sourceInfo = MstDropdowns::where('category', 'Source Info')->pluck('name_value');
         $expInfo = MstDropdowns::where('category', 'Exp Info')->pluck('name_value');
-        
-        // Redirect to detail info page for this applicant
+
+        $approved_by_1_name = null;
+        if ($jobApply->approved_by_1) {
+            $user = User::find($jobApply->approved_by_1);
+            $approved_by_1_name = $user ? $user->name : $jobApply->approved_by_1;
+        }
+
+        $approved_by_2_name = null;
+        if ($jobApply->approved_by_2) {
+            $user2 = User::find($jobApply->approved_by_2);
+            $approved_by_2_name = $user2 ? $user2->name : $jobApply->approved_by_2;
+        }
+
         return view('job_applied.applicant_info', compact(
             'idJobList',
             'idJobApply',
@@ -388,7 +445,10 @@ class JoblistController extends Controller
             'grade',
             'optionYN',
             'sourceInfo',
-            'expInfo'))
-            ->with('success', 'Applicant marked as seen.');
+            'expInfo',
+            'jobApply',
+            'approved_by_1_name',
+            'approved_by_2_name'
+        ));
     }
 }
