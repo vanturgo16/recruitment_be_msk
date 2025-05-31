@@ -67,6 +67,7 @@
                                                 require_once app_path('Helpers/interview_schedule_helper.php');
                                             }
                                         @endphp
+                                        <!-- cek candidate interview schedule-->
                                         @if(has_interview_schedule($data->id))
                                             <a href="{{ route('interview_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
                                                 View Schedule Interview
@@ -78,6 +79,28 @@
                                                 'position_name' => $data->position_name
                                             ]) }}" class="btn btn-outline-primary btn-sm ms-2">
                                                 Set Schedule Interview
+                                            </a>
+                                        @endif
+                                    @endif
+
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'TESTED')
+                                        @php
+                                            if (!function_exists('has_test_schedule')) {
+                                                require_once app_path('Helpers/test_schedule_helper.php');
+                                            }
+                                        @endphp
+                                        <!-- cek candidate test schedule-->
+                                        @if(has_test_schedule($data->id))
+                                            <a href="{{ route('test_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                                View Schedule Test
+                                            </a>
+                                        @else
+                                            <a href="{{ route('test_schedule.create', [
+                                                'id_jobapply' => $data->id,
+                                                'applicant_name' => $data->candidate_first_name . ' ' . $data->candidate_last_name,
+                                                'position_name' => $data->position_name
+                                            ]) }}" class="btn btn-outline-primary btn-sm ms-2">
+                                                Set Schedule Test
                                             </a>
                                         @endif
                                     @endif

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InterviewSchedule;
+use App\Models\TestSchedule;
 use App\Models\JobApply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class InterviewScheduleController extends Controller
+class TestScheduleController extends Controller
 {
     public function index()
     {
@@ -21,7 +21,7 @@ class InterviewScheduleController extends Controller
             $departmentName = $user->employee->position->department->dept_name; // Contoh, jika dept_name ada di model Department
         }
 
-        $schedules = InterviewSchedule::with(['jobapply.candidate', 'jobapply.joblist.position.department', 'creator']);
+        $schedules = TestSchedule::with(['jobapply.candidate', 'jobapply.joblist.position.department', 'creator']);
 
         // Tambahkan kondisi where jika department ditemukan
         if ($departmentName) {
@@ -31,9 +31,9 @@ class InterviewScheduleController extends Controller
             });
         }
 
-        $schedules = $schedules->orderBy('interview_date', 'desc')->get();
+        $schedules = $schedules->orderBy('test_date', 'desc')->get();
         
-        return view('interview_schedule.index', compact('schedules'));
+        return view('test_schedule.index', compact('schedules'));
     }
 
     public function create(Request $request)
@@ -48,50 +48,50 @@ class InterviewScheduleController extends Controller
                 $applicant_name = $jobapply->candidate ? $jobapply->candidate->candidate_first_name . ' ' . $jobapply->candidate->candidate_last_name : '-';
             }
         }
-        return view('interview_schedule.create', compact('id_jobapply', 'applicant_name', 'position_name', 'jobapply'));
+        return view('test_schedule.create', compact('id_jobapply', 'applicant_name', 'position_name', 'jobapply'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'id_jobapply' => 'required|exists:job_applies,id',
-            'interview_date' => 'required|date|after_or_equal:today',
-            'interview_address' => 'required|string',
-            'interview_notes' => 'nullable|string',
+            'test_date' => 'required|date|after_or_equal:today',
+            'test_address' => 'required|string',
+            'test_notes' => 'nullable|string',
         ]);
         
-        InterviewSchedule::create([
+        TestSchedule::create([
             'id_jobapply' => $request->id_jobapply,
-            'interview_date' => $request->interview_date,
-            'interview_address' => $request->interview_address,
-            'interview_notes' => $request->interview_notes,
+            'test_date' => $request->test_date,
+            'test_address' => $request->test_address,
+            'test_notes' => $request->test_notes,
             'created_by' => Auth::id(),
         ]);
-        return redirect()->route('interview_schedule.index')->with('success', 'Interview schedule created successfully.');
+        return redirect()->route('test_schedule.index')->with('success', 'Test schedule created successfully.');
     }
 
     public function edit($id)
     {
-        $schedule = InterviewSchedule::with(['jobapply.candidate', 'jobapply.joblist'])->findOrFail($id);
-        return view('interview_schedule.edit', compact('schedule'));
+        $schedule = TestSchedule::with(['jobapply.candidate', 'jobapply.joblist'])->findOrFail($id);
+        return view('test_schedule.edit', compact('schedule'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'id_jobapply' => 'required|exists:job_applies,id',
-            'interview_date' => 'required|date|after_or_equal:today',
-            'interview_address' => 'required|string',
-            'interview_notes' => 'nullable|string',
+            'test_date' => 'required|date',
+            'test_address' => 'required|string',
+            'test_notes' => 'nullable|string',
         ]);
-        $schedule = InterviewSchedule::findOrFail($id);
+        $schedule = TestSchedule::findOrFail($id);
         $schedule->update([
             'id_jobapply' => $request->id_jobapply,
-            'interview_date' => $request->interview_date,
-            'interview_address' => $request->interview_address,
-            'interview_notes' => $request->interview_notes,
+            'test_date' => $request->test_date,
+            'test_address' => $request->test_address,
+            'test_notes' => $request->test_notes,
         ]);
-        return redirect()->route('interview_schedule.index')->with('success', 'Interview schedule updated successfully.');
+        return redirect()->route('test_schedule.index')->with('success', 'Test schedule updated successfully.');
     }
 
     public function updateResult(Request $request, $id)
@@ -104,15 +104,15 @@ class InterviewScheduleController extends Controller
 
         if ($request->hasFile('result_attachment')) {
             $path = $request->file('result_attachment');
-            $attPath = $path->move('storage/resultInterview', $path->hashName());
+            $attPath = $path->move('storage/resultTest', $path->hashName());
         }
 
         $userId = $user = Auth::user()->id;
         DB::beginTransaction();
         try {
-            //update table interview schedule
+            //update table Test schedule
             // 1. Temukan record berdasarkan ID
-            $schedule = InterviewSchedule::find($id);
+            $schedule = TestSchedule::find($id);
 
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
@@ -120,14 +120,14 @@ class InterviewScheduleController extends Controller
                 $schedule->result_attachment = $attPath->getPath() . '/' . $attPath->getFilename();
                 $schedule->result_notes = $request->result_notes;
                 $schedule->approved_by_1 = $userId; // Ini adalah nilai yang Anda cari
-                $schedule->interview_status = $request->approval_action;
+                $schedule->test_status = $request->approval_action;
 
                 // 3. Simpan perubahan ke database
                 $schedule->save();
                 $id_jobapply = $schedule->id_jobapply;              
             }
 
-            //update table Job Apply kalau rejected
+            //update table Job Apply
             if($request->approval_action == '2'){
                 $progressStatus = 'REJECTED';
                 $status = '2';
@@ -140,15 +140,15 @@ class InterviewScheduleController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('interview_schedule.index')->with('success', 'Interview result saved successfully.');
+            return redirect()->route('test_schedule.index')->with('success', 'Test result saved successfully.');
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
-            return redirect()->route('interview_schedule.index')->with('fail', 'Interview result saved failed.');
+            return redirect()->route('test_schedule.index')->with('fail', 'Test result saved failed.');
         }
     }
 
-    public function submitToTest(Request $request, $id){
+    public function submitToOffer(Request $request, $id){
         $id = decrypt($id);
         
         DB::beginTransaction();
@@ -157,25 +157,25 @@ class InterviewScheduleController extends Controller
             $now = now();
 
             if($request->approval_action == '1'){
-                $progressStatus = 'TESTED';
-                $statusReadyTested = '1';
+                $progressStatus = 'OFFERING';
+                $statusReadyOffering = '1';
                 $status = '0';
             }
 
             if($request->approval_action == '2'){
                 $progressStatus = 'REJECTED';
-                $statusReadyTested = '2';
+                $statusReadyOffering = '2';
                 $status = '2';
             }
-
-            //update table interview schedule
+            
+            //update table Test schedule
             // 1. Temukan record berdasarkan ID
-            $schedule = InterviewSchedule::find($id);
+            $schedule = TestSchedule::find($id);
 
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
                 // 2. Perbarui atribut-atribut model
-                $schedule->ready_tested = $statusReadyTested;
+                $schedule->ready_offering = $statusReadyOffering;
 
                 // 3. Simpan perubahan ke database
                 $schedule->save();
@@ -185,24 +185,24 @@ class InterviewScheduleController extends Controller
             //update table Job Apply
             $updateJobApply = JobApply::where('id', $id_jobapply)
                 ->update([
-                    'approved_to_tested_by_1'   => $userId,
-                    'approved_to_tested_at_1'   => $now,
+                    'approved_to_offering_by_1' => $userId,
+                    'approved_to_offering_at_1' => $now,
                     'progress_status'           => $progressStatus,
                     'status'                    => $status
                 ]);
             DB::commit();
-            return redirect()->route('interview_schedule.index')->with('success', 'This Candidate is saved as READY TO TESTED.');
+            return redirect()->route('test_schedule.index')->with('success', 'This Candidate is saved as READY TO OFFERING.');
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
-            return redirect()->route('interview_schedule.index')->with('fail', 'Failed update data.');
+            return redirect()->route('test_schedule.index')->with('fail', 'Failed update data.');
         }
     }
 
     public function destroy($id)
     {
-        $schedule = InterviewSchedule::findOrFail($id);
+        $schedule = TestSchedule::findOrFail($id);
         $schedule->delete();
-        return redirect()->route('interview_schedule.index')->with('success', 'Interview schedule deleted successfully.');
+        return redirect()->route('test_schedule.index')->with('success', 'Test schedule deleted successfully.');
     }
 }

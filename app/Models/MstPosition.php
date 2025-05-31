@@ -9,4 +9,9 @@ class MstPosition extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+
+    public function department()
+    {
+        return $this->belongsTo(MstDepartment::class, 'id_dept');
+    }
 }

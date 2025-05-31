@@ -3,14 +3,14 @@
 <div class="page-content">
     <div class="card">
         <div class="card-header">
-            <h4 class="text-bold">Interview Schedules</h4>
+            <h4 class="text-bold">Test Schedules</h4>
         </div>
         <div class="card-body">
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
             <div class="table-responsive">
-                <table class="table table-bordered" id="interviewTable">
+                <table class="table table-bordered" id="testTable">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -39,28 +39,28 @@
                             </td>
                             <td>
                                 <button type="button" class="btn btn-info btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#viewDetailModal{{ $schedule->id }}">
-                                    Interview Detail
+                                    Test Detail
                                 </button>
-                                <!-- Modal View Detail Interview-->
+                                <!-- Modal View Detail test-->
                                 <div class="modal fade" id="viewDetailModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="viewDetailModalLabel{{ $schedule->id }}" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="viewDetailModalLabel{{ $schedule->id }}">Interview Detail</h5>
+                                                <h5 class="modal-title" id="viewDetailModalLabel{{ $schedule->id }}">test Detail</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="mb-2">
-                                                    <strong>Interview Date:</strong><br>
-                                                    {{ $schedule->interview_date }}
+                                                    <strong>Test Date:</strong><br>
+                                                    {{ $schedule->test_date }}
                                                 </div>
                                                 <div class="mb-2">
                                                     <strong>Address:</strong><br>
-                                                    {{ $schedule->interview_address }}
+                                                    {{ $schedule->test_address }}
                                                 </div>
                                                 <div class="mb-2">
                                                     <strong>Notes:</strong><br>
-                                                    {{ $schedule->interview_notes }}
+                                                    {{ $schedule->test_notes }}
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -71,17 +71,17 @@
                                 </div>
                                 <!-- End Modal View Detail -->
                                 <br>
-                                <!-- jika status interview bukan 0 -->
-                                @if ($schedule->interview_status != '0')
-                                    <button type="button" class="btn btn-info btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#resultInterviewModal{{ $schedule->id }}">
-                                    Interview Result
+                                <!-- jika status test bukan 0 -->
+                                @if ($schedule->test_status != '0')
+                                    <button type="button" class="btn btn-info btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#resulttestModal{{ $schedule->id }}">
+                                    Test Result
                                     </button>
-                                    <!-- Modal View Result Interview-->
-                                    <div class="modal fade" id="resultInterviewModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="resultInterviewModalLabel{{ $schedule->id }}" aria-hidden="true">
+                                    <!-- Modal View Result test-->
+                                    <div class="modal fade" id="resulttestModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="resulttestModalLabel{{ $schedule->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="resultInterviewModalLabel{{ $schedule->id }}">Interview Detail</h5>
+                                                    <h5 class="modal-title" id="resulttestModalLabel{{ $schedule->id }}">test Detail</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
@@ -90,7 +90,7 @@
                                                         {{ $schedule->updated_at }}
                                                     </div>
                                                     <div class="mb-2">
-                                                        <strong>Approval Interview By:</strong><br>
+                                                        <strong>Approval Test By:</strong><br>
                                                         {{ $schedule->approval1->name }}
                                                     </div>
                                                     <div class="mb-2">
@@ -98,15 +98,15 @@
                                                         {{ $schedule->result_notes }}
                                                     </div>
                                                     <div class="mb-2">
-                                                        <strong>Result Interview:</strong><br>
-                                                        @if ($schedule->interview_status == '1')
+                                                        <strong>Result Test:</strong><br>
+                                                        @if ($schedule->test_status == '1')
                                                             <span class="badge bg-success">PASSED</span>
-                                                        @elseif ($schedule->interview_status == '2')
+                                                        @elseif ($schedule->test_status == '2')
                                                             <span class="badge bg-danger">REJECTED</span>
                                                         @endif
                                                     </div>
                                                     <div class="mb-2">
-                                                        <a href="{{ url($schedule->result_attachment) }}" class="btn btn-info btn-sm" target="_blank"><i class="fas fa-download"></i> Download PDF Result</a>
+                                                        <a href="{{ url($schedule->result_attachment) }}" class="btn btn-info btn-sm"><i class="fas fa-download"></i> Download PDF Result</a>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -121,7 +121,7 @@
                             <td>{{ $schedule->creator->name ?? '-' }}</td>
                             <td>
                                 <div class="dropdown">
-                                    @if ($isAdminHR && $schedule->interview_status == '0')
+                                    @if ($isAdminHR && $schedule->test_status == '0')
                                     <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton{{ $schedule->id }}" data-bs-toggle="dropdown" aria-expanded="false">
                                         Action
                                     </button>
@@ -130,23 +130,23 @@
                                             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editModal{{ $schedule->id }}">Edit</a>
                                         </li>
                                         <li>
-                                            <form action="{{ route('interview_schedule.delete', $schedule->id) }}" method="POST" onsubmit="return confirm('Delete this schedule?')">
+                                            <form action="{{ route('test_schedule.delete', $schedule->id) }}" method="POST" onsubmit="return confirm('Delete this schedule?')">
                                                 @csrf
                                                 <button type="submit" class="dropdown-item text-danger">Delete</button>
                                             </form>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#resultModal{{ $schedule->id }}">Interview Result</a>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#resultModal{{ $schedule->id }}">Test Result</a>
                                         </li>
                                     </ul>
                                     @endif
-                                    @if ($schedule->interview_status == '1')
-                                        @if ($isEmployeeHead && $schedule->ready_tested != '1')
-                                            <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitTestedModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Tested</a>
+                                    @if ($schedule->test_status == '1')
+                                        @if ($isEmployeeHead && $schedule->ready_offering != '1')
+                                            <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitOfferingModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Offering</a>
                                         @else
                                             <span class="badge bg-success">PASSED</span>
                                         @endif
-                                    @elseif ($schedule->interview_status == '2')
+                                    @elseif ($schedule->test_status == '2')
                                         <span class="badge bg-danger">REJECTED</span>
                                     @endif
                                 </div>
@@ -156,10 +156,10 @@
                         <div class="modal fade" id="editModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $schedule->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('interview_schedule.update', $schedule->id) }}" method="POST">
+                                    <form action="{{ route('test_schedule.update', $schedule->id) }}" method="POST">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel{{ $schedule->id }}">Edit Interview Schedule</h5>
+                                            <h5 class="modal-title" id="editModalLabel{{ $schedule->id }}">Edit Testing Schedule</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -173,16 +173,16 @@
                                                 <input type="text" class="form-control" value="{{ $position }}" readonly>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="interview_date{{ $schedule->id }}" class="form-label">Interview Date</label>
-                                                <input type="datetime-local" name="interview_date" id="interview_date{{ $schedule->id }}" class="form-control" value="{{ date('Y-m-d\TH:i', strtotime($schedule->interview_date)) }}" required>
+                                                <label for="test_date{{ $schedule->id }}" class="form-label">Testing Date</label>
+                                                <input type="datetime-local" name="test_date" id="test_date{{ $schedule->id }}" class="form-control" value="{{ date('Y-m-d\TH:i', strtotime($schedule->test_date)) }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="interview_address{{ $schedule->id }}" class="form-label">Interview Address</label>
-                                                <input type="text" name="interview_address" id="interview_address{{ $schedule->id }}" class="form-control" value="{{ $schedule->interview_address }}" required>
+                                                <label for="test_address{{ $schedule->id }}" class="form-label">Testing Address</label>
+                                                <input type="text" name="test_address" id="test_address{{ $schedule->id }}" class="form-control" value="{{ $schedule->test_address }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="interview_notes{{ $schedule->id }}" class="form-label">Interview Notes</label>
-                                                <textarea name="interview_notes" id="interview_notes{{ $schedule->id }}" class="form-control">{{ $schedule->interview_notes }}</textarea>
+                                                <label for="test_notes{{ $schedule->id }}" class="form-label">Testing Notes</label>
+                                                <textarea name="test_notes" id="test_notes{{ $schedule->id }}" class="form-control">{{ $schedule->test_notes }}</textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -195,14 +195,14 @@
                         </div>
                         <!-- End Modal Edit -->
 
-                        <!-- Modal result -->
+                        <!-- Modal Result -->
                         <div class="modal fade" id="resultModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="resultModalLabel{{ $schedule->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('interview_schedule.update.result', $schedule->id) }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('test_schedule.update.result', $schedule->id) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="resultModalLabel{{ $schedule->id }}">Input Interview Result</h5>
+                                            <h5 class="modal-title" id="resultModalLabel{{ $schedule->id }}">Input Test Result</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -233,16 +233,16 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Modal Edit -->
+                        <!-- End Modal Result -->
 
-                        <!-- Modal submit to tested -->
-                        <div class="modal fade" id="submitTestedModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="submitTestedModal{{ $schedule->id }}" aria-hidden="true">
+                        <!-- Modal submit to offering -->
+                        <div class="modal fade" id="submitOfferingModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="submitOfferingModal{{ $schedule->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('interview_schedule.submitTest', encrypt($schedule->id)) }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('test_schedule.submitOffer', encrypt($schedule->id)) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="submitTestedModalLabel{{ $schedule->id }}">Submit to Tested</h5>
+                                            <h5 class="modal-title" id="submitOfferingModalLabel{{ $schedule->id }}">Submit to Offering</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -265,7 +265,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Modal submit to tested -->
+                        <!-- End Modal submit to offering -->
                         @endforeach
                     </tbody>
                 </table>
@@ -279,7 +279,7 @@
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#interviewTable').DataTable();
+        $('#testTable').DataTable();
     });
 </script>
 @endsection

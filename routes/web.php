@@ -194,15 +194,32 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/mappingSubDistrict/{district_id}', 'selectSubDistrict')->name('mappingSubDistrict');
         });
     });
+
     // INTERVIEW SCHEDULE
-    Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(\App\Http\Controllers\InterviewScheduleController::class)->group(function () {
+    Route::middleware(['role:Admin,Admin HR,Super Admin,Employee'])->controller(\App\Http\Controllers\InterviewScheduleController::class)->group(function () {
         Route::prefix('interview-schedule')->group(function () {
             Route::get('/', 'index')->name('interview_schedule.index');
             Route::get('/create', 'create')->name('interview_schedule.create');
             Route::post('/store', 'store')->name('interview_schedule.store');
             Route::get('/{id}/edit', 'edit')->name('interview_schedule.edit');
             Route::post('/{id}/update', 'update')->name('interview_schedule.update');
+            Route::post('/{id}/update/result', 'updateResult')->name('interview_schedule.update.result');
             Route::post('/{id}/delete', 'destroy')->name('interview_schedule.delete');
+            Route::post('submit-test/{id}', 'submitToTest')->name('interview_schedule.submitTest');
+        });
+    });
+
+    // TEST SCHEDULE
+    Route::middleware(['role:Admin,Admin HR,Super Admin,Employee'])->controller(\App\Http\Controllers\TestScheduleController::class)->group(function () {
+        Route::prefix('test-schedule')->group(function () {
+            Route::get('/', 'index')->name('test_schedule.index');
+            Route::get('/create', 'create')->name('test_schedule.create');
+            Route::post('/store', 'store')->name('test_schedule.store');
+            Route::get('/{id}/edit', 'edit')->name('test_schedule.edit');
+            Route::post('/{id}/update', 'update')->name('test_schedule.update');
+            Route::post('/{id}/update/result', 'updateResult')->name('test_schedule.update.result');
+            Route::post('/{id}/delete', 'destroy')->name('test_schedule.delete');
+            Route::post('submit-offer/{id}', 'submitToOffer')->name('test_schedule.submitOffer');
         });
     });
 });

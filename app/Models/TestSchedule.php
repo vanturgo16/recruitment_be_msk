@@ -5,22 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InterviewSchedule extends Model
+class TestSchedule extends Model
 {
     use HasFactory;
 
-    protected $table = 'interview_schedules';
+    protected $table = 'test_schedules';
 
     protected $fillable = [
         'id_jobapply',
-        'interview_date',
-        'interview_address',
-        'interview_notes',
+        'test_date',
+        'test_address',
+        'test_notes',
         'result_attachment',
         'result_notes',
         'approved_by_1',
-        'interview_status',
-        'ready_tested',
+        'test_status',
+        'ready_offering',
         'created_by',
     ];
 
