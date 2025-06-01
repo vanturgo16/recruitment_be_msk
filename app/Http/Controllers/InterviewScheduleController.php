@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Notification;
+use App\Mail\NotificationSchedule;
 use App\Models\InterviewSchedule;
 use App\Models\JobApply;
+use App\Models\MstRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class InterviewScheduleController extends Controller
 {
@@ -67,6 +71,30 @@ class InterviewScheduleController extends Controller
             'interview_notes' => $request->interview_notes,
             'created_by' => Auth::id(),
         ]);
+
+        //start MAIL
+        $jobApply = JobApply::findOrFail($request->id_jobapply);
+
+        $mailData = [
+            'candidate_name' => $jobApply->candidate->candidate_first_name,
+            'candidate_email' => $jobApply->candidate->email,
+            'position_applied' => $jobApply->joblist->position->position_name,
+            'created_at' => $jobApply->created_at,
+            'location' => $request->interview_address,
+            'date'  => $request->interview_date,
+            'phase' => 'INTERVIEW',
+            'message' => $request->interview_notes,
+        ];
+
+        // Initiate Variable
+        $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+        $toemail = ($development == 1) 
+            ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+            : $jobApply->candidate->email;
+
+        // [ MAILING ]
+        Mail::to($toemail)->send(new NotificationSchedule($mailData));
+
         return redirect()->route('interview_schedule.index')->with('success', 'Interview schedule created successfully.');
     }
 
@@ -156,26 +184,45 @@ class InterviewScheduleController extends Controller
             $userId = $user = Auth::user()->id;
             $now = now();
 
+            //update table interview schedule
+            // 1. Temukan record berdasarkan ID
+            $schedule = InterviewSchedule::find($id);
+
             if($request->approval_action == '1'){
                 $progressStatus = 'TESTED';
                 $statusReadyTested = '1';
-                $status = '0';
+                $status = '1';
             }
 
             if($request->approval_action == '2'){
                 $progressStatus = 'REJECTED';
                 $statusReadyTested = '2';
                 $status = '2';
-            }
 
-            //update table interview schedule
-            // 1. Temukan record berdasarkan ID
-            $schedule = InterviewSchedule::find($id);
+                $mailData = [
+                    'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
+                    'candidate_email' => $schedule->jobApply->candidate->email,
+                    'position_applied' => $schedule->jobApply->joblist->position->position_name,
+                    'created_at' => $schedule->jobApply->created_at,
+                    'status' => $progressStatus,
+                    'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+                ];
+
+                // Initiate Variable
+                $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+                $toemail = ($development == 1) 
+                        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                        : $schedule->jobApply->candidate->email;
+
+                // [ MAILING ]
+                Mail::to($toemail)->send(new Notification($mailData));
+            }
 
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
                 // 2. Perbarui atribut-atribut model
                 $schedule->ready_tested = $statusReadyTested;
+                $schedule->interview_status = $status;
 
                 // 3. Simpan perubahan ke database
                 $schedule->save();
@@ -183,15 +230,25 @@ class InterviewScheduleController extends Controller
             }
 
             //update table Job Apply
-            $updateJobApply = JobApply::where('id', $id_jobapply)
-                ->update([
-                    'approved_to_tested_by_1'   => $userId,
-                    'approved_to_tested_at_1'   => $now,
-                    'progress_status'           => $progressStatus,
-                    'status'                    => $status
-                ]);
+            if($progressStatus == 'REJECTED'){
+                $updateJobApply = JobApply::where('id', $id_jobapply)
+                    ->update([
+                        'progress_status'           => $progressStatus,
+                        'status'                    => $status
+                    ]);
+            }
+            else{
+                $updateJobApply = JobApply::where('id', $id_jobapply)
+                    ->update([
+                        'approved_to_tested_by_1'   => $userId,
+                        'approved_to_tested_at_1'   => $now,
+                        'progress_status'           => $progressStatus,
+                        'status'                    => $status
+                    ]);
+            }
+
             DB::commit();
-            return redirect()->route('interview_schedule.index')->with('success', 'This Candidate is saved as READY TO TESTED.');
+            return redirect()->route('interview_schedule.index')->with('success', 'This Candidate is saved as ' . $progressStatus);
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();

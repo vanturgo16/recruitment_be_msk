@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Notification;
 use App\Models\Candidate;
 use App\Models\EducationInfo;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,12 @@ use App\Models\GeneralInfo;
 use App\Models\JobApply;
 use App\Models\MainProfile;
 use App\Models\MstDropdowns;
+use App\Models\MstRules;
 use App\Models\User;
 use App\Models\WorkExpInfo;
 use App\Traits\ProfilTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class JoblistController extends Controller
 {
@@ -349,10 +352,32 @@ class JoblistController extends Controller
     {
         $idJobApply = decrypt($id);
         $jobApply = JobApply::where('id', $idJobApply)->first();
+
+        if($jobApply->is_seen <> 1){ //jika baru dilihat kirim email
+            $mailData = [
+                'candidate_name' => $jobApply->candidate->candidate_first_name,
+                'candidate_email' => $jobApply->candidate->email,
+                'position_applied' => $jobApply->joblist->position->position_name,
+                'created_at' => $jobApply->created_at,
+                'status' => "REVIEWED",
+                'message' => "Your application is being reviewed",
+            ];
+    
+            // Initiate Variable
+            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+            $toemail = ($development == 1) 
+                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                    : $jobApply->candidate->email;
+    
+            // [ MAILING ]
+            Mail::to($toemail)->send(new Notification($mailData));
+        }
+
         if ($jobApply) {
             $jobApply->is_seen = 1;
             $jobApply->save();
         }
+
         // Redirect ke halaman info (GET)
         return redirect()->route('jobapplied.applicantinfo', encrypt($idJobApply));
     }
@@ -368,6 +393,24 @@ class JoblistController extends Controller
             $jobApply->is_approved_1 = 0;
             $jobApply->status = 2;
             $jobApply->progress_status = 'REJECTED';
+
+            $mailData = [
+                'candidate_name' => $jobApply->candidate->candidate_first_name,
+                'candidate_email' => $jobApply->candidate->email,
+                'position_applied' => $jobApply->joblist->position->position_name,
+                'created_at' => $jobApply->created_at,
+                'status' => $jobApply->progress_status,
+                'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+            ];
+
+            // Initiate Variable
+            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+            $toemail = ($development == 1) 
+                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                    : $jobApply->candidate->email;
+
+            // [ MAILING ]
+            Mail::to($toemail)->send(new Notification($mailData));
         }
         $jobApply->approved_by_1 = Auth::user()->id;
         $jobApply->approved_at_1 = now();
@@ -388,11 +431,30 @@ class JoblistController extends Controller
             $jobApply->is_approved_2 = 0;
             $jobApply->status = 2;
             $jobApply->progress_status = 'REJECTED';
+
+            $mailData = [
+                'candidate_name' => $jobApply->candidate->candidate_first_name,
+                'candidate_email' => $jobApply->candidate->email,
+                'position_applied' => $jobApply->joblist->position->position_name,
+                'created_at' => $jobApply->created_at,
+                'status' => $jobApply->progress_status,
+                'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+            ];
+
+            // Initiate Variable
+            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+            $toemail = ($development == 1) 
+                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                    : $jobApply->candidate->email;
+
+            // [ MAILING ]
+            Mail::to($toemail)->send(new Notification($mailData));
         }
         $jobApply->approved_by_2 = Auth::user()->id;
         $jobApply->approved_at_2 = now();
         $jobApply->approved_reason_2 = $request->input('approved_reason_2');
         $jobApply->save();
+        
         return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
     }
 
