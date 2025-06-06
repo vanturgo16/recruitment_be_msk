@@ -90,12 +90,17 @@
                     </li>
                     <li>
                         <a href="{{ route('interview_schedule.index') }}" class="{{ request()->is('interview-schedule*') ? 'bg-light active' : '' }}">
-                            <i class="mdi mdi-clipboard-list"></i><span>Schedule Interview</span>
+                            <span>1. Schedule Interview</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('test_schedule.index') }}" class="{{ request()->is('test-schedule*') ? 'bg-light active' : '' }}">
-                            <i class="mdi mdi-clipboard-list"></i><span>Schedule Test</span>
+                            <span>2. Schedule Test</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('offering_schedule.index') }}" class="{{ request()->is('offering-schedule*') ? 'bg-light active' : '' }}">
+                            <span>3. Schedule Offering</span>
                         </a>
                     </li>
                 @endif

@@ -242,8 +242,7 @@ class InterviewScheduleController extends Controller
                     ->update([
                         'approved_to_tested_by_1'   => $userId,
                         'approved_to_tested_at_1'   => $now,
-                        'progress_status'           => $progressStatus,
-                        'status'                    => $status
+                        'progress_status'           => $progressStatus
                     ]);
             }
 

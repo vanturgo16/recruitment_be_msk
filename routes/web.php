@@ -222,4 +222,18 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('submit-offer/{id}', 'submitToOffer')->name('test_schedule.submitOffer');
         });
     });
+
+    //OFFERING SCHEDULE
+    Route::middleware(['role:Admin,Admin HR,Super Admin,Employee'])->controller(\App\Http\Controllers\OfferingScheduleController::class)->group(function () {
+        Route::prefix('offering-schedule')->group(function () {
+            Route::get('/', 'index')->name('offering_schedule.index');
+            Route::get('/create', 'create')->name('offering_schedule.create');
+            Route::post('/store', 'store')->name('offering_schedule.store');
+            Route::get('/{id}/edit', 'edit')->name('offering_schedule.edit');
+            Route::post('/{id}/update', 'update')->name('offering_schedule.update');
+            Route::post('/{id}/update/result', 'updateResult')->name('offering_schedule.update.result');
+            Route::post('/{id}/delete', 'destroy')->name('offering_schedule.delete');
+            Route::post('submit-mcu/{id}', 'submitToMCU')->name('offering_schedule.submitMCU');
+        });
+    });
 });

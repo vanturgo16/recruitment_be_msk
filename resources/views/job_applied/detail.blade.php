@@ -104,6 +104,28 @@
                                             </a>
                                         @endif
                                     @endif
+
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'OFFERING')
+                                        @php
+                                            if (!function_exists('has_offering_schedule')) {
+                                                require_once app_path('Helpers/offering_schedule_helper.php');
+                                            }
+                                        @endphp
+                                        <!-- cek candidate offering schedule-->
+                                        @if(has_offering_schedule($data->id))
+                                            <a href="{{ route('offering_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                                View Schedule Offering
+                                            </a>
+                                        @else
+                                            <a href="{{ route('offering_schedule.create', [
+                                                'id_jobapply' => $data->id,
+                                                'applicant_name' => $data->candidate_first_name . ' ' . $data->candidate_last_name,
+                                                'position_name' => $data->position_name
+                                            ]) }}" class="btn btn-outline-primary btn-sm ms-2">
+                                                Set Schedule Offering
+                                            </a>
+                                        @endif
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
