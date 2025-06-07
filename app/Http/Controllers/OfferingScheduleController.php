@@ -165,6 +165,24 @@ class OfferingScheduleController extends Controller
                         'progress_status'   => $progressStatus,
                         'status'            => $status
                     ]);
+                
+                $mailData = [
+                    'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
+                    'candidate_email' => $schedule->jobApply->candidate->email,
+                    'position_applied' => $schedule->jobApply->joblist->position->position_name,
+                    'created_at' => $schedule->jobApply->created_at,
+                    'status' => $progressStatus,
+                    'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+                ];
+
+                // Initiate Variable
+                $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+                $toemail = ($development == 1) 
+                        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                        : $schedule->jobApply->candidate->email;
+
+                // [ MAILING ]
+                Mail::to($toemail)->send(new Notification($mailData));
             }
 
             DB::commit();
