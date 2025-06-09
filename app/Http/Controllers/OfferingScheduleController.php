@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Notification;
+use App\Mail\NotificationInternal;
 use App\Mail\NotificationSchedule;
 use App\Models\OfferingSchedule;
 use App\Models\JobApply;
@@ -152,6 +153,26 @@ class OfferingScheduleController extends Controller
 
                 // 3. Simpan perubahan ke database
                 $schedule->save();
+
+                //4. send mail to internal user
+                $mailData = [
+                    'current_phase'     => 'OFFERING',
+                    'job_user'          => $schedule->jobApply->joblist->userRequest->name,
+                    'candidate_name'    => $schedule->jobApply->candidate->candidate_first_name,
+                    'position_applied'  => $schedule->jobApply->joblist->position->position_name,
+                    'created_at'        => $schedule->jobApply->created_at,
+                    'status'            => 'NEED APPROVAL TO MEDICAL CHECK UP'
+                ];
+                
+                // Initiate Variable
+                $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+                $toemail = ($development == 1) 
+                ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                : $schedule->jobApply->joblist->userRequest->email;
+                
+                // [ MAILING ]
+                Mail::to($toemail)->send(new NotificationInternal($mailData));
+
                 $id_jobapply = $schedule->id_jobapply;              
             }
 

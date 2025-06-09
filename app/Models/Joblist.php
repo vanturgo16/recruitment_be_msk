@@ -19,4 +19,9 @@ class Joblist extends Model
     {
         return $this->belongsTo(\App\Models\MstPosition::class, 'id_position');
     }
+
+    public function userRequest()
+    {
+        return $this->belongsTo(User::class, 'position_req_user');
+    }
 }
