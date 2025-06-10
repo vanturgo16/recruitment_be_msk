@@ -22,6 +22,6 @@ class Joblist extends Model
 
     public function userRequest()
     {
-        return $this->belongsTo(User::class, 'position_req_user');
+        return $this->belongsTo(User::class, 'position_req_user', 'id_emp');
     }
 }
