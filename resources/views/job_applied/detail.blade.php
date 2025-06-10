@@ -126,6 +126,28 @@
                                             </a>
                                         @endif
                                     @endif
+
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'MCU')
+                                        @php
+                                            if (!function_exists('has_mcu_schedule')) {
+                                                require_once app_path('Helpers/mcu_schedule_helper.php');
+                                            }
+                                        @endphp
+                                        <!-- cek candidate mcu schedule-->
+                                        @if(has_mcu_schedule($data->id))
+                                            <a href="{{ route('mcu_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                                View Schedule MCU
+                                            </a>
+                                        @else
+                                            <a href="{{ route('mcu_schedule.create', [
+                                                'id_jobapply' => $data->id,
+                                                'applicant_name' => $data->candidate_first_name . ' ' . $data->candidate_last_name,
+                                                'position_name' => $data->position_name
+                                            ]) }}" class="btn btn-outline-primary btn-sm ms-2">
+                                                Set Schedule MCU
+                                            </a>
+                                        @endif
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

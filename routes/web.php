@@ -236,4 +236,18 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('submit-mcu/{id}', 'submitToMCU')->name('offering_schedule.submitMCU');
         });
     });
+
+    //MCU SCHEDULE
+    Route::middleware(['role:Admin,Admin HR,Super Admin,Employee'])->controller(\App\Http\Controllers\McuSchedulesController::class)->group(function () {
+        Route::prefix('mcu-schedule')->group(function () {
+            Route::get('/', 'index')->name('mcu_schedule.index');
+            Route::get('/create', 'create')->name('mcu_schedule.create');
+            Route::post('/store', 'store')->name('mcu_schedule.store');
+            Route::get('/{id}/edit', 'edit')->name('mcu_schedule.edit');
+            Route::post('/{id}/update', 'update')->name('mcu_schedule.update');
+            Route::post('/{id}/update/result', 'updateResult')->name('mcu_schedule.update.result');
+            Route::post('/{id}/delete', 'destroy')->name('mcu_schedule.delete');
+            Route::post('submit-hired/{id}', 'submitToHired')->name('mcu_schedule.submitHired');
+        });
+    });
 });

@@ -103,6 +103,11 @@
                             <span>3. Schedule Offering</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('mcu_schedule.index') }}" class="{{ request()->is('mcu-schedule*') ? 'bg-light active' : '' }}">
+                            <span>4. Schedule MCU</span>
+                        </a>
+                    </li>
                 @endif
                 {{-- <li>
                     <a href="#" class="{{ request()->is('applicants_list*') ? 'bg-light active' : '' }}">
