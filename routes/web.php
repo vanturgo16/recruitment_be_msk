@@ -250,4 +250,18 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('submit-sign/{id}', 'submitToSigning')->name('mcu_schedule.submitSign');
         });
     });
+
+    //SIGNING SCHEDULE
+    Route::middleware(['role:Admin,Admin HR,Super Admin,Employee'])->controller(\App\Http\Controllers\SigningScheduleController::class)->group(function () {
+        Route::prefix('signing-schedule')->group(function () {
+            Route::get('/', 'index')->name('signing_schedule.index');
+            Route::get('/create', 'create')->name('signing_schedule.create');
+            Route::post('/store', 'store')->name('signing_schedule.store');
+            Route::get('/{id}/edit', 'edit')->name('signing_schedule.edit');
+            Route::post('/{id}/update', 'update')->name('signing_schedule.update');
+            Route::post('/{id}/update/result', 'updateResult')->name('signing_schedule.update.result');
+            Route::post('/{id}/delete', 'destroy')->name('signing_schedule.delete');
+            Route::post('submit-hired/{id}', 'submitToHired')->name('signing_schedule.submitHired');
+        });
+    });
 });

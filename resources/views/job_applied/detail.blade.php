@@ -148,6 +148,28 @@
                                             </a>
                                         @endif
                                     @endif
+
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'SIGN')
+                                        @php
+                                            if (!function_exists('has_signing_schedule')) {
+                                                require_once app_path('Helpers/signing_schedule_helper.php');
+                                            }
+                                        @endphp
+                                        <!-- cek candidate signing schedule-->
+                                        @if(has_signing_schedule($data->id))
+                                            <a href="{{ route('signing_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                                View Schedule Signing
+                                            </a>
+                                        @else
+                                            <a href="{{ route('signing_schedule.create', [
+                                                'id_jobapply' => $data->id,
+                                                'applicant_name' => $data->candidate_first_name . ' ' . $data->candidate_last_name,
+                                                'position_name' => $data->position_name
+                                            ]) }}" class="btn btn-outline-primary btn-sm ms-2">
+                                                Set Schedule Signing
+                                            </a>
+                                        @endif
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
