@@ -170,6 +170,31 @@
                                             </a>
                                         @endif
                                     @endif
+
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'HIRED')
+                                        <button type="button" class="btn btn-info btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#submitEmployeeModal{{ $data->id }}">
+                                            Submit As Employee
+                                        </button>
+
+                                        <!-- Modal Submit As Employee-->
+                                        <div class="modal fade" id="submitEmployeeModal{{ $data->id }}" tabindex="-1" aria-labelledby="submitEmployeeModalLabel{{ $data->id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="submitEmployeeModalLabel{{ $data->id }}">Submit As Employee</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Modal View Detail -->
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

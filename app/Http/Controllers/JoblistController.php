@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Notification;
+use App\Mail\NotificationInternal;
 use App\Models\Candidate;
 use App\Models\EducationInfo;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,7 @@ use App\Models\MstRules;
 use App\Models\User;
 use App\Models\WorkExpInfo;
 use App\Traits\ProfilTrait;
+use App\Traits\UserTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -31,6 +33,7 @@ class JoblistController extends Controller
 {
     use AuditLogsTrait;
     use ProfilTrait;
+    use UserTrait;
     public function index(Request $request)
     {
         $positions = MstPosition::select('mst_positions.id', 'mst_positions.position_name', 'mst_departments.dept_name')
@@ -394,6 +397,10 @@ class JoblistController extends Controller
             $jobApply->status = 2;
             $jobApply->progress_status = 'REJECTED';
 
+            //Inactive User Candidate
+            $email = $jobApply->getUser->email;
+            $this->inactiveUser($email);
+
             $mailData = [
                 'candidate_name' => $jobApply->candidate->candidate_first_name,
                 'candidate_email' => $jobApply->candidate->email,
@@ -416,6 +423,26 @@ class JoblistController extends Controller
         $jobApply->approved_at_1 = now();
         $jobApply->approved_reason_1 = $request->input('approved_reason_1');
         $jobApply->save();
+
+        //send mail to internal user
+        $mailData = [
+            'current_phase'     => 'REVIEWED ADMINISTRATION',
+            'job_user'          => $jobApply->joblist->userRequest->name,
+            'candidate_name'    => $jobApply->candidate->candidate_first_name,
+            'position_applied'  => $jobApply->joblist->position->position_name,
+            'created_at'        => $jobApply->created_at,
+            'status'            => 'NEED APPROVAL TO INTERVIEW',
+        ];
+        
+        // Initiate Variable
+        $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+        $toemail = ($development == 1) 
+        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+        : $jobApply->joblist->userRequest->email;
+        
+        // [ MAILING ]
+        Mail::to($toemail)->send(new NotificationInternal($mailData));
+
         return redirect()->back()->with('success', 'Applicant administration approval processed successfully.');
     }
 

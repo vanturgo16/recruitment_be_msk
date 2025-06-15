@@ -24,4 +24,9 @@ class JobApply extends Model
     {
         return $this->belongsTo(Candidate::class, 'id_candidate');
     }
+
+    public function getUser()
+    {
+        return $this->belongsTo(User::class, 'id_candidate', 'id_candidate');
+    }
 }

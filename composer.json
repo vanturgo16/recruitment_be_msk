@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "^3.1",
+        "mtownsend/laravel-make-trait": "^1.5",
         "yajra/laravel-datatables-oracle": "10.9"
     },
     "require-dev": {

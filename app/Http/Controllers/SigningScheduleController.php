@@ -179,6 +179,10 @@ class SigningScheduleController extends Controller
                         'progress_status'   => $progressStatus,
                         'status'            => $status
                     ]);
+
+                //Inactive User Candidate
+                $email = $schedule->jobApply->candidate->email;
+                $this->inactiveUser($email);
                 
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
@@ -230,6 +234,10 @@ class SigningScheduleController extends Controller
                 $progressStatus = 'REJECTED';
                 $statusReadyHired = '2';
                 $status = '2';
+
+                //Inactive User Candidate
+                $email = $schedule->jobApply->candidate->email;
+                $this->inactiveUser($email);
 
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
