@@ -19,7 +19,7 @@ class mcu_schedules extends Model
         'result_notes',
         'approved_by_1',
         'mcu_status',
-        'ready_hired',
+        'ready_sign',
         'created_by',
     ];
 

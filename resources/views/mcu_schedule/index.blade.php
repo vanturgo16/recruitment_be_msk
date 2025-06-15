@@ -141,8 +141,8 @@
                                     </ul>
                                     @endif
                                     @if ($schedule->mcu_status == '1')
-                                        @if ($isEmployeeHead && $schedule->ready_hired != '1')
-                                            <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitHiredModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Hired</a>
+                                        @if ($isEmployeeHead && $schedule->ready_sign != '1')
+                                            <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitSignModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Sign</a>
                                         @else
                                             <span class="badge bg-success">PASSED</span>
                                         @endif
@@ -235,14 +235,14 @@
                         </div>
                         <!-- End Modal Result -->
 
-                        <!-- Modal submit to hired -->
-                        <div class="modal fade" id="submitHiredModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="submitHiredModal{{ $schedule->id }}" aria-hidden="true">
+                        <!-- Modal submit to Sign -->
+                        <div class="modal fade" id="submitSignModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="submitSignModal{{ $schedule->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('mcu_schedule.submitHired', encrypt($schedule->id)) }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('mcu_schedule.submitSign', encrypt($schedule->id)) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="submitHiredModalLabel{{ $schedule->id }}">Submit to Hired</h5>
+                                            <h5 class="modal-title" id="submitSignModalLabel{{ $schedule->id }}">Submit to Sign</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">

@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mcu_schedules', function (Blueprint $table) {
+        Schema::create('signing_schedules', function (Blueprint $table) {
             $table->id();
             $table->integer('id_jobapply')->nullable();
-            $table->dateTime('mcu_date');
-            $table->string('mcu_address');
-            $table->text('mcu_notes');
-            $table->text('result_attachment');
+            $table->dateTime('sign_date');
+            $table->string('sign_address');
+            $table->text('sign_notes');
             $table->text('result_notes');
             $table->integer('approved_by_1')->nullable();
-            $table->integer('mcu_status')->default('0');
+            $table->integer('sign_status')->default('0');
             $table->integer('created_by')->nullable();
-            $table->integer('ready_sign');
+            $table->integer('ready_hired');
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mcu_schedules');
+        Schema::dropIfExists('signing_schedules');
     }
 };

@@ -161,7 +161,7 @@ class McuSchedulesController extends Controller
                     'candidate_name'    => $schedule->jobApply->candidate->candidate_first_name,
                     'position_applied'  => $schedule->jobApply->joblist->position->position_name,
                     'created_at'        => $schedule->jobApply->created_at,
-                    'status'            => 'NEED APPROVAL TO HIRED'
+                    'status'            => 'NEED APPROVAL TO SIGNING'
                 ];
                 
                 // Initiate Variable
@@ -215,7 +215,7 @@ class McuSchedulesController extends Controller
         }
     }
 
-    public function submitToHired(Request $request, $id){
+    public function submitToSigning(Request $request, $id){
         $id = decrypt($id);
         
         DB::beginTransaction();
@@ -228,14 +228,14 @@ class McuSchedulesController extends Controller
             $schedule = mcu_schedules::find($id);
 
             if($request->approval_action == '1'){
-                $progressStatus = 'HIRED';
-                $statusReadyHired = '1';
+                $progressStatus = 'SIGN';
+                $statusReadySign = '1';
                 $status = '1';
             }
 
             if($request->approval_action == '2'){
                 $progressStatus = 'REJECTED';
-                $statusReadyHired = '2';
+                $statusReadySign = '2';
                 $status = '2';
 
                 $mailData = [
@@ -260,7 +260,7 @@ class McuSchedulesController extends Controller
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
                 // 2. Perbarui atribut-atribut model
-                $schedule->ready_hired = $statusReadyHired;
+                $schedule->ready_sign = $statusReadySign;
                 $schedule->mcu_status = $status;
 
                 // 3. Simpan perubahan ke database
@@ -279,8 +279,8 @@ class McuSchedulesController extends Controller
             else{
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'approved_to_hired_by_1' => $userId,
-                        'approved_to_hired_at_1' => $now,
+                        'approved_to_sign_by_1' => $userId,
+                        'approved_to_sign_at_1' => $now,
                         'progress_status'           => $progressStatus
                     ]);
             }
