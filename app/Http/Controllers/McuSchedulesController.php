@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 
 class McuSchedulesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         if ($user) {
@@ -28,8 +28,18 @@ class McuSchedulesController extends Controller
 
         $schedules = mcu_schedules::with(['jobapply.candidate', 'jobapply.joblist.position.department', 'creator']);
 
-        // Tambahkan kondisi where jika department ditemukan
-        if ($departmentName) {
+        // Filter by id_jobapply jika ada di request
+        if ($request->has('id_jobapply') && $request->id_jobapply) {
+            $id_jobapply = null;
+            try {
+                $id_jobapply = decrypt($request->id_jobapply);
+            } catch (\Exception $e) {}
+            if ($id_jobapply) {
+                $schedules->where('id_jobapply', $id_jobapply);
+            }
+        }
+
+        if (isset($departmentName) && $departmentName) {
             // joblist memiliki relasi ke department (yaitu joblist.department_id)
             $schedules->whereHas('jobapply.joblist.position.department', function ($query) use ($departmentName) {
                 $query->where('dept_name', $departmentName);

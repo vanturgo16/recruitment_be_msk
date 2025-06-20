@@ -69,7 +69,7 @@
                                         @endphp
                                         <!-- cek candidate interview schedule-->
                                         @if(has_interview_schedule($data->id))
-                                            <a href="{{ route('interview_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                            <a href="{{ route('interview_schedule.index', ['id_jobapply' => encrypt($data->id)]) }}" class="btn btn-outline-success btn-sm ms-2">
                                                 View Schedule Interview
                                             </a>
                                         @else
@@ -91,7 +91,7 @@
                                         @endphp
                                         <!-- cek candidate test schedule-->
                                         @if(has_test_schedule($data->id))
-                                            <a href="{{ route('test_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                            <a href="{{ route('test_schedule.index', ['id_jobapply' => encrypt($data->id)]) }}" class="btn btn-outline-success btn-sm ms-2">
                                                 View Schedule Test
                                             </a>
                                         @else
@@ -113,7 +113,7 @@
                                         @endphp
                                         <!-- cek candidate offering schedule-->
                                         @if(has_offering_schedule($data->id))
-                                            <a href="{{ route('offering_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                            <a href="{{ route('offering_schedule.index', ['id_jobapply' => encrypt($data->id)]) }}" class="btn btn-outline-success btn-sm ms-2">
                                                 View Schedule Offering
                                             </a>
                                         @else
@@ -135,7 +135,7 @@
                                         @endphp
                                         <!-- cek candidate mcu schedule-->
                                         @if(has_mcu_schedule($data->id))
-                                            <a href="{{ route('mcu_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                            <a href="{{ route('mcu_schedule.index', ['id_jobapply' => encrypt($data->id)]) }}" class="btn btn-outline-success btn-sm ms-2">
                                                 View Schedule MCU
                                             </a>
                                         @else
@@ -157,7 +157,7 @@
                                         @endphp
                                         <!-- cek candidate signing schedule-->
                                         @if(has_signing_schedule($data->id))
-                                            <a href="{{ route('signing_schedule.index') }}" class="btn btn-outline-success btn-sm ms-2">
+                                            <a href="{{ route('signing_schedule.index', ['id_jobapply' => encrypt($data->id)]) }}" class="btn btn-outline-success btn-sm ms-2">
                                                 View Schedule Signing
                                             </a>
                                         @else
