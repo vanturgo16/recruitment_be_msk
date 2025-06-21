@@ -406,7 +406,6 @@ class JoblistController extends Controller
 
             //Inactive User Candidate
             $email = $jobApply->getUser->email;
-            $this->inactiveUser($email);
 
             $mailData = [
                 'candidate_name' => $jobApply->candidate->candidate_first_name,

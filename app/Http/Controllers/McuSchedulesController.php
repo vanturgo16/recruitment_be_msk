@@ -206,7 +206,6 @@ class McuSchedulesController extends Controller
 
                 //Inactive User Candidate
                 $email = $schedule->jobApply->candidate->email;
-                $this->inactiveUser($email);
 
                 //phaseLog
                 $this->logPhase($id_jobapply, $progressStatus . ' AFTER MEDICAL CHECK UP SESSION', $request->mcu_notes, 'Reject after review result medical check up by admin recruiter', '1');
@@ -264,7 +263,6 @@ class McuSchedulesController extends Controller
 
                 //Inactive User Candidate
                 $email = $schedule->jobApply->candidate->email;
-                $this->inactiveUser($email);
                 
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
