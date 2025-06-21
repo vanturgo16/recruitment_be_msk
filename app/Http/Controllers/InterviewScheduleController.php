@@ -8,6 +8,8 @@ use App\Mail\NotificationSchedule;
 use App\Models\InterviewSchedule;
 use App\Models\JobApply;
 use App\Models\MstRules;
+use App\Traits\PhaseLoggable;
+use App\Traits\UserTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 
 class InterviewScheduleController extends Controller
 {
+    use UserTrait;
+    use PhaseLoggable;
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -96,6 +100,9 @@ class InterviewScheduleController extends Controller
             'phase' => 'INTERVIEW',
             'message' => $request->interview_notes,
         ];
+
+        //phaseLog
+        $this->logPhase($request->id_jobapply, 'INTERVIEW', $request->interview_notes, 'Set schedule interview by admin recruiter', '1');
 
         // Initiate Variable
         $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
@@ -200,6 +207,9 @@ class InterviewScheduleController extends Controller
                 //Inactive User Candidate
                 $email = $schedule->jobApply->candidate->email;
                 $this->inactiveUser($email);
+
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER INTERVIEW SESSION', $request->result_notes, 'Reject after review result interview by admin recruiter', '1');
                 
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
@@ -293,6 +303,9 @@ class InterviewScheduleController extends Controller
                         'progress_status'           => $progressStatus,
                         'status'                    => $status
                     ]);
+                
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER INTERVIEW SESSION', '', 'Reject after review result interview by department head/user', '1');
             }
             else{
                 $updateJobApply = JobApply::where('id', $id_jobapply)

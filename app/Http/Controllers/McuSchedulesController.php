@@ -8,6 +8,8 @@ use App\Mail\NotificationSchedule;
 use App\Models\mcu_schedules;
 use App\Models\JobApply;
 use App\Models\MstRules;
+use App\Traits\PhaseLoggable;
+use App\Traits\UserTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 
 class McuSchedulesController extends Controller
 {
+    use UserTrait;
+    use PhaseLoggable;
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -96,6 +100,9 @@ class McuSchedulesController extends Controller
             'phase' => 'MEDICAL CHECK UP',
             'message' => $request->mcu_notes,
         ];
+
+        //phaseLog
+        $this->logPhase($request->id_jobapply, 'MEDICAL CHECK UP', $request->mcu_notes, 'Set schedule medical check up by admin recruiter', '1');
 
         // Initiate Variable
         $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
@@ -200,7 +207,10 @@ class McuSchedulesController extends Controller
                 //Inactive User Candidate
                 $email = $schedule->jobApply->candidate->email;
                 $this->inactiveUser($email);
-                
+
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER MEDICAL CHECK UP SESSION', $request->mcu_notes, 'Reject after review result medical check up by admin recruiter', '1');
+
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
                     'candidate_email' => $schedule->jobApply->candidate->email,
@@ -293,6 +303,9 @@ class McuSchedulesController extends Controller
                         'progress_status'           => $progressStatus,
                         'status'                    => $status
                     ]);
+
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER MEDICAL CHECK UP SESSION', '', 'Reject after review result medical check up by department head/user', '1');
             }
             else{
                 $updateJobApply = JobApply::where('id', $id_jobapply)

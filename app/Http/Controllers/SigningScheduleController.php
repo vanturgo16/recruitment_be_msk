@@ -8,6 +8,8 @@ use App\Mail\NotificationSchedule;
 use App\Models\JobApply;
 use App\Models\MstRules;
 use App\Models\SigningSchedule;
+use App\Traits\PhaseLoggable;
+use App\Traits\UserTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 
 class SigningScheduleController extends Controller
 {
+    use UserTrait;
+    use PhaseLoggable;
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -96,6 +100,9 @@ class SigningScheduleController extends Controller
             'phase' => 'SIGNING AS EMPLOYEE',
             'message' => $request->sign_notes,
         ];
+
+        //phaseLog
+        $this->logPhase($request->id_jobapply, 'SIGNING AS EMPLOYEE', $request->sign_notes, 'Set schedule signing as employee by admin recruiter', '1');
 
         // Initiate Variable
         $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
@@ -193,7 +200,10 @@ class SigningScheduleController extends Controller
                 //Inactive User Candidate
                 $email = $schedule->jobApply->candidate->email;
                 $this->inactiveUser($email);
-                
+
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER SIGNING SESSION', $request->result_notes, 'Reject after review result signing by admin recruiter', '1');
+
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
                     'candidate_email' => $schedule->jobApply->candidate->email,
@@ -286,6 +296,9 @@ class SigningScheduleController extends Controller
                         'progress_status'           => $progressStatus,
                         'status'                    => $status
                     ]);
+
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER SIGNING SESSION', '', 'Reject after review result signing by department head/user', '1');
             }
             else{
                 $updateJobApply = JobApply::where('id', $id_jobapply)

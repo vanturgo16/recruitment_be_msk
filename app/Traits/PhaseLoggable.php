@@ -15,14 +15,15 @@ trait PhaseLoggable
      * @param int|null $userId
      * @return void
      */
-    public function logPhase($phase, $notes, $activity, $candidate_timeline = null)
+    public function logPhase($idjobapply, $phase, $notes, $activity, $candidate_timeline)
     {
         PhaseLog::create([
+            'id_jobapply'        => $idjobapply,
             'phase'              => $phase,
             'activity'           => $activity,
-            'notes'              => $notes,
-            'user_id'            => Auth::user()->id,
-            'candidate_timeline' => $candidate_timeline,
+            'notes'                   => $notes,
+            'user_id'               => Auth::user()->id,
+            'is_candidate_timeline' => $candidate_timeline,
         ]);
     }
 }

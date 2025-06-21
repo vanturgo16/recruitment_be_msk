@@ -24,6 +24,7 @@ use App\Models\MstDropdowns;
 use App\Models\MstRules;
 use App\Models\User;
 use App\Models\WorkExpInfo;
+use App\Traits\PhaseLoggable;
 use App\Traits\ProfilTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,7 @@ class JoblistController extends Controller
     use AuditLogsTrait;
     use ProfilTrait;
     use UserTrait;
+    use PhaseLoggable;
     public function index(Request $request)
     {
         $positions = MstPosition::select('mst_positions.id', 'mst_positions.position_name', 'mst_departments.dept_name')
@@ -374,6 +376,9 @@ class JoblistController extends Controller
     
             // [ MAILING ]
             Mail::to($toemail)->send(new Notification($mailData));
+            
+            //phaseLog
+            $this->logPhase($idJobApply, 'REVIEWED ADMINISTRATION', '', 'Review job by admin recruiter', '1');
         }
 
         if ($jobApply) {
@@ -391,11 +396,13 @@ class JoblistController extends Controller
         $jobApply = JobApply::findOrFail($idJobApply);
         $action = $request->input('approval_action');
         if ($action === 'approve') {
+            $decision = 'APPROVED';
             $jobApply->is_approved_1 = 1;
         } else {
+            $decision = 'REJECTED';
             $jobApply->is_approved_1 = 0;
             $jobApply->status = 2;
-            $jobApply->progress_status = 'REJECTED';
+            $jobApply->progress_status = $decision;
 
             //Inactive User Candidate
             $email = $jobApply->getUser->email;
@@ -406,7 +413,7 @@ class JoblistController extends Controller
                 'candidate_email' => $jobApply->candidate->email,
                 'position_applied' => $jobApply->joblist->position->position_name,
                 'created_at' => $jobApply->created_at,
-                'status' => $jobApply->progress_status,
+                'status' => $decision,
                 'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
             ];
 
@@ -418,6 +425,9 @@ class JoblistController extends Controller
 
             // [ MAILING ]
             Mail::to($toemail)->send(new Notification($mailData));
+
+            //phaseLog
+            $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_1'), 'Reject approval after review administration by admin recruiter', '1');
         }
         $jobApply->approved_by_1 = Auth::user()->id;
         $jobApply->approved_at_1 = now();
@@ -452,9 +462,11 @@ class JoblistController extends Controller
         $jobApply = JobApply::findOrFail($idJobApply);
         $action = $request->input('approval_action_2');
         if ($action === 'approve') {
+            $decision = 'APPROVED';
             $jobApply->is_approved_2 = 1;
             $jobApply->progress_status = 'INTERVIEW';
         } else {
+            $decision = 'REJECTED';
             $jobApply->is_approved_2 = 0;
             $jobApply->status = 2;
             $jobApply->progress_status = 'REJECTED';
@@ -476,12 +488,15 @@ class JoblistController extends Controller
 
             // [ MAILING ]
             Mail::to($toemail)->send(new Notification($mailData));
+
+            //phaseLog
+            $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_2'), 'Reject approval after review administration by department head/user', '1');
         }
         $jobApply->approved_by_2 = Auth::user()->id;
         $jobApply->approved_at_2 = now();
         $jobApply->approved_reason_2 = $request->input('approved_reason_2');
         $jobApply->save();
-        
+
         return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
     }
 

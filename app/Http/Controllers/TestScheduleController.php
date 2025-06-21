@@ -8,6 +8,8 @@ use App\Mail\NotificationSchedule;
 use App\Models\TestSchedule;
 use App\Models\JobApply;
 use App\Models\MstRules;
+use App\Traits\PhaseLoggable;
+use App\Traits\UserTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 
 class TestScheduleController extends Controller
 {
+    use UserTrait;
+    use PhaseLoggable;
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -96,6 +100,9 @@ class TestScheduleController extends Controller
             'phase' => 'TESTING ASSESSMENT',
             'message' => $request->test_notes,
         ];
+
+        //phaseLog
+        $this->logPhase($request->id_jobapply, 'TESTING', $request->test_notes, 'Set schedule test by admin recruiter', '1');
 
         // Initiate Variable
         $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
@@ -201,6 +208,9 @@ class TestScheduleController extends Controller
                 $email = $schedule->jobApply->candidate->email;
                 $this->inactiveUser($email);
 
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER TESTING SESSION', $request->result_notes, 'Reject after review result test by admin recruiter', '1');
+
                 $mailData = [
                     'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
                     'candidate_email' => $schedule->jobApply->candidate->email,
@@ -293,6 +303,9 @@ class TestScheduleController extends Controller
                         'progress_status'           => $progressStatus,
                         'status'                    => $status
                     ]);
+
+                //phaseLog
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER TEST SESSION', '', 'Reject after review result test by department head/user', '1');
             }
             else{
                 $updateJobApply = JobApply::where('id', $id_jobapply)
