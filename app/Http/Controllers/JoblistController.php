@@ -300,8 +300,14 @@ class JoblistController extends Controller
                 'mst_departments.dept_name',
                 DB::raw('COUNT(job_applies.id) as count_noa'),
                 DB::raw('SUM(CASE WHEN job_applies.is_approved_1 IS NULL THEN 1 ELSE 0 END) as count_unreviewed'),
-                DB::raw('SUM(CASE WHEN job_applies.is_seen = 0 THEN 1 ELSE 0 END) as count_unseen'),
-                DB::raw('SUM(CASE WHEN job_applies.is_seen = 1 THEN 1 ELSE 0 END) as count_seen')
+                DB::raw('SUM(CASE WHEN job_applies.is_seen = 1 THEN 1 ELSE 0 END) as count_seen'),
+                DB::raw('SUM(CASE WHEN job_applies.status = 2 THEN 1 ELSE 0 END) as count_rejected'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "INTERVIEW" THEN 1 ELSE 0 END) as count_interviewed'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "TESTED" THEN 1 ELSE 0 END) as count_tested'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "OFFERING" THEN 1 ELSE 0 END) as count_offered'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "MCU" THEN 1 ELSE 0 END) as count_mcu'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "SIGN" THEN 1 ELSE 0 END) as count_signed'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "HIRED" THEN 1 ELSE 0 END) as count_hired'),
                 )
                 ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
                 ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
@@ -318,10 +324,28 @@ class JoblistController extends Controller
                     return $row->position_name . ' (<b>' . $row->dept_name . '</b>)';
                 })
                 ->addColumn('number_of_applicant', function($row) {
-                    return $row->count_noa . ' (<span style="color:red">' . $row->count_unseen . '</span>)';
+                    return $row->count_noa . ' (<span style="color:red">' . $row->count_rejected . '</span>)';
                 })
-                ->addColumn('unreviewed', function($row) {
-                    return $row->count_unreviewed;
+                ->addColumn('reviewed', function($row) {
+                    return $row->count_seen;
+                })
+                ->addColumn('interviewed', function($row) {
+                    return $row->count_interviewed;
+                })
+                ->addColumn('tested', function($row) {
+                    return $row->count_tested;
+                })
+                ->addColumn('offered', function($row) {
+                    return $row->count_offered;
+                })
+                ->addColumn('mcu', function($row) {
+                    return $row->count_mcu;
+                })
+                ->addColumn('signed', function($row) {
+                    return $row->count_signed;
+                })
+                ->addColumn('hired', function($row) {
+                    return $row->count_hired;
                 })
                 ->addColumn('action', function ($row) {
                     return '<a href="'.route('jobapplied.detail', encrypt($row->id_joblist)).'" class="btn btn-info btn-sm">Show All Applicant</a>';
@@ -402,7 +426,6 @@ class JoblistController extends Controller
             $decision = 'REJECTED';
             $jobApply->is_approved_1 = 0;
             $jobApply->status = 2;
-            $jobApply->progress_status = $decision;
 
             //Inactive User Candidate
             $email = $jobApply->getUser->email;
@@ -468,7 +491,6 @@ class JoblistController extends Controller
             $decision = 'REJECTED';
             $jobApply->is_approved_2 = 0;
             $jobApply->status = 2;
-            $jobApply->progress_status = 'REJECTED';
 
             $mailData = [
                 'candidate_name' => $jobApply->candidate->candidate_first_name,

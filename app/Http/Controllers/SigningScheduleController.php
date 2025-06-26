@@ -193,7 +193,6 @@ class SigningScheduleController extends Controller
 
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'progress_status'   => $progressStatus,
                         'status'            => $status
                     ]);
 
@@ -291,7 +290,6 @@ class SigningScheduleController extends Controller
             if($progressStatus == 'REJECTED'){
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'progress_status'           => $progressStatus,
                         'status'                    => $status
                     ]);
 

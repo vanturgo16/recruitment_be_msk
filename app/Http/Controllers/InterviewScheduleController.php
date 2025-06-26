@@ -200,8 +200,7 @@ class InterviewScheduleController extends Controller
 
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'progress_status'   => $progressStatus,
-                        'status'            => $status
+                        'status'    => $status
                     ]);
 
                 //Inactive User Candidate
@@ -298,8 +297,7 @@ class InterviewScheduleController extends Controller
             if($progressStatus == 'REJECTED'){
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'progress_status'           => $progressStatus,
-                        'status'                    => $status
+                        'status' => $status
                     ]);
                 
                 //phaseLog

@@ -12,8 +12,14 @@
                         <tr>
                             <th class="align-middle text-center">No</th>
                             <th class="align-middle text-center">Position</th>
-                            <th class="align-middle text-center">Number of Applicant (<span style="color:red">Unseen</span>)</th>
-                            <th class="align-middle text-center">Unreviewed</th>
+                            <th class="align-middle text-center">Number of Applicant (<span style="color:red">Rejected</span>)</th>
+                            <th class="align-middle text-center">Reviewed</th>
+                            <th class="align-middle text-center">Interviewed</th>
+                            <th class="align-middle text-center">Tested</th>
+                            <th class="align-middle text-center">Offered</th>
+                            <th class="align-middle text-center">MCU</th>
+                            <th class="align-middle text-center">Signed</th>
+                            <th class="align-middle text-center">Hired</th>
                             <th class="align-middle text-center">Action</th>
                         </tr>
                     </thead>
@@ -53,7 +59,37 @@
                     className: 'align-top text-center',
                 },
                 {
-                    data: 'unreviewed',
+                    data: 'reviewed',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'interviewed',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'tested',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'offered',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'mcu',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'signed',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'hired',
                     orderable: true,
                     className: 'align-top text-center',
                 },

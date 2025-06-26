@@ -200,7 +200,6 @@ class McuSchedulesController extends Controller
 
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'progress_status'   => $progressStatus,
                         'status'            => $status
                     ]);
 
@@ -298,7 +297,6 @@ class McuSchedulesController extends Controller
             if($progressStatus == 'REJECTED'){
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'progress_status'           => $progressStatus,
                         'status'                    => $status
                     ]);
 

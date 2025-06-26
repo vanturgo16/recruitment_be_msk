@@ -21,6 +21,7 @@
                             <th class="align-middle text-center">Applicant Name</th>
                             <th class="align-middle text-center">Applicant Email</th>
                             <th class="align-middle text-center">Applied At</th>
+                            <th class="align-middle text-center">Phase</th>
                             <th class="align-middle text-center">Status</th>
                             <th class="align-middle text-center">Action</th>
                         </tr>
@@ -45,10 +46,23 @@
                                 <td>{{ $data->created_at }}</td>
                                 <td>
                                     @if($data->progress_status)
-                                        @if(strtolower($data->progress_status) == 'rejected' || $data->status == 2)
+                                        @if( $data->status == 2)
                                             <span class="badge bg-danger">{{ $data->progress_status }}</span>
                                         @else
                                             <span class="badge bg-primary">{{ $data->progress_status }}</span>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($data->progress_status)
+                                        @if( $data->status == 2)
+                                            <span class="badge bg-danger">REJECTED</span>
+                                        @elseif( $data->status == 1)
+                                            <span class="badge bg-success">DONE</span>
+                                        @else
+                                            <span class="badge bg-primary">PROGRESS</span>
                                         @endif
                                     @else
                                         <span class="badge bg-secondary">-</span>
@@ -172,7 +186,7 @@
                                     @endif
 
                                     @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'HIRED')
-                                        <button type="button" class="btn btn-info btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#submitEmployeeModal{{ $data->id }}">
+                                        <button type="button" class="btn btn-info btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#submitEmployeeModal{{ $data->id }}">
                                             Submit As Employee
                                         </button>
 
