@@ -6,7 +6,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-4">
-                    @if(in_array(Auth::user()->role, ['Super Admin', 'Admin']))
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'Admin','Admin HR']))
                         <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#add-new"><i class="mdi mdi-account-plus label-icon"></i> Add New User</button>
                         
                         {{-- Modal Add --}}

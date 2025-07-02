@@ -36,7 +36,7 @@ class MstUserController extends Controller
     public function datas(Request $request)
     {
         if ($request->ajax()) {
-            $datas = User::orderBy('last_seen')->get();
+            $datas = User::where('role', '!=', 'Candidate')->orderBy('last_seen')->get();
             return DataTables::of($datas)
                 ->addColumn('action', function ($data) {
                     return view('users.action', compact('data'));
@@ -128,6 +128,7 @@ class MstUserController extends Controller
         try {
             User::where('id', $id)->update([
                 'password' => Hash::make($password),
+                'last_modified_password_at' => now(),
             ]);
 
             // [ MAILING ]
@@ -259,5 +260,17 @@ class MstUserController extends Controller
         } else {
             return response()->json(['status' => 'notregistered']);
         }
+    }
+
+    public function candidates(Request $request)
+    {
+        if ($request->ajax()) {
+            $datas = User::where('role', 'Candidate')->orderBy('last_seen')->get();
+            return \Yajra\DataTables\Facades\DataTables::of($datas)
+                ->addColumn('action', function ($data) {
+                    return null; // Tidak ada aksi untuk candidate
+                })->toJson();
+        }
+        return view('users.candidates');
     }
 }

@@ -1,0 +1,106 @@
+@extends('layouts.master')
+@section('konten')
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-bold">Job Applied</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dt-responsive w-100" id="jobAppliedTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="align-middle text-center">No</th>
+                            <th class="align-middle text-center">Position</th>
+                            <th class="align-middle text-center">Number of Applicant (<span style="color:red">Rejected</span>)</th>
+                            <th class="align-middle text-center">Reviewed</th>
+                            <th class="align-middle text-center">Interviewed</th>
+                            <th class="align-middle text-center">Tested</th>
+                            <th class="align-middle text-center">Offered</th>
+                            <th class="align-middle text-center">MCU</th>
+                            <th class="align-middle text-center">Signed</th>
+                            <th class="align-middle text-center">Hired</th>
+                            <th class="align-middle text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{-- Data will be loaded by DataTables, leave empty for now --}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+        var dataTable = $('#jobAppliedTable').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: '{!! route('jobapplied.index') !!}',
+            columns: [
+                {
+                    data: null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                    orderable: false,
+                    searchable: false,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'position',
+                    orderable: true,
+                    className: 'align-top',
+                },
+                {
+                    data: 'number_of_applicant',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'reviewed',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'interviewed',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'tested',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'offered',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'mcu',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'signed',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'hired',
+                    orderable: true,
+                    className: 'align-top text-center',
+                },
+                {
+                    data: 'action',
+                    orderable: false,
+                    searchable: false,
+                    className: 'align-top text-center',
+                },
+            ],
+        });
+    });
+</script>
+@endsection

@@ -7,7 +7,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-4">
-                    @if(in_array(Auth::user()->role, ['Super Admin', 'Admin']))
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'Admin','Admin HR']))
                         <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#addNew"><i class="mdi mdi-plus label-icon"></i> {{ __('messages.add_new') }}</button>
                         {{-- Modal Add --}}
                         <div class="modal fade" id="addNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -38,11 +38,10 @@
                                                     <label class="form-label">{{ __('messages.hie_level') }}</label> <label class="text-danger">*</label>
                                                     <select class="form-control select2" name="hie_level" required>
                                                         <option value="" disabled selected>- {{ __('messages.select') }} -</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                        <option value="5">5</option>
+                                                        <option value="1">GM</option>
+                                                        <option value="2">Manager</option>
+                                                        <option value="3">Supervisor</option>
+                                                        <option value="4">Admin</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">

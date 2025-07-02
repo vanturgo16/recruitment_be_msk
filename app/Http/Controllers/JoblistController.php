@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Notification;
+use App\Mail\NotificationInternal;
+use App\Models\Candidate;
+use App\Models\EducationInfo;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
@@ -13,12 +17,25 @@ use App\Traits\AuditLogsTrait;
 use App\Models\Joblist;
 use App\Models\MstPosition;
 use App\Models\Employee;
+use App\Models\GeneralInfo;
+use App\Models\JobApply;
+use App\Models\MainProfile;
 use App\Models\MstDropdowns;
+use App\Models\MstRules;
+use App\Models\User;
+use App\Models\WorkExpInfo;
+use App\Traits\PhaseLoggable;
+use App\Traits\ProfilTrait;
+use App\Traits\UserTrait;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class JoblistController extends Controller
 {
     use AuditLogsTrait;
-
+    use ProfilTrait;
+    use UserTrait;
+    use PhaseLoggable;
     public function index(Request $request)
     {
         $positions = MstPosition::select('mst_positions.id', 'mst_positions.position_name', 'mst_departments.dept_name')
@@ -259,5 +276,303 @@ class JoblistController extends Controller
                 ->where('id_dept', $deptId);
         })->pluck('email', 'id');
         return response()->json($employee);
+    }
+
+    public function jobApplied(Request $request)
+    {
+        $id_emp_login = Auth::user()->id_emp;
+        $deptName = Employee::select('mst_departments.dept_name')
+            ->leftJoin('mst_positions', 'employees.id_position', '=', 'mst_positions.id')
+            ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+            ->where('employees.id', $id_emp_login)
+            ->value('dept_name');
+
+        // Jika yang login role-nya Employee, tambahkan filter dept_name
+        if (Auth::user()->role === 'Employee' && $deptName) {
+            $request->merge(['filter_dept_name' => $deptName]);
+        }
+        
+        if ($request->ajax()) {
+            $data = JobApply::select(
+                'job_applies.id_joblist',
+                'joblists.id_position',
+                'mst_positions.position_name',
+                'mst_departments.dept_name',
+                DB::raw('COUNT(job_applies.id) as count_noa'),
+                DB::raw('SUM(CASE WHEN job_applies.is_approved_1 IS NULL THEN 1 ELSE 0 END) as count_unreviewed'),
+                DB::raw('SUM(CASE WHEN job_applies.is_seen = 1 THEN 1 ELSE 0 END) as count_seen'),
+                DB::raw('SUM(CASE WHEN job_applies.status = 2 THEN 1 ELSE 0 END) as count_rejected'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "INTERVIEW" THEN 1 ELSE 0 END) as count_interviewed'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "TESTED" THEN 1 ELSE 0 END) as count_tested'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "OFFERING" THEN 1 ELSE 0 END) as count_offered'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "MCU" THEN 1 ELSE 0 END) as count_mcu'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "SIGN" THEN 1 ELSE 0 END) as count_signed'),
+                DB::raw('SUM(CASE WHEN job_applies.progress_status = "HIRED" THEN 1 ELSE 0 END) as count_hired'),
+                )
+                ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
+                ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
+                ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+                // filter by department if needed
+                ->when($request->filter_dept_name ?? null, function ($query, $deptName) {
+                $query->where('mst_departments.dept_name', $deptName);
+                })
+                ->groupBy('job_applies.id_joblist')
+                ->get();
+
+            return DataTables::of(collect($data))
+                ->addColumn('position', function($row) {
+                    return $row->position_name . ' (<b>' . $row->dept_name . '</b>)';
+                })
+                ->addColumn('number_of_applicant', function($row) {
+                    return $row->count_noa . ' (<span style="color:red">' . $row->count_rejected . '</span>)';
+                })
+                ->addColumn('reviewed', function($row) {
+                    return $row->count_seen;
+                })
+                ->addColumn('interviewed', function($row) {
+                    return $row->count_interviewed;
+                })
+                ->addColumn('tested', function($row) {
+                    return $row->count_tested;
+                })
+                ->addColumn('offered', function($row) {
+                    return $row->count_offered;
+                })
+                ->addColumn('mcu', function($row) {
+                    return $row->count_mcu;
+                })
+                ->addColumn('signed', function($row) {
+                    return $row->count_signed;
+                })
+                ->addColumn('hired', function($row) {
+                    return $row->count_hired;
+                })
+                ->addColumn('action', function ($row) {
+                    return '<a href="'.route('jobapplied.detail', encrypt($row->id_joblist)).'" class="btn btn-info btn-sm">Show All Applicant</a>';
+                })
+                ->rawColumns(['action', 'position', 'number_of_applicant'])
+                ->toJson();
+        }
+        return view('job_applied.index');
+    }
+
+    public function jobAppliedDetail($id)
+    {
+        $id = decrypt($id);
+        $datas = JobApply::select(
+            'job_applies.*',
+            'joblists.id_position',
+            'mst_positions.position_name',
+            'mst_departments.dept_name',
+            'candidate.candidate_first_name',
+            'candidate.candidate_last_name',
+            'candidate.email',
+            )
+            ->leftJoin('joblists', 'job_applies.id_joblist', '=', 'joblists.id')
+            ->leftJoin('mst_positions', 'joblists.id_position', '=', 'mst_positions.id')
+            ->leftJoin('mst_departments', 'mst_positions.id_dept', '=', 'mst_departments.id')
+            ->leftJoin('candidate', 'job_applies.id_candidate', '=', 'candidate.id')
+            ->where('job_applies.id_joblist', $id)
+            ->get();
+            return view('job_applied.detail', compact('datas'));
+    }
+
+    public function jobAppliedSeen($id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::where('id', $idJobApply)->first();
+
+        if($jobApply->is_seen <> 1){ //jika baru dilihat kirim email
+            $mailData = [
+                'candidate_name' => $jobApply->candidate->candidate_first_name,
+                'candidate_email' => $jobApply->candidate->email,
+                'position_applied' => $jobApply->joblist->position->position_name,
+                'created_at' => $jobApply->created_at,
+                'status' => "REVIEWED",
+                'message' => "Your application is being reviewed",
+            ];
+    
+            // Initiate Variable
+            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+            $toemail = ($development == 1) 
+                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                    : $jobApply->candidate->email;
+    
+            // [ MAILING ]
+            Mail::to($toemail)->send(new Notification($mailData));
+            
+            //phaseLog
+            $this->logPhase($idJobApply, 'REVIEWED ADMINISTRATION', '', 'Review job by admin recruiter', '1');
+        }
+
+        if ($jobApply) {
+            $jobApply->is_seen = 1;
+            $jobApply->save();
+        }
+
+        // Redirect ke halaman info (GET)
+        return redirect()->route('jobapplied.applicantinfo', encrypt($idJobApply));
+    }
+
+    public function jobAppliedApproveAdmin(Request $request, $id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::findOrFail($idJobApply);
+        $action = $request->input('approval_action');
+        if ($action === 'approve') {
+            $decision = 'APPROVED';
+            $jobApply->is_approved_1 = 1;
+        } else {
+            $decision = 'REJECTED';
+            $jobApply->is_approved_1 = 0;
+            $jobApply->status = 2;
+
+            //Inactive User Candidate
+            $email = $jobApply->getUser->email;
+
+            $mailData = [
+                'candidate_name' => $jobApply->candidate->candidate_first_name,
+                'candidate_email' => $jobApply->candidate->email,
+                'position_applied' => $jobApply->joblist->position->position_name,
+                'created_at' => $jobApply->created_at,
+                'status' => $decision,
+                'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+            ];
+
+            // Initiate Variable
+            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+            $toemail = ($development == 1) 
+                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                    : $jobApply->candidate->email;
+
+            // [ MAILING ]
+            Mail::to($toemail)->send(new Notification($mailData));
+
+            //phaseLog
+            $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_1'), 'Reject approval after review administration by admin recruiter', '1');
+        }
+        $jobApply->approved_by_1 = Auth::user()->id;
+        $jobApply->approved_at_1 = now();
+        $jobApply->approved_reason_1 = $request->input('approved_reason_1');
+        $jobApply->save();
+
+        //send mail to internal user
+        $mailData = [
+            'current_phase'     => 'REVIEWED ADMINISTRATION',
+            'job_user'          => $jobApply->joblist->userRequest->name,
+            'candidate_name'    => $jobApply->candidate->candidate_first_name,
+            'position_applied'  => $jobApply->joblist->position->position_name,
+            'created_at'        => $jobApply->created_at,
+            'status'            => 'NEED APPROVAL TO INTERVIEW',
+        ];
+        
+        // Initiate Variable
+        $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+        $toemail = ($development == 1) 
+        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+        : $jobApply->joblist->userRequest->email;
+        
+        // [ MAILING ]
+        Mail::to($toemail)->send(new NotificationInternal($mailData));
+
+        return redirect()->back()->with('success', 'Applicant administration approval processed successfully.');
+    }
+
+    public function jobAppliedApproveHead(Request $request, $id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::findOrFail($idJobApply);
+        $action = $request->input('approval_action_2');
+        if ($action === 'approve') {
+            $decision = 'APPROVED';
+            $jobApply->is_approved_2 = 1;
+            $jobApply->progress_status = 'INTERVIEW';
+        } else {
+            $decision = 'REJECTED';
+            $jobApply->is_approved_2 = 0;
+            $jobApply->status = 2;
+
+            $mailData = [
+                'candidate_name' => $jobApply->candidate->candidate_first_name,
+                'candidate_email' => $jobApply->candidate->email,
+                'position_applied' => $jobApply->joblist->position->position_name,
+                'created_at' => $jobApply->created_at,
+                'status' => $jobApply->progress_status,
+                'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+            ];
+
+            // Initiate Variable
+            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+            $toemail = ($development == 1) 
+                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                    : $jobApply->candidate->email;
+
+            // [ MAILING ]
+            Mail::to($toemail)->send(new Notification($mailData));
+
+            //phaseLog
+            $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_2'), 'Reject approval after review administration by department head/user', '1');
+        }
+        $jobApply->approved_by_2 = Auth::user()->id;
+        $jobApply->approved_at_2 = now();
+        $jobApply->approved_reason_2 = $request->input('approved_reason_2');
+        $jobApply->save();
+
+        return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
+    }
+
+    public function jobAppliedApplicantInfo($id)
+    {
+        $idJobApply = decrypt($id);
+        $jobApply = JobApply::findOrFail($idJobApply);
+        $idJobList = $jobApply->id_joblist;
+        $idCandidate = $jobApply->id_candidate;
+
+        $candidate = Candidate::where('id', $idCandidate)->first();
+        $mainProfile = MainProfile::where('id_candidate', $idCandidate)->first();
+        $generalInfo = GeneralInfo::where('id_candidate', $idCandidate)->first();
+        $eduInfo = EducationInfo::where('id_candidate', $idCandidate)->get();
+        $workExpInfo = WorkExpInfo::where('id_candidate', $idCandidate)->get();
+
+        $isEditable = !$this->checkApplicationIP($idCandidate);
+
+        $gender = MstDropdowns::where('category', 'Gender')->pluck('name_value');
+        $marriageStatus = MstDropdowns::where('category', 'Marriage Status')->pluck('name_value');
+        $grade = MstDropdowns::where('category', 'Education')->pluck('name_value');
+        $optionYN = MstDropdowns::where('category', 'OptionYN')->pluck('name_value');
+        $sourceInfo = MstDropdowns::where('category', 'Source Info')->pluck('name_value');
+        $expInfo = MstDropdowns::where('category', 'Exp Info')->pluck('name_value');
+
+        $approved_by_1_name = null;
+        if ($jobApply->approved_by_1) {
+            $user = User::find($jobApply->approved_by_1);
+            $approved_by_1_name = $user ? $user->name : $jobApply->approved_by_1;
+        }
+
+        $approved_by_2_name = null;
+        if ($jobApply->approved_by_2) {
+            $user2 = User::find($jobApply->approved_by_2);
+            $approved_by_2_name = $user2 ? $user2->name : $jobApply->approved_by_2;
+        }
+
+        return view('job_applied.applicant_info', compact(
+            'idJobList',
+            'idJobApply',
+            'candidate',
+            'mainProfile',
+            'generalInfo',
+            'eduInfo',
+            'workExpInfo',
+            'isEditable',
+            'gender',
+            'marriageStatus',
+            'grade',
+            'optionYN',
+            'sourceInfo',
+            'expInfo',
+            'jobApply',
+            'approved_by_1_name',
+            'approved_by_2_name'
+        ));
     }
 }
