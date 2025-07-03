@@ -425,6 +425,7 @@
             <table class="table table-bordered dt-responsive w-100" id="ssTable">
                 <thead class="table-light">
                     <tr>
+                        <th class="align-middle text-center">No</th>
                         <th class="align-middle text-center">Phase</th>
                         <th class="align-middle text-center">Activity</th>
                         <th class="align-middle text-center">Action By</th>
@@ -440,7 +441,16 @@
                     serverSide: true,
                     scrollY: '100vh',
                     ajax: '{!! route('jobapplied.applicantinfo', encrypt($idJobList)) !!}',
-                    columns: [
+                    columns: [{
+                        data: null,
+                            render: function(data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            },
+                            orderable: false,
+                            searchable: false,
+                            visible: false,
+                            className: 'align-top text-center',
+                        },
                         {
                             data: 'phase',
                             orderable: true,
