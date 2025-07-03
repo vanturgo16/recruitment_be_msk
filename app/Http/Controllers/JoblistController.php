@@ -22,6 +22,7 @@ use App\Models\JobApply;
 use App\Models\MainProfile;
 use App\Models\MstDropdowns;
 use App\Models\MstRules;
+use App\Models\PhaseLog;
 use App\Models\User;
 use App\Models\WorkExpInfo;
 use App\Traits\PhaseLoggable;
@@ -521,9 +522,18 @@ class JoblistController extends Controller
         return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
     }
 
-    public function jobAppliedApplicantInfo($id)
+    public function jobAppliedApplicantInfo(Request $request, $id)
     {
         $idJobApply = decrypt($id);
+
+        if ($request->ajax()) {
+            $datas = PhaseLog::select('phase_logs.*', 'users.name as created')
+                ->leftjoin('users', 'phase_logs.user_id', 'users.id')
+                ->orderBy('phase_logs.created_at', 'desc')
+                ->get();
+            return DataTables::of($datas)->toJson();
+        }
+
         $jobApply = JobApply::findOrFail($idJobApply);
         $idJobList = $jobApply->id_joblist;
         $idCandidate = $jobApply->id_candidate;
