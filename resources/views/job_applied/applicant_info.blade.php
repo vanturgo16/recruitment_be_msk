@@ -21,7 +21,7 @@
 
     @php
         $isApprovalHR = Auth::user()->role === 'Admin HR' && $jobApply->is_approved_1 === null;
-        $isApprovalHead = Auth::user()->role === 'Employee' && in_array(Auth::user()->hie_level, [2,3]) && $mainProfile->is_approved_2 === null;
+        $isApprovalHead = Auth::user()->role === 'Employee' && in_array(Auth::user()->hie_level, [2,3]) && $jobApply->is_approved_1 === 1 && $jobApply->is_approved_2 === null;
         $progressSteps = [
             'LAMARAN TERKIRIM' => ['icon' => 'bi-send-check', 'badge' => 'secondary', 'text' => 'dark'],
             'REVIEW ADM'       => ['icon' => 'bi-hourglass-split', 'badge' => 'warning', 'text' => 'white'],
