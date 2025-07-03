@@ -333,7 +333,7 @@
     <!-- DASHBOARD INIT -->
     <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="{{ asset('assets/libs/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('assets/libs/dayjs@1/dayjs.min.js') }}"></script>
 
     <!-- DATATABLE CUSTOM SCROLL -->
