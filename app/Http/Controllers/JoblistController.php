@@ -297,6 +297,7 @@ class JoblistController extends Controller
             $data = JobApply::select(
                 'job_applies.id_joblist',
                 'joblists.id_position',
+                'joblists.created_at',
                 'mst_positions.position_name',
                 'mst_departments.dept_name',
                 DB::raw('COUNT(job_applies.id) as count_noa'),
@@ -318,11 +319,12 @@ class JoblistController extends Controller
                 $query->where('mst_departments.dept_name', $deptName);
                 })
                 ->groupBy('job_applies.id_joblist')
+                ->orderBy('joblists.created_at', 'desc')
                 ->get();
 
             return DataTables::of(collect($data))
                 ->addColumn('position', function($row) {
-                    return $row->position_name . ' (<b>' . $row->dept_name . '</b>)';
+                    return $row->position_name . ' (<b>' . $row->dept_name . '</b>)' . ' <br> <b>Publish At:</b> ' . $row->created_at->format('d M Y');
                 })
                 ->addColumn('number_of_applicant', function($row) {
                     return $row->count_noa . ' (<span style="color:red">' . $row->count_rejected . '</span>)';
