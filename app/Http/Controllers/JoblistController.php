@@ -529,6 +529,7 @@ class JoblistController extends Controller
         if ($request->ajax()) {
             $datas = PhaseLog::select('phase_logs.*', 'users.name as created')
                 ->leftjoin('users', 'phase_logs.user_id', 'users.id')
+                ->where('phase_logs.id_jobapply', $idJobApply)
                 ->orderBy('phase_logs.created_at', 'desc')
                 ->get();
             return DataTables::of($datas)->toJson();

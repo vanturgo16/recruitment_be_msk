@@ -440,7 +440,7 @@
                     processing: true,
                     serverSide: true,
                     scrollY: '100vh',
-                    ajax: '{!! route('jobapplied.applicantinfo', encrypt($idJobList)) !!}',
+                    ajax: '{!! route('jobapplied.applicantinfo', encrypt($idJobApply)) !!}',
                     columns: [{
                         data: null,
                             render: function(data, type, row, meta) {
