@@ -18,6 +18,10 @@ use App\Models\MainProfile;
 use App\Models\MstDropdowns;
 use App\Models\User;
 
+// Export
+use App\Exports\EmployeeExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class EmployeeController extends Controller
 {
     use AuditLogsTrait;
@@ -34,9 +38,9 @@ class EmployeeController extends Controller
             )
             ->leftjoin('mst_positions', 'employees.id_position', 'mst_positions.id')
             ->leftjoin('mst_departments', 'mst_positions.id_dept', 'mst_departments.id')
-                ->leftjoin('offices', 'employees.placement_id', 'offices.id')
-                ->orderBy('employees.created_at')
-                ->get();
+            ->leftjoin('offices', 'employees.placement_id', 'offices.id')
+            ->orderBy('employees.created_at')
+            ->get();
             return DataTables::of($datas)
                 ->addColumn('action', function ($data) use ($listReasons) {
                     return view('employee.action', compact('data', 'listReasons'));
@@ -195,5 +199,10 @@ class EmployeeController extends Controller
             DB::rollback();
             return redirect()->back()->with(['fail' => __('messages.fail_submit')]);
         }
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new EmployeeExport, 'employee_report.xlsx');
     }
 }
