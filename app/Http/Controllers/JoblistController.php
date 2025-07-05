@@ -22,6 +22,7 @@ use App\Models\JobApply;
 use App\Models\MainProfile;
 use App\Models\MstDropdowns;
 use App\Models\MstRules;
+use App\Models\Office;
 use App\Models\PhaseLog;
 use App\Models\User;
 use App\Models\WorkExpInfo;
@@ -141,6 +142,7 @@ class JoblistController extends Controller
     public function applicantList($id)
     {
         $id = decrypt($id);
+        $offices = Office::orderBy('name')->get();
 
         //Audit Log
         $this->auditLogs('View List Applicant Joblist ID (' . $id . ')');
@@ -362,10 +364,12 @@ class JoblistController extends Controller
     public function jobAppliedDetail($id)
     {
         $id = decrypt($id);
+        $offices = Office::orderBy('name')->get();
         $datas = JobApply::select(
             'job_applies.*',
             'joblists.id_position',
             'mst_positions.position_name',
+            'mst_positions.hie_level',
             'mst_departments.dept_name',
             'candidate.candidate_first_name',
             'candidate.candidate_last_name',
@@ -377,7 +381,19 @@ class JoblistController extends Controller
             ->leftJoin('candidate', 'job_applies.id_candidate', '=', 'candidate.id')
             ->where('job_applies.id_joblist', $id)
             ->get();
-            return view('job_applied.detail', compact('datas'));
+
+        //cari untuk reportlines
+        $id_dept = $datas[0]->joblist->position->id_dept;
+        $positions = MstPosition::where('id_dept', $id_dept)
+            ->where('hie_level', '<', '4')
+            ->pluck('id');
+
+        $reportlines = Employee::whereIn('id_position', $positions)
+            ->leftJoin('mst_positions', 'employees.id_position', '=', 'mst_positions.id')
+            ->leftJoin('users', 'employees.id', '=', 'users.id_emp')
+            ->get();
+
+        return view('job_applied.detail', compact('datas', 'offices', 'positions', 'reportlines'));
     }
 
     public function jobAppliedSeen($id)

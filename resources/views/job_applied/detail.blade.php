@@ -48,6 +48,8 @@
                                     @if($data->progress_status)
                                         @if( $data->status == 2)
                                             <span class="badge bg-danger">{{ $data->progress_status }}</span>
+                                        @elseif( $data->status == 1)
+                                            <span class="badge bg-success">{{ $data->progress_status }}</span>
                                         @else
                                             <span class="badge bg-primary">{{ $data->progress_status }}</span>
                                         @endif
@@ -185,21 +187,59 @@
                                         @endif
                                     @endif
 
-                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'HIRED')
+                                    @if(Auth::user()->role === 'Admin HR' && strtoupper($data->progress_status) == 'HIRED' && $data->status == 0)
                                         <button type="button" class="btn btn-info btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#submitEmployeeModal{{ $data->id }}">
                                             Submit As Employee
                                         </button>
 
                                         <!-- Modal Submit As Employee-->
                                         <div class="modal fade" id="submitEmployeeModal{{ $data->id }}" tabindex="-1" aria-labelledby="submitEmployeeModalLabel{{ $data->id }}" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="submitEmployeeModalLabel{{ $data->id }}">Submit As Employee</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
+                                            <div class="modal-dialog modal-md">
+                                                <form action="{{ route('employee.submit', ['id_candidate' => $data->id_candidate]) }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="submitEmployeeModalLabel{{ $data->id }}">Submit As Employee</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
                                                     <div class="modal-body">
-                                                        
+                                                        <input type="hidden" name="id_position" value="{{ $datas[0]['id_position'] }}">
+                                                        <input type="hidden" name="hie_level" value="{{ $datas[0]['hie_level'] }}">
+                                                        <input type="hidden" name="id_jobApply" value="{{ $datas[0]['id'] }}">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Join Date</label>
+                                                            <input type="date" class="form-control" value="" name="join_date" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Candidate Name</label>
+                                                            <input type="text" class="form-control" value="{{ $data->candidate_first_name . " " . $data->candidate_last_name }}" name="candidate_name" readonly>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Employee No</label>
+                                                            <input type="text" class="form-control" value="" name="employee_no" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Placement</label>
+                                                            <select name="placement_id" id="placement_id" class="form-control" required>
+                                                                <option value="">-Select Office-</option>
+                                                                @foreach($offices as $office)
+                                                                    <option value="{{ $office->id }}">{{ $office->name . ' - ' . $office->type . ' - ' . $office->code }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Corporate Email</label>
+                                                            <input type="email" class="form-control" value="" name="corporate_email" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Report Line</label>
+                                                            <select name="report_line" id="report_line" class="form-control" required>
+                                                                <option value="">-Select Report Line-</option>
+                                                                @foreach($reportlines as $reportline)
+                                                                    <option value="{{ $reportline->email }}">{{ $reportline->name . ' - ' . $reportline->position_name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>

@@ -22,6 +22,7 @@
                         <th class="align-middle text-center">No</th>
                         <th class="align-middle text-center">{{ __('messages.emp_no') }}</th>
                         <th class="align-middle text-center">Email</th>
+                        <th class="align-middle text-center">{{ __('messages.department') }}</th>
                         <th class="align-middle text-center">{{ __('messages.position') }}</th>
                         <th class="align-middle text-center">{{ __('messages.placement') }}</th>
                         <th class="align-middle text-center">Status</th>
@@ -57,6 +58,12 @@
                 },
                 {
                     data: 'email',
+                    orderable: true,
+                    searchable: true,
+                    className: 'align-top',
+                },
+                {
+                    data: 'dept_name',
                     orderable: true,
                     searchable: true,
                     className: 'align-top',
