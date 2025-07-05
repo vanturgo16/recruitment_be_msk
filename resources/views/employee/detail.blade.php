@@ -210,7 +210,15 @@
             </div>
             <hr>
             <div class="row">
-                <div class="col-lg-6 mb-2">
+                <div class="col-lg-4 mb-2">
+                    <div class="form-group">
+                        <div><span class="fw-bold">{{ __('messages.join_date') }} :</span></div>
+                        <span>
+                            <span>{{ $data->join_date }}</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
                     <div class="form-group">
                         <div><span class="fw-bold">{{ __('messages.created_at') }} :</span></div>
                         <span>
@@ -218,7 +226,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-lg-6 mb-2">
+                <div class="col-lg-4 mb-2">
                     <div class="form-group">
                         <div><span class="fw-bold">{{ __('messages.last_updated') }} :</span></div>
                         <span>

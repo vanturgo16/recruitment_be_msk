@@ -71,6 +71,7 @@ return [
     'success_update_language' => 'Berhasil, Bahasa Diperbarui',
     'created_at' => 'Dibuat Pada',
     'last_updated' => 'Terakhir Diubah Pada',
+    'join_date' => 'Tanggal Bergabung',
     // Manage Users
     'name' => 'Nama',
     'dealer_type' => 'Jenis Dealer',
@@ -109,9 +110,12 @@ return [
     // Employee
     'emp' => 'Karyawan',
     'emp_no' => 'Nomor Karyawan',
+    'department' => 'Departemen',
     'position' => 'Posisi',
     'placement' => 'Penempatan',
     'inactive_date' => 'Tanggal Tidak Aktif',
+    'success_submit' => 'Berhasil Ditambahkan Sebagai Karyawan',
+    'fail_submit' => 'Gagal Ditambahkan Sebagai Karyawan',
     // Blacklist
     'reason' => 'Alasan',
     // Joblist

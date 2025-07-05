@@ -77,6 +77,7 @@ return [
     'success_update_language' => 'Success, Language Updated',
     'created_at' => 'Created At',
     'last_updated' => 'Last Updated At',
+    'join_date' => 'Join Date',
     // Manage Users
     'name' => 'Name',
     'dealer_type' => 'Dealer Type',
@@ -116,9 +117,12 @@ return [
     // Employee
     'emp' => 'Employee',
     'emp_no' => 'Employee No',
+    'department' => 'Department',
     'position' => 'Position',
     'placement' => 'Placement',
     'inactive_date' => 'Inactive Date',
+    'success_submit' => 'Success Submit as Employee',
+    'fail_submit' => 'Failed Submit as Employee',
     // Blacklist
     'reason' => 'Reason',
     // Joblist

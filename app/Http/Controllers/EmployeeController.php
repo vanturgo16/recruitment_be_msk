@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blacklist;
+use App\Models\Candidate;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
@@ -12,6 +13,8 @@ use App\Traits\AuditLogsTrait;
 
 // Model
 use App\Models\Employee;
+use App\Models\JobApply;
+use App\Models\MainProfile;
 use App\Models\MstDropdowns;
 use App\Models\User;
 
@@ -23,8 +26,14 @@ class EmployeeController extends Controller
     {
         $listReasons = MstDropdowns::where('category', 'Reason Blacklist')->get();
         if ($request->ajax()) {
-            $datas = Employee::select('employees.*', 'mst_positions.position_name', 'offices.name as office_name')
-                ->leftjoin('mst_positions', 'employees.id_position', 'mst_positions.id')
+            $datas = Employee::select(
+                'employees.*',
+                'mst_positions.position_name',
+                'offices.name as office_name',
+                'mst_departments.dept_name'
+            )
+            ->leftjoin('mst_positions', 'employees.id_position', 'mst_positions.id')
+            ->leftjoin('mst_departments', 'mst_positions.id_dept', 'mst_departments.id')
                 ->leftjoin('offices', 'employees.placement_id', 'offices.id')
                 ->orderBy('employees.created_at')
                 ->get();
@@ -108,6 +117,83 @@ class EmployeeController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             return redirect()->back()->with(['fail' => __('messages.fail_deactivate') . ' ' . $data->email . '!']);
+        }
+    }
+
+    public function submitEmployee(Request $request, $id_candidate)
+    {
+        $request->validate([
+            'id_position' => 'required',
+            'hie_level' => 'required',
+            'join_date' => 'required|date',
+            'candidate_name' => 'required|string|max:255',
+            'employee_no' => 'required|string|max:255',
+            'placement_id' => 'required|integer',
+            'corporate_email' => 'required|email',
+            'report_line' => 'required|email',
+            'id_jobApply' => 'required|integer',
+        ]);
+
+        //buat variabel setiap request
+        $id_position = $request->id_position;
+        $join_date = $request->join_date;
+        $candidate_name = $request->candidate_name;
+        $employee_no = $request->employee_no;
+        $placement_id = $request->placement_id;
+        $corporate_email = strtolower($request->corporate_email);
+        $report_line = strtolower($request->report_line);
+        $id_jobApply = $request->id_jobApply;
+        $hie_level = $request->hie_level;
+
+        // Logic to submit employee data
+        DB::beginTransaction();
+        try {
+            //insert ke table employee
+            $createEmployee = Employee::create([
+                'id_candidate' => $id_candidate,
+                'emp_no' => $request->employee_no,
+                'email' => $request->corporate_email,
+                'id_position' => $id_position,
+                'placement_id' => $placement_id,
+                'reportline_1' => $report_line,
+                'is_active' => 1,
+                'join_date' => $join_date
+            ]);
+
+            $id_emp = $createEmployee->id;
+
+            //update ke table users
+            User::where('id_candidate', $id_candidate)->update([
+                'email' => $corporate_email,
+                'id_emp' => $id_emp,
+                'hie_level' => $hie_level,
+                'role' => 'Employee'
+            ]);
+
+            //update table candidate
+            Candidate::where('id', $id_candidate)->update([
+                'id_emp' => $id_emp
+            ]);
+
+            //update main profile
+            MainProfile::where('id_candidate', $id_candidate)->update([
+                'id_emp' => $id_emp
+            ]);
+
+            //update job applies
+            JobApply::where('id', $id_jobApply)->update([
+                'status' => 1
+            ]);
+
+            //phaseLog
+            $this->logPhase($id_jobApply, 'SUBMIT AS EMPLOYEE', '', 'Success Submit as Employee', '1');
+
+            DB::commit();
+            return redirect()->back()->with(['success' => __('messages.success_submit')]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return redirect()->back()->with(['fail' => __('messages.fail_submit')]);
         }
     }
 }
