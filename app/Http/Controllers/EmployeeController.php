@@ -17,6 +17,7 @@ use App\Models\JobApply;
 use App\Models\MainProfile;
 use App\Models\MstDropdowns;
 use App\Models\User;
+use App\Models\MstDepartment;
 
 // Export
 use App\Exports\EmployeeExport;
@@ -29,6 +30,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $listReasons = MstDropdowns::where('category', 'Reason Blacklist')->get();
+        $departments = MstDepartment::all();
         if ($request->ajax()) {
             $datas = Employee::select(
                 'employees.*',
@@ -49,7 +51,7 @@ class EmployeeController extends Controller
 
         //Audit Log
         $this->auditLogs('View List Employee');
-        return view('employee.index', compact('listReasons'));
+        return view('employee.index', compact('listReasons', 'departments'));
     }
 
     public function detail($id)
@@ -201,8 +203,12 @@ class EmployeeController extends Controller
         }
     }
 
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new EmployeeExport, 'employee_report.xlsx');
+        $departmentIds = $request->input('departments', []);
+        $status = $request->input('status', 'all');
+        $date = now()->format('Ymd_His');
+        $filename = "employee_report_{$date}.xlsx";
+        return Excel::download(new EmployeeExport($departmentIds, $status), $filename);
     }
 }

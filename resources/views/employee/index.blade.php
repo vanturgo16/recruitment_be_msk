@@ -16,9 +16,58 @@
         <div class="card-body">
             <div class="row mb-2">
                 <div class="col-12 justify-content-end d-flex">
-                    <a href="{{ route('employee.export.excel') }}" class="btn btn-success">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExportExcel">
                         <i class="fas fa-file-excel"></i> Download Excel
-                    </a>
+                    </button>
+                </div>
+            </div>
+            <!-- Modal Export Excel -->
+            <div class="modal fade" id="modalExportExcel" tabindex="-1" aria-labelledby="modalExportExcelLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="GET" action="{{ route('employee.export.excel') }}" id="formExportExcel">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalExportExcelLabel">Export Excel - Department Filter</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-2">
+                                    <label class="form-label">Select Department:</label>
+                                    <div style="max-height:300px;overflow:auto;">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="checkAllDept">
+                                            <label class="form-check-label fw-bold" for="checkAllDept">All Departments</label>
+                                        </div>
+                                        @foreach($departments as $dept)
+                                            <div class="form-check">
+                                                <input class="form-check-input dept-checkbox" type="checkbox" name="departments[]" value="{{ $dept->id }}" id="dept_{{ $dept->id }}">
+                                                <label class="form-check-label" for="dept_{{ $dept->id }}">{{ $dept->dept_name }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Employee Status:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" id="status_all" value="all" checked>
+                                        <label class="form-check-label" for="status_all">All Status</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" id="status_active" value="active">
+                                        <label class="form-check-label" for="status_active">Active</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="status" id="status_inactive" value="inactive">
+                                        <label class="form-check-label" for="status_inactive">Inactive</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success"><i class="fas fa-file-excel"></i> Download Excel</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             <table class="table table-bordered dt-responsive nowrap w-100" id="ssTable">
@@ -112,6 +161,19 @@
                 dataTable.columns.adjust().draw();
                 window.dispatchEvent(new Event('resize'));
             }, 10);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#checkAllDept').on('change', function() {
+            $('.dept-checkbox').prop('checked', $(this).is(':checked'));
+        });
+        $('.dept-checkbox').on('change', function() {
+            if ($('.dept-checkbox:checked').length === $('.dept-checkbox').length) {
+                $('#checkAllDept').prop('checked', true);
+            } else {
+                $('#checkAllDept').prop('checked', false);
+            }
         });
     });
 </script>
