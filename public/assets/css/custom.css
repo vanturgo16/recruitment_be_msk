@@ -1,0 +1,184 @@
+.drpdwn:hover {
+    background-color: #4e73df;
+    color: #ffff;
+}
+.drpdwn-dgr:hover {
+    background-color: red;
+    color: #ffff;
+}
+.drpdwn-scs:hover {
+    background-color: rgb(0, 185, 52);
+    color: #ffff;
+}
+.dropdown-menu2 {
+    background-color: #f3f3f3;
+    border: 0.1rem solid #5a5c68;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.586);
+}
+[data-bs-theme="dark"] .dropdown-menu2 {
+    background-color: #2c2f33;
+    border: 0.1rem solid #888;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+.truncate-text {
+    white-space: normal;
+}
+.left-align {
+    text-align: left;
+}
+.text-bold {
+    font-weight: bold;
+}
+
+.select2-selection__rendered {
+    line-height: 35px !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px !important;
+}
+
+.select2-selection__arrow {
+    height: 35px !important;
+}
+.modal-header {
+    background-color: #5156be;
+    color: white;
+    border-bottom: none;
+}
+
+.modal-header .modal-title {
+    color: inherit;
+}
+
+.modal-header button.btn-close {
+    background-color: #ffffff;
+}
+.lmt {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: calc(6ch + 1em);
+}
+
+/* MAIN CARD SCROLL */
+.contentScroll {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+@media (min-height: 0px) {
+    .contentScroll {
+        height: 0vh;
+    }
+}
+@media (min-height: 200px) {
+    .contentScroll {
+        height: 10vh;
+    }
+}
+@media (min-height: 300px) {
+    .contentScroll {
+        height: 50vh;
+    }
+}
+@media (min-height: 500px) {
+    .contentScroll {
+        height: 55vh;
+    }
+}
+@media (min-height: 600px) {
+    .contentScroll {
+        height: 60vh;
+    }
+}
+@media (min-height: 700px) {
+    .contentScroll {
+        height: 63vh;
+    }
+}
+@media (min-height: 750px) {
+    .contentScroll {
+        height: 65vh;
+    }
+}
+@media (min-height: 800px) {
+    .contentScroll {
+        height: 73vh;
+    }
+}
+@media (min-height: 900px) {
+    .contentScroll {
+        height: 78vh;
+    }
+}
+.footer-text {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card {
+    border: 1px solid #ff000d36;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* BG COLOR CARD */
+body:not([data-bs-theme="dark"]) .header-detail-a  {
+    background-color: #dddddd;
+}
+body:not([data-bs-theme="dark"]) .body-detail-a  {
+    background-color: #eeeeee;
+}
+/* Dark Theme */
+body[data-bs-theme="dark"] .header-detail-a  {
+    background-color: #383d3b;
+}
+body[data-bs-theme="dark"] .body-detail-a  {
+    background-color: #495057;
+}
+
+.card-profile-image {
+    text-align: center;
+}
+.card-profile-image img {
+    margin: 8px 0;
+    max-width: 180px;
+    border-radius: 0.35rem;
+    transition: all 0.2s ease-in-out;
+}
+@media (max-width: 767.98px) {
+    .card-profile-image img {
+        max-width: 150px;
+    }
+}
+
+.bg-company {
+    position: relative;
+    background: url('/assets/images/background/MSK.png') no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+    z-index: auto;
+}
+.bg-company::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9); /* Default: white transparent */
+    z-index: 0;
+}
+/* Dark theme = black transparent overlay */
+[data-bs-theme="dark"] .bg-company::before {
+    background-color: rgba(0, 0, 0, 0.9); /* Dark: black transparent */
+}
+
