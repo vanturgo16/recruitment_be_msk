@@ -105,9 +105,9 @@
                                                             <span class="badge bg-danger">REJECTED</span>
                                                         @endif
                                                     </div>
-                                                    <div class="mb-2">
+                                                    {{-- <div class="mb-2">
                                                         <a href="{{ url($schedule->result_attachment) }}" class="btn btn-info btn-sm"><i class="fas fa-download"></i> Download PDF Result</a>
-                                                    </div>
+                                                    </div> --}}
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -216,10 +216,10 @@
                                                     <label class="form-check-label" for="rejectRadio">Reject</label>
                                                 </div>
                                             </div>
-                                            <div class="mb-3">
+                                            {{-- <div class="mb-3">
                                                 <label class="form-label">Result Attachment <span class="text-danger">*Max 500 Kb</span></label>
                                                 <input type="file" class="form-control" value="" name="result_attachment" readonly>
-                                            </div>
+                                            </div> --}}
                                             <div class="mb-3">
                                                 <label fclass="form-label">Result Notes</label>
                                                 <textarea name="result_notes" class="form-control"></textarea>
