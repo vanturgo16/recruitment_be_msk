@@ -144,14 +144,14 @@ class OfferingScheduleController extends Controller
     {
         //dd($id);
         $request->validate([
-            'result_attachment' => 'required|mimes:pdf|max:500',
+            //'result_attachment' => 'required|mimes:pdf|max:500',
             'result_notes' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('result_attachment')) {
-            $path = $request->file('result_attachment');
-            $attPath = $path->move('storage/resultOffering', $path->hashName());
-        }
+        // if ($request->hasFile('result_attachment')) {
+        //     $path = $request->file('result_attachment');
+        //     $attPath = $path->move('storage/resultOffering', $path->hashName());
+        // }
 
         $userId = $user = Auth::user()->id;
         DB::beginTransaction();
@@ -163,7 +163,7 @@ class OfferingScheduleController extends Controller
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
                 // 2. Perbarui atribut-atribut model
-                $schedule->result_attachment = $attPath->getPath() . '/' . $attPath->getFilename();
+                //$schedule->result_attachment = $attPath->getPath() . '/' . $attPath->getFilename();
                 $schedule->result_notes = $request->result_notes;
                 $schedule->approved_by_1 = $userId; // Ini adalah nilai yang Anda cari
                 $schedule->offering_status = $request->approval_action;
