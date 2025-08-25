@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Candidate;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use App\Imports\EmployeeImport;
-use Maatwebsite\Excel\Facades\Excel;
 
 // Traits
 use App\Traits\AuditLogsTrait;
@@ -17,7 +15,7 @@ use App\Models\Blacklist;
 use App\Models\Employee;
 use App\Models\JobApply;
 use App\Models\MainProfile;
-use App\Models\MainProfile;
+use App\Models\Candidate;
 use App\Models\MstDropdowns;
 use App\Models\User;
 use App\Models\MstDepartment;
@@ -25,7 +23,6 @@ use App\Models\MstDepartment;
 // Export
 use App\Exports\EmployeeExport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\Candidate;
 
 class EmployeeController extends Controller
 {
