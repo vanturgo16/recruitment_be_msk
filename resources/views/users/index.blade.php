@@ -110,6 +110,9 @@
                     orderable: true,
                     searchable: true,
                     className: 'align-top text-center',
+                    render: function (data, type, row) {
+                        return data === null ? 0 : data;
+                    }
                 },
                 {
                     data: 'last_seen',

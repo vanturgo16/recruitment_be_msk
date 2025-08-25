@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
@@ -88,6 +89,15 @@ class MstPositionController extends Controller
                     'hie_level' => $request->hie_level,
                     'notes' => $request->notes
                 ]);
+
+                if ($dataBefore->hie_level != $request->hie_level) {
+                    $empIds = Employee::where('id_position', $id)->pluck('id');
+                    if ($empIds->isNotEmpty()) {
+                        User::whereIn('id_emp', $empIds)->update([
+                            'hie_level' => $request->hie_level
+                        ]);
+                    }
+                }
 
                 // Audit Log
                 $this->auditLogs('Update Position ID: ' . $id);

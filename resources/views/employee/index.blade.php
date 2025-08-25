@@ -6,7 +6,40 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-4"></div>
+                <div class="col-4">
+                    @if(Auth::user()->role == 'Super Admin')
+                        <a  href="{{ url($template->path) }}" download="{{ $template->file_name }}" type="button" class="btn btn-success waves-effect btn-label waves-light"><i class="mdi mdi-download label-icon"></i> Template</a>
+                        <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#import"><i class="mdi mdi-import label-icon"></i> Import Excel</button>
+                        {{-- Modal Import --}}
+                        <div class="modal fade" id="import" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-top modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Import Employee Data</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form class="formLoad" action="{{ route('employee.importData') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="modal-body py-8 px-4" style="max-height: 67vh; overflow-y: auto;">
+                                            <div class="row">
+                                                <div class="col-lg-12 mb-3">
+                                                    <label class="form-label">Data Excel</label> <label class="text-danger">*</label>
+                                                    <input class="form-control" name="file" type="file" accept=".xls,.xlsx" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                                            <button type="submit" class="btn btn-success waves-effect btn-label waves-light">
+                                                <i class="mdi mdi-import label-icon"></i>Import
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
                 <div class="col-4">
                     <div class="text-center">
                         <h4 class="text-bold">{{ __('messages.emp_list') }}</h4>

@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 
 // Mail
 use App\Mail\SendEmailPassword;
-use App\Models\Employee;
 // Traits
 use App\Traits\AuditLogsTrait;
 
@@ -19,6 +18,9 @@ use App\Models\User;
 use App\Models\MstDropdowns;
 use App\Models\MstRules;
 use App\Models\MstEmployees;
+use App\Models\Candidate;
+use App\Models\Employee;
+use App\Models\MstPosition;
 
 class MstUserController extends Controller
 {
@@ -88,15 +90,33 @@ class MstUserController extends Controller
         try {
             $password = $this->generateRandomPassword(8);
             //search id_emp by email
-            $id_emp = Employee::where('email', $request->email)->value('id'); 
+            $emp = Employee::where('email', $request->email)->first();
+            if (!$emp) {
+                return redirect()->back()->with(['fail' => 'Employee not found for this email']);
+            }
+            $hie_level = MstPosition::where('id', $emp->id_position)->value('hie_level');
+            if (!$hie_level) {
+                return redirect()->back()->with(['fail' => 'Hierarchy level not found for employee position']);
+            }
+            $candidate = Candidate::where('id_emp', $emp->id)->first();
+            if (!$candidate) {
+                return redirect()->back()->with(['fail' => 'Candidate not found for this email']);
+            }
 
-            User::create([
-                'id_emp' => $id_emp,
+            $user = User::create([
+                'id_candidate' => $candidate->id,
+                'id_emp' => $emp->id,
+                'hie_level' => $hie_level,
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($password),
                 'is_active' => 1,
                 'role' => $request->role
+            ]);
+
+            // Update Candidate
+            Candidate::where('id_emp', $emp->id)->update([
+                'id_user' => $user->id
             ]);
 
             // [ MAILING ]
@@ -170,6 +190,10 @@ class MstUserController extends Controller
         }
 
         $iduser = decrypt($id);
+        if(User::where('email', $request->email)->where('id', '!=', $iduser)->exists()){
+            return redirect()->back()->withInput()->with(['fail' => 'Email has already registered']);
+        }
+
         $dataBefore = User::where('id', $iduser)->first();
         $dataBefore->name = $request->name;
         $dataBefore->email = $request->email;
@@ -183,6 +207,12 @@ class MstUserController extends Controller
                     'email' => $request->email,
                     'role' => $request->role
                 ]);
+
+                if($dataBefore->email != $request->email){
+                    Employee::where('id', $dataBefore->id_emp)->update([
+                        'email' => $request->email
+                    ]);
+                }
 
                 //Audit Log
                 $this->auditLogs('Update User (' . $dataBefore->email . ')');
