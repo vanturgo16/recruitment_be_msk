@@ -48,7 +48,7 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3">
-                                                <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Ubah Password</button>
+                                                <button class="btn btn-danger w-100 waves-effect waves-light" type="submit">Ubah Password</button>
                                             </div>
                                         </form>
                                     </div>
@@ -63,18 +63,12 @@
                     </div>
                     <div class="col-xxl-9 col-lg-8 col-md-7">
                         <div class="auth-bg pt-md-5 p-4 d-flex" style="background-image: url('{{ asset('assets/images/background/MSK.png') }}');">
-                            <div class="bg-overlay bg-primary"></div>
+                            <div class="bg-overlay bg-secondary-subtle" style="opacity: 0.85"></div>
+                            <!-- bubble effect -->
                             <ul class="bg-bubbles">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
+                                @foreach(range(1, 10) as $i)
+                                    <li></li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>

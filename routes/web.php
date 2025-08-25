@@ -141,6 +141,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/deactivate/{id}', 'deactivate')->name('employee.deactivate');
             Route::post('/submit/{id_candidate}', 'submitEmployee')->name('employee.submit');
             Route::get('/export/excel', 'exportExcel')->name('employee.export.excel');
+            Route::post('/import', 'importData')->name('employee.importData');
         });
     });
     // BLACKLIST
