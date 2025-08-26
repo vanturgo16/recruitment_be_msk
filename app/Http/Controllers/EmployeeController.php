@@ -218,7 +218,8 @@ class EmployeeController extends Controller
         return Excel::download(new EmployeeExport($departmentIds, $status), $filename);
     }
 
-    public function importData(Request $request) {
+    public function importData(Request $request) 
+    {
         $request->validate([
             'file' => 'required|mimes:xls,xlsx',
         ]);
@@ -235,7 +236,7 @@ class EmployeeController extends Controller
             foreach ($import->validRows as $item) {
                 $emp = Employee::create([
                     'emp_no' => $item['emp_no'],
-                    'email' => $item['email'],
+                    'email' => $item['email_office'],
                     'id_position' => $item['id_position'],
                     'placement_id' => $item['placement_id'],
                     'reportline_1' => $item['reportline_1'],

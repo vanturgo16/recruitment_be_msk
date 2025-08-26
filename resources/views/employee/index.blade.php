@@ -7,7 +7,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-4">
-                    @if(Auth::user()->role == 'Super Admin')
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'Admin', 'Admin HR']))
                         <a  href="{{ url($template->path) }}" download="{{ $template->file_name }}" type="button" class="btn btn-success waves-effect btn-label waves-light"><i class="mdi mdi-download label-icon"></i> Template</a>
                         <button type="button" class="btn btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#import"><i class="mdi mdi-import label-icon"></i> Import Excel</button>
                         {{-- Modal Import --}}

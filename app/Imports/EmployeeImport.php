@@ -25,26 +25,27 @@ class EmployeeImport implements ToCollection, WithStartRow
     protected $seenEmpNo = [];
     protected $seenIdCardNo = [];
     protected $seenEmail = [];
+    protected $seenEmailOffice = [];
 
     public function startRow(): int
     {
-        return 3; // start reading from row 3
+        return 2; // start reading from row 3
     }
 
     public function collection(Collection $rows)
     {
         foreach ($rows as $index => $row) {
-            $excelRow = $index + 3; // Excel actual row number
+            $excelRow = $index + 2; // Excel actual row number
 
             $birthDate = is_numeric($row[6])
                 ? Date::excelToDateTimeObject($row[6])->format('Y-m-d')
                 : $row[6];
 
-            $joinDate = is_numeric($row[12])
-                ? Date::excelToDateTimeObject($row[12])->format('Y-m-d')
-                : $row[12];
+            $joinDate = is_numeric($row[13])
+                ? Date::excelToDateTimeObject($row[13])->format('Y-m-d')
+                : $row[13];
 
-            // mapping columns A..V
+            // mapping columns A..W
             $data = [
                 'emp_no'          => $row[0],
                 'id_card_no'      => $row[1],
@@ -55,24 +56,25 @@ class EmployeeImport implements ToCollection, WithStartRow
                 'birthdate'       => $birthDate,
                 'marriage_status' => $row[7],
                 'email'           => $row[8],
-                'phone'           => $row[9],
-                'id_card_address' => $row[10],
-                'domicile_address'=> $row[11],
+                'email_office'    => $row[9],
+                'phone'           => $row[10],
+                'id_card_address' => $row[11],
+                'domicile_address'=> $row[12],
                 'join_date'       => $joinDate,
-                'division'        => $row[13],
-                'department'      => $row[14],
-                'position'        => $row[15],
-                'placement'       => $row[16],
-                'reportline_1'    => $row[17],
-                'reportline_2'    => $row[18],
-                'reportline_3'    => $row[19],
-                'reportline_4'    => $row[20],
-                'reportline_5'    => $row[21],
+                'division'        => $row[14],
+                'department'      => $row[15],
+                'position'        => $row[16],
+                'placement'       => $row[17],
+                'reportline_1'    => $row[18],
+                'reportline_2'    => $row[19],
+                'reportline_3'    => $row[20],
+                'reportline_4'    => $row[21],
+                'reportline_5'    => $row[22],
             ];
 
             // 1. validate input fields
             $validator = Validator::make($data, [
-                'emp_no'          => 'required|string',
+                'emp_no'          => 'required',
                 'id_card_no'      => 'required|integer|max:99999999999999999999',
                 'first_name'      => 'required|string|max:50',
                 'last_name'       => 'nullable|string|max:50',
@@ -81,7 +83,8 @@ class EmployeeImport implements ToCollection, WithStartRow
                 'birthdate'       => 'required|date_format:Y-m-d',
                 'marriage_status' => 'required|in:Single,Married,Divorce',
                 'email'           => 'required|email',
-                'phone'           => 'required|string',
+                'email_office'    => 'required|email',
+                'phone'           => 'required',
                 'id_card_address' => 'required|string|max:255',
                 'domicile_address'=> 'required|string|max:255',
                 'join_date'       => 'required|date_format:Y-m-d',
@@ -116,16 +119,25 @@ class EmployeeImport implements ToCollection, WithStartRow
                 $this->errors[] = "row {$excelRow} = Duplicate Emp. Email inside Excel";
                 continue;
             }
+            if (in_array($data['email_office'], $this->seenEmailOffice)) {
+                $this->errors[] = "row {$excelRow} = Duplicate Emp. Email Office inside Excel";
+                continue;
+            }
             $this->seenEmpNo[] = $data['emp_no'];
             $this->seenIdCardNo[] = $data['id_card_no'];
             $this->seenEmail[] = $data['email'];
+            $this->seenEmailOffice[] = $data['email_office'];
             // Check duplicates in DB
             if (Employee::where('emp_no', $data['emp_no'])->exists()) {
                 $this->errors[] = "row {$excelRow} = Emp. No., already exists in Database";
                 continue;
             }
-            if (Employee::where('email', $data['email'])->exists()) {
+            if (Candidate::where('email', $data['email'])->exists()) {
                 $this->errors[] = "row {$excelRow} = Emp. Email already exists in Database";
+                continue;
+            }
+            if (Employee::where('email', $data['email_office'])->exists()) {
+                $this->errors[] = "row {$excelRow} = Emp. Email Office already exists in Database";
                 continue;
             }
             if (Candidate::where('id_card_no', $data['id_card_no'])->exists()) {
