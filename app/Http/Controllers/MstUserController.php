@@ -100,7 +100,7 @@ class MstUserController extends Controller
             }
             $candidate = Candidate::where('id_emp', $emp->id)->first();
             if (!$candidate) {
-                return redirect()->back()->with(['fail' => 'Candidate not found for this email']);
+                return redirect()->back()->with(['fail' => 'Candidate Data not found for this email']);
             }
 
             $user = User::create([
