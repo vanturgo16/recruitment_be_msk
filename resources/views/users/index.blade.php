@@ -21,10 +21,6 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-lg-6 mb-3">
-                                                    <label class="form-label">{{ __('messages.name') }}</label> <label class="text-danger">*</label>
-                                                    <input class="form-control" type="text" name="name" placeholder="Input {{ __('messages.name') }}.." required>
-                                                </div>
-                                                <div class="col-lg-6 mb-3">
                                                     <label class="form-label">Email</label> <label class="text-danger">*</label>
                                                     <input class="form-control" type="email" name="email" placeholder="Input Email.." required>
                                                 </div>

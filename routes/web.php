@@ -208,7 +208,8 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/{id}/update', 'update')->name('interview_schedule.update');
             Route::post('/{id}/update/result', 'updateResult')->name('interview_schedule.update.result');
             Route::post('/{id}/delete', 'destroy')->name('interview_schedule.delete');
-            Route::post('submit-test/{id}', 'submitToTest')->name('interview_schedule.submitTest');
+            //Route::post('submit-test/{id}', 'submitToTest')->name('interview_schedule.submitTest');
+            Route::post('submit-offer/{id}', 'submitToOffer')->name('interview_schedule.submitOffer');
         });
     });
 
@@ -222,7 +223,6 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/{id}/update', 'update')->name('test_schedule.update');
             Route::post('/{id}/update/result', 'updateResult')->name('test_schedule.update.result');
             Route::post('/{id}/delete', 'destroy')->name('test_schedule.delete');
-            Route::post('submit-offer/{id}', 'submitToOffer')->name('test_schedule.submitOffer');
         });
     });
 

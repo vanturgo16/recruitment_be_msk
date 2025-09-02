@@ -441,6 +441,7 @@ class JoblistController extends Controller
         if ($action === 'approve') {
             $decision = 'APPROVED';
             $jobApply->is_approved_1 = 1;
+            $jobApply->progress_status = 'TESTED'; //langsung interview tanpa approval head
         } else {
             $decision = 'REJECTED';
             $jobApply->is_approved_1 = 0;
@@ -475,70 +476,71 @@ class JoblistController extends Controller
         $jobApply->approved_reason_1 = $request->input('approved_reason_1');
         $jobApply->save();
 
-        //send mail to internal user
-        $mailData = [
-            'current_phase'     => 'REVIEWED ADMINISTRATION',
-            'job_user'          => $jobApply->joblist->userRequest->name,
-            'candidate_name'    => $jobApply->candidate->candidate_first_name,
-            'position_applied'  => $jobApply->joblist->position->position_name,
-            'created_at'        => $jobApply->created_at,
-            'status'            => 'NEED APPROVAL TO INTERVIEW',
-        ];
+        // //send mail to internal user (dimatikan karna tidak butuh approval head)
+        // $mailData = [
+        //     'current_phase'     => 'REVIEWED ADMINISTRATION',
+        //     'job_user'          => $jobApply->joblist->userRequest->name,
+        //     'candidate_name'    => $jobApply->candidate->candidate_first_name,
+        //     'position_applied'  => $jobApply->joblist->position->position_name,
+        //     'created_at'        => $jobApply->created_at,
+        //     'status'            => 'NEED APPROVAL TO INTERVIEW',
+        // ];
         
-        // Initiate Variable
-        $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
-        $toemail = ($development == 1) 
-        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
-        : $jobApply->joblist->userRequest->email;
+        // // Initiate Variable
+        // $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+        // $toemail = ($development == 1) 
+        // ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+        // : $jobApply->joblist->userRequest->email;
         
-        // [ MAILING ]
-        Mail::to($toemail)->send(new NotificationInternal($mailData));
+        // // [ MAILING ]
+        // Mail::to($toemail)->send(new NotificationInternal($mailData));
 
         return redirect()->back()->with('success', 'Applicant administration approval processed successfully.');
     }
 
-    public function jobAppliedApproveHead(Request $request, $id)
-    {
-        $idJobApply = decrypt($id);
-        $jobApply = JobApply::findOrFail($idJobApply);
-        $action = $request->input('approval_action_2');
-        if ($action === 'approve') {
-            $decision = 'APPROVED';
-            $jobApply->is_approved_2 = 1;
-            $jobApply->progress_status = 'INTERVIEW';
-        } else {
-            $decision = 'REJECTED';
-            $jobApply->is_approved_2 = 0;
-            $jobApply->status = 2;
+    //dimatikan karna tidak butuh approval head
+    // public function jobAppliedApproveHead(Request $request, $id)
+    // {
+    //     $idJobApply = decrypt($id);
+    //     $jobApply = JobApply::findOrFail($idJobApply);
+    //     $action = $request->input('approval_action_2');
+    //     if ($action === 'approve') {
+    //         $decision = 'APPROVED';
+    //         $jobApply->is_approved_2 = 1;
+    //         $jobApply->progress_status = 'INTERVIEW';
+    //     } else {
+    //         $decision = 'REJECTED';
+    //         $jobApply->is_approved_2 = 0;
+    //         $jobApply->status = 2;
 
-            $mailData = [
-                'candidate_name' => $jobApply->candidate->candidate_first_name,
-                'candidate_email' => $jobApply->candidate->email,
-                'position_applied' => $jobApply->joblist->position->position_name,
-                'created_at' => $jobApply->created_at,
-                'status' => $jobApply->progress_status,
-                'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
-            ];
+    //         $mailData = [
+    //             'candidate_name' => $jobApply->candidate->candidate_first_name,
+    //             'candidate_email' => $jobApply->candidate->email,
+    //             'position_applied' => $jobApply->joblist->position->position_name,
+    //             'created_at' => $jobApply->created_at,
+    //             'status' => $jobApply->progress_status,
+    //             'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+    //         ];
 
-            // Initiate Variable
-            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
-            $toemail = ($development == 1) 
-                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
-                    : $jobApply->candidate->email;
+    //         // Initiate Variable
+    //         $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+    //         $toemail = ($development == 1) 
+    //                 ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+    //                 : $jobApply->candidate->email;
 
-            // [ MAILING ]
-            Mail::to($toemail)->send(new Notification($mailData));
+    //         // [ MAILING ]
+    //         Mail::to($toemail)->send(new Notification($mailData));
 
-            //phaseLog
-            $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_2'), 'Reject approval after review administration by department head/user', '1');
-        }
-        $jobApply->approved_by_2 = Auth::user()->id;
-        $jobApply->approved_at_2 = now();
-        $jobApply->approved_reason_2 = $request->input('approved_reason_2');
-        $jobApply->save();
+    //         //phaseLog
+    //         $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_2'), 'Reject approval after review administration by department head/user', '1');
+    //     }
+    //     $jobApply->approved_by_2 = Auth::user()->id;
+    //     $jobApply->approved_at_2 = now();
+    //     $jobApply->approved_reason_2 = $request->input('approved_reason_2');
+    //     $jobApply->save();
 
-        return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
-    }
+    //     return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
+    // }
 
     public function jobAppliedApplicantInfo(Request $request, $id)
     {
