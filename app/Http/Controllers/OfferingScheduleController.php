@@ -43,7 +43,7 @@ class OfferingScheduleController extends Controller
             }
         }
 
-        if (isset($departmentName) && $departmentName) {
+        if (isset($departmentName) && $departmentName && $user->role == 'Employee') {
             // joblist memiliki relasi ke department (yaitu joblist.department_id)
             $schedules->whereHas('jobapply.joblist.position.department', function ($query) use ($departmentName) {
                 $query->where('dept_name', $departmentName);
@@ -162,33 +162,24 @@ class OfferingScheduleController extends Controller
 
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
-                // 2. Perbarui atribut-atribut model
-                //$schedule->result_attachment = $attPath->getPath() . '/' . $attPath->getFilename();
-                $schedule->result_notes = $request->result_notes;
-                $schedule->approved_by_1 = $userId; // Ini adalah nilai yang Anda cari
-                $schedule->offering_status = $request->approval_action;
-
-                // 3. Simpan perubahan ke database
-                $schedule->save();
-
-                //4. send mail to internal user
-                $mailData = [
-                    'current_phase'     => 'OFFERING',
-                    'job_user'          => $schedule->jobApply->joblist->userRequest->name,
-                    'candidate_name'    => $schedule->jobApply->candidate->candidate_first_name,
-                    'position_applied'  => $schedule->jobApply->joblist->position->position_name,
-                    'created_at'        => $schedule->jobApply->created_at,
-                    'status'            => 'NEED APPROVAL TO MEDICAL CHECK UP'
-                ];
+                //4. send mail to internal user (dimatiin karna tidak perlu approval head)
+                // $mailData = [
+                //     'current_phase'     => 'OFFERING',
+                //     'job_user'          => $schedule->jobApply->joblist->userRequest->name,
+                //     'candidate_name'    => $schedule->jobApply->candidate->candidate_first_name,
+                //     'position_applied'  => $schedule->jobApply->joblist->position->position_name,
+                //     'created_at'        => $schedule->jobApply->created_at,
+                //     'status'            => 'NEED APPROVAL TO MEDICAL CHECK UP'
+                // ];
                 
-                // Initiate Variable
-                $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
-                $toemail = ($development == 1) 
-                ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
-                : $schedule->jobApply->joblist->userRequest->email;
+                // // Initiate Variable
+                // $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+                // $toemail = ($development == 1) 
+                // ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+                // : $schedule->jobApply->joblist->userRequest->email;
                 
-                // [ MAILING ]
-                Mail::to($toemail)->send(new NotificationInternal($mailData));
+                // // [ MAILING ]
+                // Mail::to($toemail)->send(new NotificationInternal($mailData));
 
                 $id_jobapply = $schedule->id_jobapply;              
             }
@@ -200,7 +191,7 @@ class OfferingScheduleController extends Controller
 
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'status'            => $status
+                        'status' => $status
                     ]);
 
                 //Inactive User Candidate
@@ -227,6 +218,25 @@ class OfferingScheduleController extends Controller
                 // [ MAILING ]
                 Mail::to($toemail)->send(new Notification($mailData));
             }
+            else{
+                $progressStatus = 'MCU';
+                $statusReadyMCU = '1';
+
+                //Perbarui atribut-atribut model
+                //$schedule->result_attachment = $attPath->getPath() . '/' . $attPath->getFilename();
+                $schedule->result_notes = $request->result_notes;
+                $schedule->approved_by_1 = $userId; // Ini adalah nilai yang Anda cari
+                $schedule->offering_status = $request->approval_action;
+                $schedule->ready_mcu = $statusReadyMCU;
+
+                //Simpan perubahan ke database
+                $schedule->save();
+
+                $updateJobApply = JobApply::where('id', $id_jobapply)
+                    ->update([
+                        'progress_status' => $progressStatus
+                    ]);
+            }
 
             DB::commit();
             return redirect()->route('offering_schedule.index')->with('success', 'Offering result saved successfully.');
@@ -237,88 +247,89 @@ class OfferingScheduleController extends Controller
         }
     }
 
-    public function submitToMCU(Request $request, $id){
-        $id = decrypt($id);
+    //gak dipake flow nya berubah
+    // public function submitToMCU(Request $request, $id){
+    //     $id = decrypt($id);
         
-        DB::beginTransaction();
-        try {
-            $userId = $user = Auth::user()->id;
-            $now = now();
+    //     DB::beginTransaction();
+    //     try {
+    //         $userId = $user = Auth::user()->id;
+    //         $now = now();
             
-            //update table Offering schedule
-            // 1. Temukan record berdasarkan ID
-            $schedule = OfferingSchedule::find($id);
+    //         //update table Offering schedule
+    //         // 1. Temukan record berdasarkan ID
+    //         $schedule = OfferingSchedule::find($id);
 
-            if($request->approval_action == '1'){
-                $progressStatus = 'MCU';
-                $statusReadyMCU = '1';
-                $status = '1';
-            }
+    //         if($request->approval_action == '1'){
+    //             $progressStatus = 'MCU';
+    //             $statusReadyMCU = '1';
+    //             $status = '1';
+    //         }
 
-            if($request->approval_action == '2'){
-                $progressStatus = 'REJECTED';
-                $statusReadyMCU = '2';
-                $status = '2';
+    //         if($request->approval_action == '2'){
+    //             $progressStatus = 'REJECTED';
+    //             $statusReadyMCU = '2';
+    //             $status = '2';
 
-                //Inactive User Candidate
-                $email = $schedule->jobApply->candidate->email;
+    //             //Inactive User Candidate
+    //             $email = $schedule->jobApply->candidate->email;
 
-                $mailData = [
-                    'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
-                    'candidate_email' => $schedule->jobApply->candidate->email,
-                    'position_applied' => $schedule->jobApply->joblist->position->position_name,
-                    'created_at' => $schedule->jobApply->created_at,
-                    'status' => $progressStatus,
-                    'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
-                ];
+    //             $mailData = [
+    //                 'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
+    //                 'candidate_email' => $schedule->jobApply->candidate->email,
+    //                 'position_applied' => $schedule->jobApply->joblist->position->position_name,
+    //                 'created_at' => $schedule->jobApply->created_at,
+    //                 'status' => $progressStatus,
+    //                 'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+    //             ];
 
-                // Initiate Variable
-                $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
-                $toemail = ($development == 1) 
-                        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
-                        : $schedule->jobApply->candidate->email;
+    //             // Initiate Variable
+    //             $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+    //             $toemail = ($development == 1) 
+    //                     ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+    //                     : $schedule->jobApply->candidate->email;
 
-                // [ MAILING ]
-                Mail::to($toemail)->send(new Notification($mailData));
-            }
+    //             // [ MAILING ]
+    //             Mail::to($toemail)->send(new Notification($mailData));
+    //         }
 
-            // Pastikan record ditemukan sebelum melanjutkan
-            if ($schedule) {
-                // 2. Perbarui atribut-atribut model
-                $schedule->ready_mcu = $statusReadyMCU;
-                $schedule->offering_status = $status;
+    //         // Pastikan record ditemukan sebelum melanjutkan
+    //         if ($schedule) {
+    //             // 2. Perbarui atribut-atribut model
+    //             $schedule->ready_mcu = $statusReadyMCU;
+    //             $schedule->offering_status = $status;
 
-                // 3. Simpan perubahan ke database
-                $schedule->save();
-                $id_jobapply = $schedule->id_jobapply;              
-            }
+    //             // 3. Simpan perubahan ke database
+    //             $schedule->save();
+    //             $id_jobapply = $schedule->id_jobapply;              
+    //         }
 
-            //update table Job Apply
-            if($progressStatus == 'REJECTED'){
-                $updateJobApply = JobApply::where('id', $id_jobapply)
-                    ->update([
-                        'status'                    => $status
-                    ]);
+    //         //update table Job Apply
+    //         if($progressStatus == 'REJECTED'){
+    //             $updateJobApply = JobApply::where('id', $id_jobapply)
+    //                 ->update([
+    //                     'status'                    => $status
+    //                 ]);
 
-                //phaseLog
-                $this->logPhase($id_jobapply, $progressStatus . ' AFTER OFFERING SESSION', '', 'Reject after review result offering by department head/user', '1');
-            }
-            else{
-                $updateJobApply = JobApply::where('id', $id_jobapply)
-                    ->update([
-                        'approved_to_mcu_by_1' => $userId,
-                        'approved_to_mcu_at_1' => $now,
-                        'progress_status'           => $progressStatus
-                    ]);
-            }
-            DB::commit();
-            return redirect()->route('offering_schedule.index')->with('success', 'This Candidate is saved as ' . $progressStatus);
-        } catch (\Throwable $th) {
-            throw $th;
-            DB::rollBack();
-            return redirect()->route('offering_schedule.index')->with('fail', 'Failed update data.');
-        }
-    }
+    //             //phaseLog
+    //             $this->logPhase($id_jobapply, $progressStatus . ' AFTER OFFERING SESSION', '', 'Reject after review result offering by department head/user', '1');
+    //         }
+    //         else{
+    //             $updateJobApply = JobApply::where('id', $id_jobapply)
+    //                 ->update([
+    //                     'approved_to_mcu_by_1' => $userId,
+    //                     'approved_to_mcu_at_1' => $now,
+    //                     'progress_status'           => $progressStatus
+    //                 ]);
+    //         }
+    //         DB::commit();
+    //         return redirect()->route('offering_schedule.index')->with('success', 'This Candidate is saved as ' . $progressStatus);
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //         DB::rollBack();
+    //         return redirect()->route('offering_schedule.index')->with('fail', 'Failed update data.');
+    //     }
+    // }
 
     public function destroy($id)
     {

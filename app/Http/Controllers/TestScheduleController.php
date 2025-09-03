@@ -191,7 +191,7 @@ class TestScheduleController extends Controller
 
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'status'            => $status
+                        'status' => $status
                     ]);
                 
                 //Inactive User Candidate
