@@ -247,7 +247,7 @@ class OfferingScheduleController extends Controller
         }
     }
 
-    //gak dipake flow nya berubah
+    //gak dipake karena flow nya berubah
     // public function submitToMCU(Request $request, $id){
     //     $id = decrypt($id);
         
