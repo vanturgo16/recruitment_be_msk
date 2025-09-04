@@ -23,18 +23,19 @@
         $isApprovalHR = Auth::user()->role === 'Admin HR' && $jobApply->is_approved_1 === null;
         $isApprovalHead = Auth::user()->role === 'Employee' && in_array(Auth::user()->hie_level, [2,3]) && $jobApply->is_approved_1 === 1 && $jobApply->is_approved_2 === null;
         $progressSteps = [
-            'LAMARAN TERKIRIM' => ['icon' => 'bi-send-check', 'badge' => 'secondary', 'text' => 'dark'],
-            'REVIEW ADM'       => ['icon' => 'bi-hourglass-split', 'badge' => 'warning', 'text' => 'white'],
-            'INTERVIEW'        => ['icon' => 'bi-person-lines-fill', 'badge' => 'warning', 'text' => 'white'],
-            'TESTED'           => ['icon' => 'bi-file-earmark-text', 'badge' => 'warning', 'text' => 'white'],
-            'OFFERING'         => ['icon' => 'bi-question-circle', 'badge' => 'warning', 'text' => 'white'],
-            'MCU'              => ['icon' => 'bi-file-medical', 'badge' => 'warning', 'text' => 'white'],
-            'SIGN'             => ['icon' => 'bi-pen-fill', 'badge' => 'warning', 'text' => 'white'],
-            'HIRED'            => ['icon' => 'bi-check-circle', 'badge' => 'success', 'text' => 'white'],
-            'REJECT'           => ['icon' => 'bi-x-circle-fill', 'badge' => 'danger', 'text' => 'white'],
+            'LAMARAN TERKIRIM' => ['icon' => 'mdi-send-check', 'badge' => 'secondary', 'text' => 'dark'],
+            'REVIEW ADM'       => ['icon' => 'mdi-hourglass', 'badge' => 'warning', 'text' => 'white'],
+            'TESTED'           => ['icon' => 'mdi-file-document-outline', 'badge' => 'warning', 'text' => 'white'],
+            'INTERVIEW'        => ['icon' => 'mdi-account-tie', 'badge' => 'warning', 'text' => 'white'],
+            'OFFERING'         => ['icon' => 'mdi-help-circle-outline', 'badge' => 'warning', 'text' => 'white'],
+            'MCU'              => ['icon' => 'mdi-medical-bag', 'badge' => 'warning', 'text' => 'white'],
+            'SIGN'             => ['icon' => 'mdi-pen', 'badge' => 'warning', 'text' => 'white'],
+            'HIRED'            => ['icon' => 'mdi-check-circle', 'badge' => 'success', 'text' => 'white'],
+            'REJECT'           => ['icon' => 'mdi-close-circle', 'badge' => 'danger', 'text' => 'white'],
             // fallback/default for undefined or unknown statuses
-            'DEFAULT'          => ['icon' => 'bi-question-circle', 'badge' => 'secondary', 'text' => 'dark'],
+            'DEFAULT'          => ['icon' => 'mdi-help-circle-outline', 'badge' => 'secondary', 'text' => 'dark'],
         ];
+
     @endphp
 
     {{-- MAIN CARD --}}
@@ -46,10 +47,8 @@
             <table class="table table-bordered dt-responsive w-100">
                 <thead class="table-light">
                     <tr>
-                        <th class="align-middle text-center">Data Applicant</th>
-                        <th class="align-middle text-center">Response Screening</th>
-                        <th class="align-middle text-center">Approval Administration</th>
-                        <th class="align-middle text-center">Application Status</th>
+                        <th class="align-middle text-center">DATA APPLICANT</th>
+                        <th class="align-middle text-center">RESPONSE SCREENING</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,7 +63,30 @@
                                 <i class="mdi mdi-eye label-icon"></i> Show Response
                             </button>
                         </td>
-                        <td class="align-top">
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <table class="table table-bordered dt-responsive w-100">
+                <thead class="table-light">
+                    <tr>
+                        <th rowspan="2" class="align-middle text-center">REVIEW ADMINISTRATION</th>
+                        <th rowspan="2" class="align-middle text-center">TESTED</th>
+                        <th colspan="2" class="align-middle text-center">INTERVIEW</th>
+                        <th rowspan="2" class="align-middle text-center">OFFERING</th>
+                        <th rowspan="2" class="align-middle text-center">MEDICAL CHECK UP</th>
+                        <th rowspan="2" class="align-middle text-center">SIGNING CONTRACT</th>
+                        <th rowspan="2" class="align-middle text-center">STATUS</th>
+                    </tr>
+                    <tr>
+                        <th class="align-middle text-center">ADMIN (HR)</th>
+                        <th class="align-middle text-center">USER (DEPT. HEAD)</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr>
+                        <td class="align-top text-center">
                             @if($isApprovalHR)
                                 <div class="text-center">
                                     <button type="button" class="btn btn-sm btn-primary waves-effect btn-label waves-light" data-bs-toggle="modal" data-bs-target="#approveAdminModal">
@@ -105,36 +127,190 @@
                             @else
                                 @if((isset($mainProfile) && $mainProfile->is_approved_1 == 1) || (isset($jobApply) && $jobApply->is_approved_1 == 1))
                                     <span class="badge bg-success">Approved</span>
-                                    <span class="ms-2 text-muted small">by: {{ $approved_by_1_name ?? '-' }}</span>
-                                    <span class="ms-2 text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
-                                    @if($jobApply->approved_reason_1)
-                                        <div class="mt-1 text-muted small"><b>Reason:</b> {{ $jobApply->approved_reason_1 }}</div>
-                                    @endif
                                 @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
                                     <span class="badge bg-danger">Rejected</span>
-                                    <span class="ms-2 text-muted small">by: {{ $approved_by_1_name ?? '-' }}</span>
-                                    <span class="ms-2 text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
-                                    @if($jobApply->approved_reason_1)
-                                        <div class="mt-1 text-muted small"><b>Reason:</b> {{ $jobApply->approved_reason_1 }}</div>
-                                    @endif
                                 @else
-                                    <div class="text-center">
-                                        <span class="badge bg-secondary">Not Approved</span>
-                                    </div>
+                                    <span class="badge bg-secondary">Not Approved</span>
                                 @endif
                             @endif
                         </td>
+                    </tr>
+                    <tr>
+                        <td class="align-top">
+                            <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                            <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                        </td>
+                        <td class="align-top">
+                            @if(isset($jobApply) && $jobApply->is_approved_1 == 1)
+                                <span class="badge bg-success">Approved</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                <span class="badge bg-danger">Rejected</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @else
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">Not Approved</span>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="align-top">
+                            @if(isset($jobApply) && $jobApply->is_approved_1 == 1)
+                                <span class="badge bg-success">Approved</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                <span class="badge bg-danger">Rejected</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @else
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">Not Approved</span>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="align-top">
+                            @if(isset($jobApply) && $jobApply->is_approved_1 == 1)
+                                <span class="badge bg-success">Approved</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                <span class="badge bg-danger">Rejected</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @else
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">Not Approved</span>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="align-top">
+                            @if(isset($jobApply) && $jobApply->is_approved_1 == 1)
+                                <span class="badge bg-success">Approved</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                <span class="badge bg-danger">Rejected</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @else
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">Not Approved</span>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="align-top">
+                            @if(isset($jobApply) && $jobApply->is_approved_1 == 1)
+                                <span class="badge bg-success">Approved</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                <span class="badge bg-danger">Rejected</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @else
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">Not Approved</span>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="align-top">
+                            @if(isset($jobApply) && $jobApply->is_approved_1 == 1)
+                                <span class="badge bg-success">Approved</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @elseif(isset($jobApply) && $jobApply->is_approved_1 === 0)
+                                <span class="badge bg-danger">Rejected</span><br>
+                                <span class="text-muted small">{{ $approved_by_1_name ?? '-' }}</span><br>
+                                <span class="text-muted small">at: {{ $mainProfile->approved_at_1 ?? $jobApply->approved_at_1 ?? '-' }}</span>
+                            @else
+                                <div class="text-center">
+                                    <span class="badge bg-secondary">Not Approved</span>
+                                </div>
+                            @endif
+                        </td>
+                        
                         <td class="align-top text-center">
                             @php
                                 $status = $jobApply->status == 2 ? 'REJECT' : $jobApply->progress_status;
                                 $step = $progressSteps[$status] ?? $progressSteps['DEFAULT'];
                             @endphp
                             <span class="badge bg-{{ $step['badge'] }} text-{{ $step['text'] }}">
-                                <i class="bi {{ $step['icon'] }}"></i> {{ $status }}
+                                <i class="mdi {{ $step['icon'] }}"></i> {{ $status }}
                             </span>
                         </td>
                     </tr>
                 </tbody>
+
+                <tfoot>
+                    <tr>
+                        <td>
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td>
+                        <td colspan="2">
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td>
+                        {{-- <td>
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td> --}}
+                        <td>
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-muted small">
+                                @if($jobApply->approved_reason_1)
+                                    <b>Reason:</b><br> {{ $jobApply->approved_reason_1 }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
         
@@ -153,7 +329,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row mb-3">
-                                    <div class="col-md-4 mb-2">
+                                    {{-- <div class="col-md-4 mb-2">
                                         <div class="fw-bold">Photo :</div>
                                         @if($mainProfile && $mainProfile->self_photo)
                                             <a href="{{ url($mainProfile->self_photo) }}" target="_blank" class="btn btn-outline-danger btn-sm"><i class="bx bx-show"></i> Current Photo</a>
@@ -168,7 +344,7 @@
                                         @else
                                             <button class="btn btn-outline-danger btn-sm" disabled><i class="bx bx-hide"></i> No CV</button>
                                         @endif
-                                    </div>
+                                    </div> --}}
                                     <div class="col-md-4 mb-2">
                                         <div class="fw-bold">Email :</div>
                                         <span>{{ $candidate->email ?? '-' }}</span>
@@ -285,6 +461,7 @@
                                 <h4 class="text-bold">Experience</h4>
                             </div>
                             <div class="card-body">
+                                @if($workExpInfo->isNotEmpty())
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-hover dt-responsive w-100" id="tableExperience">
                                         <thead class="table-light">
@@ -309,6 +486,9 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                @else
+                                    None
+                                @endif
                             </div>
                         </div>
                     </div>

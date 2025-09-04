@@ -1,5 +1,11 @@
 <?php
 return [
+    // Dashboard
+    'title_count_applicant' => 'Jumlah Lamaran Diterima',
+    'not_check' => 'Belum Dicek',
+    'in_progress' => 'Sedang Diproses',
+    'rejected' => 'Ditolak',
+    'approve' => 'Diterima / Dipekerjakan',
     // Left Bar
     'mng_user' => 'Kelola Pengguna',
     'mng_rule' => 'Kelola Aturan',

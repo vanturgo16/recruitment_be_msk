@@ -32,6 +32,12 @@ use App\Traits\UserTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
+use App\Models\TestSchedule;
+use App\Models\InterviewSchedule;
+use App\Models\OfferingSchedule;
+use App\Models\mcu_schedules;
+use App\Models\SigningSchedule;
+
 class JoblistController extends Controller
 {
     use AuditLogsTrait;
@@ -586,6 +592,33 @@ class JoblistController extends Controller
             $approved_by_2_name = $user2 ? $user2->name : $jobApply->approved_by_2;
         }
 
+        // Data Section / STEP
+        $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
+            ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
+            ->where('test_schedules.id_jobapply', $idJobApply)
+            ->first();
+        // $stepTest = InterviewSchedule::select('interview_schedules.test_status as status', 'users.name', 'interview_schedules.created_at', 'interview_schedules.result_notes as note')
+        //     ->leftjoin('users', 'interview_schedules.approved_by_1', 'users.id')
+        //     ->where('interview_schedules.id_jobapply', $idJobApply)
+        //     ->first();
+        // $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
+        //     ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
+        //     ->where('test_schedules.id_jobapply', $idJobApply)
+        //     ->first();
+        // $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
+        //     ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
+        //     ->where('test_schedules.id_jobapply', $idJobApply)
+        //     ->first();
+        // $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
+        //     ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
+        //     ->where('test_schedules.id_jobapply', $idJobApply)
+        //     ->first();
+
+        // $stepInterview = InterviewSchedule::where('id_jobapply', $idJobApply)->first();
+        // $stepOffering = OfferingSchedule::where('id_jobapply', $idJobApply)->first();
+        // $stepMCU = mcu_schedules::where('id_jobapply', $idJobApply)->first();
+        // $stepSign = SigningSchedule::where('id_jobapply', $idJobApply)->first();
+
         return view('job_applied.applicant_info', compact(
             'idJobList',
             'idJobApply',
@@ -603,7 +636,13 @@ class JoblistController extends Controller
             'expInfo',
             'jobApply',
             'approved_by_1_name',
-            'approved_by_2_name'
+            'approved_by_2_name',
+
+            // 'stepTest',
+            // 'stepInterview',
+            // 'stepOffering',
+            // 'stepMCU',
+            // 'stepSign',
         ));
     }
 }

@@ -1,5 +1,11 @@
 <?php
 return [
+    // Dashboard
+    'title_count_applicant' => 'Jumlah Lamaran Anu Katerima',
+    'not_check' => 'Teu Acan Dicek',
+    'in_progress' => 'Nuju Diproses',
+    'rejected' => 'Ditampik',
+    'approve' => 'Ditampi / Dianggo',
     // Left Bar
     'mng_user' => 'Ngatur Pamaké',
     'mng_rule' => 'Ngatur Aturan',

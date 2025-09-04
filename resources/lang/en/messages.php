@@ -7,6 +7,13 @@ return [
     'app_name' => '"Human Resource (HR) Dashboard"',
     'company_name' => 'PT Mitra Sendang Kemakmuran Banten Regional',
 
+    // Dashboard
+    'title_count_applicant' => 'Number of Applications Received',
+    'not_check' => 'Not Checked',
+    'in_progress' => 'In Progress',
+    'rejected' => 'Rejected',
+    'approve' => 'Approved / Hired',
+
     // Left Bar
     'mng_user' => 'Manage Users',
     'mng_rule' => 'Manage Rules',

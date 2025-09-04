@@ -55,6 +55,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
     Route::controller(DashboardController::class)->group(function () {
         Route::prefix('dashboard')->group(function () {
             Route::get('/', 'index')->name('dashboard');
+            Route::get('/get-data-summary', 'getDataSummary')->name('getDataSummary');
             Route::post('/', 'switchTheme')->name('switchTheme');
         });
     });
