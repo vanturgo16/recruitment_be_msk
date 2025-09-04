@@ -89,13 +89,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('interview_schedule.index') }}" class="{{ request()->is('interview-schedule*') ? 'bg-light active' : '' }}">
-                            <span>1. Schedule Interview</span>
+                        <a href="{{ route('test_schedule.index') }}" class="{{ request()->is('test-schedule*') ? 'bg-light active' : '' }}">
+                            <span>1. Schedule Test</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('test_schedule.index') }}" class="{{ request()->is('test-schedule*') ? 'bg-light active' : '' }}">
-                            <span>2. Schedule Test</span>
+                        <a href="{{ route('interview_schedule.index') }}" class="{{ request()->is('interview-schedule*') ? 'bg-light active' : '' }}">
+                            <span>2. Schedule Interview</span>
                         </a>
                     </li>
                     <li>

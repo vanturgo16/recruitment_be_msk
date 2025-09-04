@@ -3,7 +3,7 @@
 <div class="page-content">
     <div class="card">
         <div class="card-header">
-            <h4 class="text-bold">Step 2 - Test Schedules</h4>
+            <h4 class="text-bold">Step 1 - Test Schedules</h4>
         </div>
         <div class="card-body">
             @if(session('success'))

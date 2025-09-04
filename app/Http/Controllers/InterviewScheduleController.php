@@ -44,7 +44,7 @@ class InterviewScheduleController extends Controller
         }
 
         // Tambahkan kondisi where jika department ditemukan
-        if (isset($departmentName) && $departmentName) {
+        if (isset($departmentName) && $departmentName && $user->role == 'Employee') {
             $schedules->whereHas('jobapply.joblist.position.department', function ($query) use ($departmentName) {
                 $query->where('dept_name', $departmentName);
             });
@@ -178,7 +178,7 @@ class InterviewScheduleController extends Controller
                     'candidate_name'    => $schedule->jobApply->candidate->candidate_first_name,
                     'position_applied'  => $schedule->jobApply->joblist->position->position_name,
                     'created_at'        => $schedule->jobApply->created_at,
-                    'status'            => 'NEED APPROVAL TO TEST'
+                    'status'            => 'NEED APPROVAL TO OFFERING'
                 ];
                 
                 // Initiate Variable
@@ -237,27 +237,112 @@ class InterviewScheduleController extends Controller
         }
     }
 
-    public function submitToTest(Request $request, $id){
+    // dimatikan karna habis interview itu offering
+    // public function submitToTest(Request $request, $id){
+    //     $id = decrypt($id);
+        
+    //     DB::beginTransaction();
+    //     try {
+    //         $userId = $user = Auth::user()->id;
+    //         $now = now();
+
+    //         //update table interview schedule
+    //         // 1. Temukan record berdasarkan ID
+    //         $schedule = InterviewSchedule::find($id);
+
+    //         if($request->approval_action == '1'){
+    //             $progressStatus = 'TESTED';
+    //             $statusReadyTested = '1';
+    //             $status = '1';
+    //         }
+
+    //         if($request->approval_action == '2'){
+    //             $progressStatus = 'REJECTED';
+    //             $statusReadyTested = '2';
+    //             $status = '2';
+
+    //             //Inactive User Candidate
+    //             $email = $schedule->jobApply->candidate->email;
+
+    //             $mailData = [
+    //                 'candidate_name' => $schedule->jobApply->candidate->candidate_first_name,
+    //                 'candidate_email' => $schedule->jobApply->candidate->email,
+    //                 'position_applied' => $schedule->jobApply->joblist->position->position_name,
+    //                 'created_at' => $schedule->jobApply->created_at,
+    //                 'status' => $progressStatus,
+    //                 'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+    //             ];
+
+    //             // Initiate Variable
+    //             $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+    //             $toemail = ($development == 1) 
+    //                     ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+    //                     : $schedule->jobApply->candidate->email;
+
+    //             // [ MAILING ]
+    //             Mail::to($toemail)->send(new Notification($mailData));
+    //         }
+
+    //         // Pastikan record ditemukan sebelum melanjutkan
+    //         if ($schedule) {
+    //             // 2. Perbarui atribut-atribut model
+    //             $schedule->ready_tested = $statusReadyTested;
+    //             $schedule->interview_status = $status;
+
+    //             // 3. Simpan perubahan ke database
+    //             $schedule->save();
+    //             $id_jobapply = $schedule->id_jobapply;              
+    //         }
+
+    //         //update table Job Apply
+    //         if($progressStatus == 'REJECTED'){
+    //             $updateJobApply = JobApply::where('id', $id_jobapply)
+    //                 ->update([
+    //                     'status' => $status
+    //                 ]);
+                
+    //             //phaseLog
+    //             $this->logPhase($id_jobapply, $progressStatus . ' AFTER INTERVIEW SESSION', '', 'Reject after review result interview by department head/user', '1');
+    //         }
+    //         else{
+    //             $updateJobApply = JobApply::where('id', $id_jobapply)
+    //                 ->update([
+    //                     'approved_to_tested_by_1'   => $userId,
+    //                     'approved_to_tested_at_1'   => $now,
+    //                     'progress_status'           => $progressStatus
+    //                 ]);
+    //         }
+
+    //         DB::commit();
+    //         return redirect()->route('interview_schedule.index')->with('success', 'This Candidate is saved as ' . $progressStatus);
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //         DB::rollBack();
+    //         return redirect()->route('interview_schedule.index')->with('fail', 'Failed update data.');
+    //     }
+    // }
+
+    public function submitToOffer(Request $request, $id){
         $id = decrypt($id);
         
         DB::beginTransaction();
         try {
             $userId = $user = Auth::user()->id;
             $now = now();
-
-            //update table interview schedule
+            
+            //update table Interview schedule
             // 1. Temukan record berdasarkan ID
             $schedule = InterviewSchedule::find($id);
 
             if($request->approval_action == '1'){
-                $progressStatus = 'TESTED';
-                $statusReadyTested = '1';
+                $progressStatus = 'OFFERING';
+                $statusReadyOffering = '1';
                 $status = '1';
             }
 
             if($request->approval_action == '2'){
                 $progressStatus = 'REJECTED';
-                $statusReadyTested = '2';
+                $statusReadyOffering = '2';
                 $status = '2';
 
                 //Inactive User Candidate
@@ -285,7 +370,9 @@ class InterviewScheduleController extends Controller
             // Pastikan record ditemukan sebelum melanjutkan
             if ($schedule) {
                 // 2. Perbarui atribut-atribut model
-                $schedule->ready_tested = $statusReadyTested;
+                $schedule->approved_to_offering_by_1 = $userId;
+                $schedule->approved_to_offering_at_1 = $now;
+                $schedule->ready_offering = $statusReadyOffering;
                 $schedule->interview_status = $status;
 
                 // 3. Simpan perubahan ke database
@@ -299,19 +386,16 @@ class InterviewScheduleController extends Controller
                     ->update([
                         'status' => $status
                     ]);
-                
+
                 //phaseLog
-                $this->logPhase($id_jobapply, $progressStatus . ' AFTER INTERVIEW SESSION', '', 'Reject after review result interview by department head/user', '1');
+                $this->logPhase($id_jobapply, $progressStatus . ' AFTER TEST SESSION', '', 'Reject after review result test by department head/user', '1');
             }
             else{
                 $updateJobApply = JobApply::where('id', $id_jobapply)
                     ->update([
-                        'approved_to_tested_by_1'   => $userId,
-                        'approved_to_tested_at_1'   => $now,
-                        'progress_status'           => $progressStatus
+                        'progress_status' => $progressStatus
                     ]);
             }
-
             DB::commit();
             return redirect()->route('interview_schedule.index')->with('success', 'This Candidate is saved as ' . $progressStatus);
         } catch (\Throwable $th) {

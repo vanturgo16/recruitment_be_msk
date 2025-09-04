@@ -14,8 +14,8 @@
                             <th class="align-middle text-center">Position</th>
                             <th class="align-middle text-center">Number of Applicant (<span style="color:red">Rejected</span>)</th>
                             <th class="align-middle text-center">Reviewed</th>
-                            <th class="align-middle text-center">Interviewed</th>
                             <th class="align-middle text-center">Tested</th>
+                            <th class="align-middle text-center">Interviewed</th>
                             <th class="align-middle text-center">Offered</th>
                             <th class="align-middle text-center">MCU</th>
                             <th class="align-middle text-center">Signed</th>
@@ -64,12 +64,12 @@
                     className: 'align-top text-center',
                 },
                 {
-                    data: 'interviewed',
+                    data: 'tested',
                     orderable: true,
                     className: 'align-top text-center',
                 },
                 {
-                    data: 'tested',
+                    data: 'interviewed',
                     orderable: true,
                     className: 'align-top text-center',
                 },

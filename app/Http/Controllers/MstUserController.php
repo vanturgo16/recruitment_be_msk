@@ -61,7 +61,6 @@ class MstUserController extends Controller
     {
         // Validate Request
         $request->validate([
-            'name' => 'required',
             'email' => [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -107,7 +106,7 @@ class MstUserController extends Controller
                 'id_candidate' => $candidate->id,
                 'id_emp' => $emp->id,
                 'hie_level' => $hie_level,
-                'name' => $request->name,
+                'name' => $candidate->candidate_first_name . " " . $candidate->candidate_last_name,
                 'email' => $request->email,
                 'password' => Hash::make($password),
                 'is_active' => 1,
