@@ -36,6 +36,7 @@ use App\Models\TestSchedule;
 use App\Models\InterviewSchedule;
 use App\Models\OfferingSchedule;
 use App\Models\mcu_schedules;
+use App\Models\MstDepartment;
 use App\Models\SigningSchedule;
 
 class JoblistController extends Controller
@@ -593,31 +594,84 @@ class JoblistController extends Controller
         }
 
         // Data Section / STEP
-        $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
+        $stepAdmin = JobApply::select('job_applies.is_approved_1 as status', 'users.name as approver_1', 'job_applies.approved_at_1 as result_updated', 'job_applies.approved_at_1 as result_notes')
+            ->leftjoin('users', 'job_applies.approved_by_1', 'users.id')
+            ->where('job_applies.id', $idJobApply)
+            ->first();
+        $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name as approver_1', 'test_schedules.updated_at as result_updated', 'test_schedules.result_notes')
             ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
             ->where('test_schedules.id_jobapply', $idJobApply)
             ->first();
-        // $stepTest = InterviewSchedule::select('interview_schedules.test_status as status', 'users.name', 'interview_schedules.created_at', 'interview_schedules.result_notes as note')
-        //     ->leftjoin('users', 'interview_schedules.approved_by_1', 'users.id')
-        //     ->where('interview_schedules.id_jobapply', $idJobApply)
-        //     ->first();
-        // $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
-        //     ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
-        //     ->where('test_schedules.id_jobapply', $idJobApply)
-        //     ->first();
-        // $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
-        //     ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
-        //     ->where('test_schedules.id_jobapply', $idJobApply)
-        //     ->first();
-        // $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name', 'test_schedules.created_at', 'test_schedules.result_notes as note')
-        //     ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
-        //     ->where('test_schedules.id_jobapply', $idJobApply)
-        //     ->first();
+        $stepInterview = InterviewSchedule::select('interview_schedules.interview_status as status', 'a.name as approver_1', 'b.name as approver_2', 'interview_schedules.updated_at as result_updated', 'interview_schedules.result_notes')
+            ->leftjoin('users as a', 'interview_schedules.approved_by_1', 'a.id')
+            ->leftjoin('users as b', 'interview_schedules.approved_to_offering_by_1', 'b.id')
+            ->where('interview_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepOffering = OfferingSchedule::select('offering_schedules.offering_status as status', 'users.name as approver_1', 'offering_schedules.updated_at as result_updated', 'offering_schedules.result_notes')
+            ->leftjoin('users', 'offering_schedules.approved_by_1', 'users.id')
+            ->where('offering_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepMCU = mcu_schedules::select('mcu_schedules.mcu_status as status', 'users.name as approver_1', 'mcu_schedules.updated_at as result_updated', 'mcu_schedules.result_notes')
+            ->leftjoin('users', 'mcu_schedules.approved_by_1', 'users.id')
+            ->where('mcu_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepSign = SigningSchedule::select('signing_schedules.sign_status as status', 'users.name as approver_1', 'signing_schedules.updated_at as result_updated', 'signing_schedules.result_notes')
+            ->leftjoin('users', 'signing_schedules.approved_by_1', 'users.id')
+            ->where('signing_schedules.id_jobapply', $idJobApply)
+            ->first();
 
-        // $stepInterview = InterviewSchedule::where('id_jobapply', $idJobApply)->first();
-        // $stepOffering = OfferingSchedule::where('id_jobapply', $idJobApply)->first();
-        // $stepMCU = mcu_schedules::where('id_jobapply', $idJobApply)->first();
-        // $stepSign = SigningSchedule::where('id_jobapply', $idJobApply)->first();
+        // Latest Apply
+        $latestApply = JobApply::select('job_applies.id as id_last_apply', 'job_applies.id_joblist', 'job_applies.created_at as latest_applied_date', 'job_applies.approved_reason_1')
+            ->where('id_candidate', $idCandidate)
+            ->where('id', '!=', $idJobApply)
+            ->where('created_at', '<', $jobApply->created_at)
+            ->orderBy('created_at', 'desc')
+            ->first();
+            
+        if ($latestApply) {
+            $latestJob = Joblist::where('id', $latestApply->id_joblist)->first();
+            if ($latestJob) {
+                $latestPosition = MstPosition::where('id', $latestJob->id_position)->first();
+                if ($latestPosition) {
+                    $latestDept = MstDepartment::where('id', $latestPosition->id_dept)->first()->dept_name ?? 'N/A';
+                    $latestApply->latest_position = $latestPosition->position_name . ' (' . $latestDept . ')';
+                } else {
+                    $latestApply->latest_position = 'N/A';
+                }
+            } else {
+                $latestApply->latest_position = 'N/A';
+            }
+
+            $latestApply->latest_status = 'REVIEW ADMINISTRATION';
+            $latestApply->latest_notes = $latestApply->approved_reason_1;
+            $toTest = TestSchedule::select('result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toTest) {
+                $latestApply->latest_status = 'TESTED';
+                $latestApply->latest_notes = $toTest->result_notes;
+            }
+            $toInterview = InterviewSchedule::select('interview_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toInterview) {
+                $latestApply->latest_status = 'INTERVIEW';
+                $latestApply->latest_notes = $toInterview->result_notes;
+            }
+            $toOffering = OfferingSchedule::select('offering_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toOffering) {
+                $latestApply->latest_status = 'OFFERING';
+                $latestApply->latest_notes = $toOffering->result_notes;
+            }
+            $toMCU = mcu_schedules::select('mcu_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toMCU) {
+                $latestApply->latest_status = 'MEDICAL CHECK UP	';
+                $latestApply->latest_notes = $toMCU->result_notes;
+            }
+            $toSign = SigningSchedule::select('sign_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toSign) {
+                $latestApply->latest_status = 'SIGNING CONTRACT	';
+                $latestApply->latest_notes = $toSign->result_notes;
+            }
+        } else {
+            $latestApply = null;
+        }
 
         return view('job_applied.applicant_info', compact(
             'idJobList',
@@ -638,11 +692,13 @@ class JoblistController extends Controller
             'approved_by_1_name',
             'approved_by_2_name',
 
-            // 'stepTest',
-            // 'stepInterview',
-            // 'stepOffering',
-            // 'stepMCU',
-            // 'stepSign',
+            'stepAdmin',
+            'stepTest',
+            'stepInterview',
+            'stepOffering',
+            'stepMCU',
+            'stepSign',
+            'latestApply'
         ));
     }
 }

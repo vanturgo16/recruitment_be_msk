@@ -23,7 +23,7 @@ return [
     'mst_dept' => 'Master Department',
     'mst_position' => 'Master Position',
     'emp_list' => 'Employee List',
-    'blacklist' => 'Employee BlackList',
+    'blacklist' => 'Emp. Restricted list',
     'job_list' => 'Job List',
     'applicants_list' => 'Applicants List',
     'other' => 'Other',

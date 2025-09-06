@@ -15,7 +15,7 @@ return [
     'mst_dept' => 'Departemen Indung',
     'mst_position' => 'Kalungguhan Indung',
     'emp_list' => 'Daptar Pagawé',
-    'blacklist' => 'Daptar Hideung',
+    'blacklist' => 'Daptar karyawan Diwatesan',
     'job_list' => 'Daptar Pagawéan',
     'applicants_list' => 'Applicants List',
     'other' => 'Lain-lain',

@@ -71,9 +71,12 @@ class EmployeeController extends Controller
             ->where('employees.id', $id)
             ->first();
 
+        $detailCandidate = Candidate::where('id_emp', $id)->first();
+        $detailMainProfile = MainProfile::where('id_emp', $id)->first();
+
         //Audit Log
         $this->auditLogs('View Detail Employee ID (' . $id . ')');
-        return view('employee.detail', compact('data'));
+        return view('employee.detail', compact('data', 'detailCandidate', 'detailMainProfile'));
     }
 
     public function activate($id)

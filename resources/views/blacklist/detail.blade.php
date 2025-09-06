@@ -76,13 +76,13 @@
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <div class="page-title-left">
-                    <a href="{{ route('employee.index') }}" class="btn btn-light waves-effect btn-label waves-light">
+                    <a href="{{ route('blacklist.index') }}" class="btn btn-light waves-effect btn-label waves-light">
                         <i class="mdi mdi-arrow-left label-icon"></i> {{ __('messages.back_to_list') }}
                     </a>
                 </div>
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="{{ route('employee.index') }}">{{ __('messages.emp_list') }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('blacklist.index') }}">{{ __('messages.blacklist') }}</a></li>
                         <li class="breadcrumb-item active"> {{ __('messages.detail') }}</li>
                     </ol>
                 </div>
@@ -94,19 +94,8 @@
     <div class="card">
         <div class="card-header bg-light">
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <h4 class="text-bold">{{ __('messages.detail') }}</h4>
-                </div>
-                <div class="col-lg-6">
-                    <div class="text-end">
-                        <h4>
-                            @if($data->is_active == 0)
-                                <span class="badge bg-danger text-white"><i class="fas fa-window-close"></i> Inactive</span>
-                            @else
-                                <span class="badge bg-success text-white"><i class="fas fa-check"></i> Active</span>
-                            @endif
-                        </h4>
-                    </div>
                 </div>
             </div>
         </div>
@@ -126,7 +115,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">NIK :</span></div>
                                 <span>
-                                    <span>{{ $detailCandidate->id_card_no }}</span>
+                                    <span>{{ $data->id_card_no }}</span>
                                 </span>
                             </div>
                         </div>
@@ -136,7 +125,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">First Name :</span></div>
                                 <span>
-                                    <span>{{ $detailCandidate->candidate_first_name }}</span>
+                                    <span>{{ $data->candidate_first_name }}</span>
                                 </span>
                             </div>
                         </div>
@@ -144,7 +133,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Last Name :</span></div>
                                 <span>
-                                    <span>{{ $detailCandidate->candidate_last_name ?? '-' }}</span>
+                                    <span>{{ $data->candidate_last_name ?? '-' }}</span>
                                 </span>
                             </div>
                         </div>
@@ -152,7 +141,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Gender :</span></div>
                                 <span>
-                                    <span>{{ $detailMainProfile->gender ?? '-' }}</span>
+                                    <span>{{ $data->gender ?? '-' }}</span>
                                 </span>
                             </div>
                         </div>
@@ -160,7 +149,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Birth Place & Date :</span></div>
                                 <span>
-                                    <span>{{ $detailMainProfile->birthplace }}, {{ $detailMainProfile->birthdate }}</span>
+                                    <span>{{ $data->birthplace }}, {{ $data->birthdate }}</span>
                                 </span>
                             </div>
                         </div>
@@ -168,7 +157,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Mariage Status :</span></div>
                                 <span>
-                                    <span>{{ $detailMainProfile->marriage_status ?? '-' }}</span>
+                                    <span>{{ $data->marriage_status ?? '-' }}</span>
                                 </span>
                             </div>
                         </div>
@@ -176,7 +165,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Mariage Status :</span></div>
                                 <span>
-                                    <span>{{ $detailMainProfile->marriage_status ?? '-' }}</span>
+                                    <span>{{ $data->marriage_status ?? '-' }}</span>
                                 </span>
                             </div>
                         </div>
@@ -184,7 +173,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">E-mail :</span></div>
                                 <span>
-                                    <span>{{ $detailCandidate->email }}</span>
+                                    <span>{{ $data->email }}</span>
                                 </span>
                             </div>
                         </div>
@@ -200,7 +189,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Phone Number :</span></div>
                                 <span>
-                                    <span>{{ $detailCandidate->phone }}</span>
+                                    <span>{{ $data->phone }}</span>
                                 </span>
                             </div>
                         </div>
@@ -210,7 +199,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Card Address :</span></div>
                                 <span>
-                                    <span>{{ $detailMainProfile->id_card_address }}</span>
+                                    <span>{{ $data->id_card_address }}</span>
                                 </span>
                             </div>
                         </div>
@@ -218,7 +207,7 @@
                             <div class="form-group">
                                 <div><span class="fw-bold">Domicile Address :</span></div>
                                 <span>
-                                    <span>{{ $detailMainProfile->domicile_address }}</span>
+                                    <span>{{ $data->domicile_address }}</span>
                                 </span>
                             </div>
                         </div>
@@ -265,16 +254,6 @@
                                 </span>
                             </div>
                         </div>
-                        @if($data->is_active == 0)
-                            <div class="col-lg-4 mb-3">
-                                <div class="form-group">
-                                    <div><span class="fw-bold">{{ __('messages.inactive_date') }} :</span></div>
-                                    <span>
-                                        <span>{{ $data->inactive_date }}</span>
-                                    </span>
-                                </div>
-                            </div>
-                        @endif
                     </div>
                 </div>
                 <div class="col-lg-5">
@@ -312,17 +291,9 @@
             <div class="row">
                 <div class="col-lg-6 mb-2">
                     <div class="form-group">
-                        <div><span class="fw-bold">{{ __('messages.created_at') }} :</span></div>
+                        <div><span class="fw-bold">Restricted at :</span></div>
                         <span>
-                            <span>{{ $data->created_at }}</span>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-2">
-                    <div class="form-group">
-                        <div><span class="fw-bold">{{ __('messages.last_updated') }} :</span></div>
-                        <span>
-                            <span>{{ $data->updated_at }}</span>
+                            <span>{{ $data->bl_created_at }}</span>
                         </span>
                     </div>
                 </div>
