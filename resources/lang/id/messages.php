@@ -1,5 +1,11 @@
 <?php
 return [
+    // Dashboard
+    'title_count_applicant' => 'Jumlah Lamaran Diterima',
+    'not_check' => 'Belum Dicek',
+    'in_progress' => 'Sedang Diproses',
+    'rejected' => 'Ditolak',
+    'approve' => 'Diterima / Dipekerjakan',
     // Left Bar
     'mng_user' => 'Kelola Pengguna',
     'mng_rule' => 'Kelola Aturan',
@@ -9,7 +15,7 @@ return [
     'mst_dept' => 'Departemen Master',
     'mst_position' => 'Posisi Master',
     'emp_list' => 'Daftar Karyawan',
-    'blacklist' => 'Daftar Blacklist',
+    'blacklist' => 'Daftar Terbatas Karyawan',
     'job_list' => 'Daftar Pekerjaan',    
     'job_applied' => 'Daftar Pekerjaan Dilamar',    
     'applicants_list' => 'Daftar Pelamar',

@@ -55,6 +55,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
     Route::controller(DashboardController::class)->group(function () {
         Route::prefix('dashboard')->group(function () {
             Route::get('/', 'index')->name('dashboard');
+            Route::get('/get-data-summary', 'getDataSummary')->name('getDataSummary');
             Route::post('/', 'switchTheme')->name('switchTheme');
         });
     });
@@ -148,6 +149,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
     Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(BlacklistController::class)->group(function () {
         Route::prefix('blacklist')->group(function () {
             Route::get('/', 'index')->name('blacklist.index');
+            Route::get('/detail/{id}', 'detail')->name('blacklist.detail');
             Route::post('/store', 'store')->name('blacklist.store');
             Route::post('/update/{id}', 'update')->name('blacklist.update');
             Route::post('/delete/{id}', 'delete')->name('blacklist.delete');
@@ -178,6 +180,8 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/{id}/info', 'jobAppliedApplicantInfo')->name('jobapplied.applicantinfo'); // detail info per applicant
             Route::post('/{id}/approveadmin', 'jobAppliedApproveAdmin')->name('jobapplied.approveadmin');
             Route::post('/{id}/approvehead', 'jobAppliedApproveHead')->name('jobapplied.approvehead');
+
+            Route::get('/info/{id}', 'jobAppliedApplicantInfo')->name('jobapplied.applicantinfo_public'); 
         });
     });
 
