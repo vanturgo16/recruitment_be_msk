@@ -227,6 +227,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/{id}/update', 'update')->name('test_schedule.update');
             Route::post('/{id}/update/result', 'updateResult')->name('test_schedule.update.result');
             Route::post('/{id}/delete', 'destroy')->name('test_schedule.delete');
+            Route::post('submit-offer/{id}', 'submitToMCU')->name('test_schedule.submitOffer');
         });
     });
 
