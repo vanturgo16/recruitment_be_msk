@@ -29,9 +29,11 @@
 <script>
     $(function() {
         var dataTable = $('#candidateTable').DataTable({
+            
+            scrollX: true,
+            responsive: false,
             processing: true,
             serverSide: true,
-            scrollY: '100vh',
             ajax: '{!! route('user.candidates') !!}',
             columns: [
                 {

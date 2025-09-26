@@ -34,9 +34,11 @@
 <script>
     $(function() {
         var dataTable = $('#ssTable').DataTable({
+            
+            scrollX: true,
+            responsive: false,
             processing: true,
             serverSide: true,
-            scrollY: '100vh',
             ajax: '{!! route('blacklist.index') !!}',
             columns: [{
                 data: null,

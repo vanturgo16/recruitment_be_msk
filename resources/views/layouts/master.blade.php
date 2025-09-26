@@ -341,31 +341,41 @@
         $(function() {
             // Scroll Table
             $('#ssTable_wrapper .dataTables_scrollBody').css({
-                'overflow-x': 'hidden', 'overflow-y': 'scroll',
-                'max-height': '44vh', // Default
+                'overflow-x': 'scroll', 'overflow-y': 'hidden', 'min-height': '35vh',
+                // 'overflow-x': 'hidden', 'overflow-y': 'scroll',
+                // 'max-height': '44vh', // Default
             });
-            function setTableHeight() {
-                const windowHeight = $(window).height();
-                let maxHeight;
+            // function setTableHeight() {
+            //     const windowHeight = $(window).height();
+            //     let maxHeight;
     
-                if (windowHeight < 550) { maxHeight = '10vh'; } 
-                else if (windowHeight < 600) { maxHeight = '19vh'; } 
-                else if (windowHeight < 700) { maxHeight = '29vh'; } 
-                else if (windowHeight < 800) { maxHeight = '35vh'; } 
-                else if (windowHeight < 900) { maxHeight = '42vh'; } 
-                else if (windowHeight < 1000) { maxHeight = '44vh'; }
-                $('#ssTable_wrapper .dataTables_scrollBody').css('max-height', maxHeight);
-            }
-            setTableHeight();
-            $(window).resize(function() { setTableHeight(); });
+            //     if (windowHeight < 550) { maxHeight = '10vh'; } 
+            //     else if (windowHeight < 600) { maxHeight = '19vh'; } 
+            //     else if (windowHeight < 700) { maxHeight = '29vh'; } 
+            //     else if (windowHeight < 800) { maxHeight = '35vh'; } 
+            //     else if (windowHeight < 900) { maxHeight = '42vh'; } 
+            //     else if (windowHeight < 1000) { maxHeight = '44vh'; }
+            //     $('#ssTable_wrapper .dataTables_scrollBody').css('max-height', maxHeight);
+            // }
+            // setTableHeight();
+            // $(window).resize(function() { setTableHeight(); });
+
+            // Custom Scrollbar for both X and Y
             $('<style>').prop('type', 'text/css').html(`
-                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar { width: 4px; }
-                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb { background-color: #888;border-radius: 4px; }
-                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb:hover { background-color: #555; }
-                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-track { background: transparent; }
-                /* Add margin between scroll body and pagination */
+                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar {
+                    width: 4px; height: 4px;
+                }
+                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb {
+                    background-color: #888; border-radius: 4px;
+                }
+                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+                    background-color: #555;
+                }
+                #ssTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-track {
+                    background: transparent;
+                }
                 #ssTable_wrapper .dataTables_scroll {
-                    margin-bottom: 20px; /* Add space between table body and pagination */
+                    margin-bottom: 20px;
                 }
             `).appendTo('head');
         });

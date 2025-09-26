@@ -120,9 +120,15 @@
 <script>
     $(function() {
         var dataTable = $('#ssTable').DataTable({
+            scrollX: true,
+            responsive: false,
+            fixedColumns: {
+                leftColumns: 2, // Freeze first two columns
+                rightColumns: 1 // Freeze last column (Aksi)
+            },
             processing: true,
             serverSide: true,
-            scrollY: '100vh',
+
             ajax: '{!! route('employee.index') !!}',
             columns: [{
                 data: null,
