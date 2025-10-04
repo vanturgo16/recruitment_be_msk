@@ -594,7 +594,7 @@ class JoblistController extends Controller
         }
 
         // Data Section / STEP
-        $stepAdmin = JobApply::select('job_applies.is_approved_1 as status', 'users.name as approver_1', 'job_applies.approved_at_1 as result_updated', 'job_applies.approved_at_1 as result_notes')
+        $stepAdmin = JobApply::select('job_applies.is_approved_1 as status', 'users.name as approver_1', 'job_applies.approved_at_1 as result_updated', 'job_applies.approved_reason_1 as result_notes')
             ->leftjoin('users', 'job_applies.approved_by_1', 'users.id')
             ->where('job_applies.id', $idJobApply)
             ->first();
