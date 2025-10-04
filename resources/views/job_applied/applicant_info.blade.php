@@ -524,11 +524,12 @@
                                             <h5 class="mb-2">Pertanyaan {{ $index + 1 }}</h5>
                                             <p><strong>{{ $item->question }}</strong></p>
                                             <p class="text-muted">
-                                                @if($index + 1 == 13)
+                                                {{ $item->answer }}
+                                                {{-- @if($index + 1 == 13)
                                                     Rp {{ number_format((int) $item->answer, 0, ',', '.') }}
                                                 @else
                                                     {{ $item->answer }}
-                                                @endif
+                                                @endif --}}
                                             </p>
                                         </div>
                                     @endforeach
