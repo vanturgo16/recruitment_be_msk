@@ -22,11 +22,12 @@ use App\Models\MstDepartment;
 
 // Export
 use App\Exports\EmployeeExport;
+use App\Traits\PhaseLoggable;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
 {
-    use AuditLogsTrait;
+    use AuditLogsTrait, PhaseLoggable;
 
     public function index(Request $request)
     {
@@ -206,7 +207,7 @@ class EmployeeController extends Controller
             DB::commit();
             return redirect()->back()->with(['success' => __('messages.success_submit')]);
         } catch (\Throwable $th) {
-            //throw $th;
+            //dd($th);
             DB::rollback();
             return redirect()->back()->with(['fail' => __('messages.fail_submit')]);
         }
