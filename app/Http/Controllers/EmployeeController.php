@@ -143,7 +143,7 @@ class EmployeeController extends Controller
             'hie_level' => 'required',
             'join_date' => 'required|date',
             'candidate_name' => 'required|string|max:255',
-            'employee_no' => 'required|string|max:255',
+            'employee_no' => 'required|string|max:5|unique:employees,emp_no',
             'placement_id' => 'required|integer',
             'corporate_email' => 'required|email',
             'report_line' => 'required|email',
