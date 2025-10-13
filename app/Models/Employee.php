@@ -14,4 +14,9 @@ class Employee extends Model
     {
         return $this->belongsTo(\App\Models\MstPosition::class, 'id_position');
     }
+
+    public function candidate()
+    {
+        return $this->belongsTo(\App\Models\Candidate::class, 'id_emp');
+    }
 }

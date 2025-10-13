@@ -3,7 +3,7 @@
         aria-expanded="false">
         {{ __('messages.action') }} <i class="mdi mdi-chevron-down"></i>
     </button>
-    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $data->id }}">
+    <ul class="dropdown-menu dropdown-menu2" aria-labelledby="btnGroupDrop{{ $data->id }}">
         <li><a class="dropdown-item drpdwn" href="{{ route('user.edit', encrypt($data->id)) }}"><span class="mdi mdi-file-edit"></span> | {{ __('messages.edit') }}</a></li>
         <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#reset{{ $data->id }}"><span class="mdi mdi-update"></span> | {{ __('messages.reset') }} Password</a></li>
         @if($data->is_active == 0)

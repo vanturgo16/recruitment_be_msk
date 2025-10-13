@@ -11,18 +11,7 @@ class InterviewSchedule extends Model
 
     protected $table = 'interview_schedules';
 
-    protected $fillable = [
-        'id_jobapply',
-        'interview_date',
-        'interview_address',
-        'interview_notes',
-        'result_attachment',
-        'result_notes',
-        'approved_by_1',
-        'interview_status',
-        'ready_tested',
-        'created_by',
-    ];
+    protected $guarded = ['id'];
 
     // Relationships
     public function jobapply()
@@ -38,5 +27,10 @@ class InterviewSchedule extends Model
     public function approval1()
     {
         return $this->belongsTo(User::class, 'approved_by_1');
+    }
+
+    public function approvalUser()
+    {
+        return $this->belongsTo(User::class, 'approved_to_offering_by_1');
     }
 }

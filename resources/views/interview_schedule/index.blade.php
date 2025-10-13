@@ -3,7 +3,7 @@
 <div class="page-content">
     <div class="card">
         <div class="card-header">
-            <h4 class="text-bold">Step 1 - Interview Schedules</h4>
+            <h4 class="text-bold">Step 2 - Interview Schedules</h4>
         </div>
         <div class="card-body">
             @if(session('success'))
@@ -93,6 +93,12 @@
                                                         <strong>Approval Interview By:</strong><br>
                                                         {{ $schedule->approval1->name }}
                                                     </div>
+                                                    @if ($schedule->approved_to_offering_at_1)
+                                                    <div class="mb-2">
+                                                        <strong>Approval User By:</strong><br>
+                                                        {{ $schedule->approvalUser->name . " At " . $schedule->approved_to_offering_at_1 }}
+                                                    </div>
+                                                    @endif
                                                     <div class="mb-2">
                                                         <strong>Result Notes:</strong><br>
                                                         {{ $schedule->result_notes }}
@@ -100,7 +106,11 @@
                                                     <div class="mb-2">
                                                         <strong>Result Interview:</strong><br>
                                                         @if ($schedule->interview_status == '1')
-                                                            <span class="badge bg-success">PASSED</span>
+                                                            @if ($schedule->approved_to_offering_at_1)
+                                                                <span class="badge bg-success">PASSED</span>
+                                                            @else
+                                                                <span class="badge bg-warning">PASSED <i>(Waiting Approval User)</i></span>
+                                                            @endif
                                                         @elseif ($schedule->interview_status == '2')
                                                             <span class="badge bg-danger">REJECTED</span>
                                                         @endif
@@ -141,10 +151,14 @@
                                     </ul>
                                     @endif
                                     @if ($schedule->interview_status == '1')
-                                        @if ($isEmployeeHead && $schedule->ready_tested != '1')
-                                            <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitTestedModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Tested</a>
+                                        @if ($isEmployeeHead && $schedule->ready_offering != '1')
+                                            <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitOfferingModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Offered</a>
                                         @else
-                                            <span class="badge bg-success">PASSED</span>
+                                            @if ($schedule->approved_to_offering_at_1)
+                                                <span class="badge bg-success">PASSED</span>
+                                            @else
+                                                <span class="badge bg-warning">PASSED <i>(Waiting Approval User)</i></span>
+                                            @endif
                                         @endif
                                     @elseif ($schedule->interview_status == '2')
                                         <span class="badge bg-danger">REJECTED</span>
@@ -235,14 +249,14 @@
                         </div>
                         <!-- End Modal Edit -->
 
-                        <!-- Modal submit to tested -->
-                        <div class="modal fade" id="submitTestedModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="submitTestedModal{{ $schedule->id }}" aria-hidden="true">
+                        <!-- Modal submit to offering -->
+                        <div class="modal fade" id="submitOfferingModal{{ $schedule->id }}" tabindex="-1" aria-labelledby="submitOfferingModal{{ $schedule->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('interview_schedule.submitTest', encrypt($schedule->id)) }}" method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('interview_schedule.submitOffer', encrypt($schedule->id)) }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="submitTestedModalLabel{{ $schedule->id }}">Submit to Tested</h5>
+                                            <h5 class="modal-title" id="submitOfferingModalLabel{{ $schedule->id }}">Submit to offering</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">

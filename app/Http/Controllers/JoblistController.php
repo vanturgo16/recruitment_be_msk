@@ -32,6 +32,13 @@ use App\Traits\UserTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
+use App\Models\TestSchedule;
+use App\Models\InterviewSchedule;
+use App\Models\OfferingSchedule;
+use App\Models\mcu_schedules;
+use App\Models\MstDepartment;
+use App\Models\SigningSchedule;
+
 class JoblistController extends Controller
 {
     use AuditLogsTrait;
@@ -441,6 +448,7 @@ class JoblistController extends Controller
         if ($action === 'approve') {
             $decision = 'APPROVED';
             $jobApply->is_approved_1 = 1;
+            $jobApply->progress_status = 'TESTED'; //langsung interview tanpa approval head
         } else {
             $decision = 'REJECTED';
             $jobApply->is_approved_1 = 0;
@@ -475,70 +483,71 @@ class JoblistController extends Controller
         $jobApply->approved_reason_1 = $request->input('approved_reason_1');
         $jobApply->save();
 
-        //send mail to internal user
-        $mailData = [
-            'current_phase'     => 'REVIEWED ADMINISTRATION',
-            'job_user'          => $jobApply->joblist->userRequest->name,
-            'candidate_name'    => $jobApply->candidate->candidate_first_name,
-            'position_applied'  => $jobApply->joblist->position->position_name,
-            'created_at'        => $jobApply->created_at,
-            'status'            => 'NEED APPROVAL TO INTERVIEW',
-        ];
+        // //send mail to internal user (dimatikan karna tidak butuh approval head)
+        // $mailData = [
+        //     'current_phase'     => 'REVIEWED ADMINISTRATION',
+        //     'job_user'          => $jobApply->joblist->userRequest->name,
+        //     'candidate_name'    => $jobApply->candidate->candidate_first_name,
+        //     'position_applied'  => $jobApply->joblist->position->position_name,
+        //     'created_at'        => $jobApply->created_at,
+        //     'status'            => 'NEED APPROVAL TO INTERVIEW',
+        // ];
         
-        // Initiate Variable
-        $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
-        $toemail = ($development == 1) 
-        ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
-        : $jobApply->joblist->userRequest->email;
+        // // Initiate Variable
+        // $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+        // $toemail = ($development == 1) 
+        // ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+        // : $jobApply->joblist->userRequest->email;
         
-        // [ MAILING ]
-        Mail::to($toemail)->send(new NotificationInternal($mailData));
+        // // [ MAILING ]
+        // Mail::to($toemail)->send(new NotificationInternal($mailData));
 
         return redirect()->back()->with('success', 'Applicant administration approval processed successfully.');
     }
 
-    public function jobAppliedApproveHead(Request $request, $id)
-    {
-        $idJobApply = decrypt($id);
-        $jobApply = JobApply::findOrFail($idJobApply);
-        $action = $request->input('approval_action_2');
-        if ($action === 'approve') {
-            $decision = 'APPROVED';
-            $jobApply->is_approved_2 = 1;
-            $jobApply->progress_status = 'INTERVIEW';
-        } else {
-            $decision = 'REJECTED';
-            $jobApply->is_approved_2 = 0;
-            $jobApply->status = 2;
+    //dimatikan karna tidak butuh approval head
+    // public function jobAppliedApproveHead(Request $request, $id)
+    // {
+    //     $idJobApply = decrypt($id);
+    //     $jobApply = JobApply::findOrFail($idJobApply);
+    //     $action = $request->input('approval_action_2');
+    //     if ($action === 'approve') {
+    //         $decision = 'APPROVED';
+    //         $jobApply->is_approved_2 = 1;
+    //         $jobApply->progress_status = 'INTERVIEW';
+    //     } else {
+    //         $decision = 'REJECTED';
+    //         $jobApply->is_approved_2 = 0;
+    //         $jobApply->status = 2;
 
-            $mailData = [
-                'candidate_name' => $jobApply->candidate->candidate_first_name,
-                'candidate_email' => $jobApply->candidate->email,
-                'position_applied' => $jobApply->joblist->position->position_name,
-                'created_at' => $jobApply->created_at,
-                'status' => $jobApply->progress_status,
-                'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
-            ];
+    //         $mailData = [
+    //             'candidate_name' => $jobApply->candidate->candidate_first_name,
+    //             'candidate_email' => $jobApply->candidate->email,
+    //             'position_applied' => $jobApply->joblist->position->position_name,
+    //             'created_at' => $jobApply->created_at,
+    //             'status' => $jobApply->progress_status,
+    //             'message' => "We appreciate you taking the time to apply for this position. While your qualifications are impressive, we have decided to pursue other applicants whose profiles were a closer match for our current needs.",
+    //         ];
 
-            // Initiate Variable
-            $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
-            $toemail = ($development == 1) 
-                    ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
-                    : $jobApply->candidate->email;
+    //         // Initiate Variable
+    //         $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+    //         $toemail = ($development == 1) 
+    //                 ? MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray() 
+    //                 : $jobApply->candidate->email;
 
-            // [ MAILING ]
-            Mail::to($toemail)->send(new Notification($mailData));
+    //         // [ MAILING ]
+    //         Mail::to($toemail)->send(new Notification($mailData));
 
-            //phaseLog
-            $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_2'), 'Reject approval after review administration by department head/user', '1');
-        }
-        $jobApply->approved_by_2 = Auth::user()->id;
-        $jobApply->approved_at_2 = now();
-        $jobApply->approved_reason_2 = $request->input('approved_reason_2');
-        $jobApply->save();
+    //         //phaseLog
+    //         $this->logPhase($idJobApply, $decision . ' REVIEW ADMINISTRATION', $request->input('approved_reason_2'), 'Reject approval after review administration by department head/user', '1');
+    //     }
+    //     $jobApply->approved_by_2 = Auth::user()->id;
+    //     $jobApply->approved_at_2 = now();
+    //     $jobApply->approved_reason_2 = $request->input('approved_reason_2');
+    //     $jobApply->save();
 
-        return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
-    }
+    //     return redirect()->back()->with('success', 'Applicant head approval processed successfully.');
+    // }
 
     public function jobAppliedApplicantInfo(Request $request, $id)
     {
@@ -584,6 +593,86 @@ class JoblistController extends Controller
             $approved_by_2_name = $user2 ? $user2->name : $jobApply->approved_by_2;
         }
 
+        // Data Section / STEP
+        $stepAdmin = JobApply::select('job_applies.is_approved_1 as status', 'users.name as approver_1', 'job_applies.approved_at_1 as result_updated', 'job_applies.approved_reason_1 as result_notes')
+            ->leftjoin('users', 'job_applies.approved_by_1', 'users.id')
+            ->where('job_applies.id', $idJobApply)
+            ->first();
+        $stepTest = TestSchedule::select('test_schedules.test_status as status', 'users.name as approver_1', 'test_schedules.updated_at as result_updated', 'test_schedules.result_notes')
+            ->leftjoin('users', 'test_schedules.approved_by_1', 'users.id')
+            ->where('test_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepInterview = InterviewSchedule::select('interview_schedules.interview_status as status', 'a.name as approver_1', 'b.name as approver_2', 'interview_schedules.updated_at as result_updated', 'interview_schedules.result_notes')
+            ->leftjoin('users as a', 'interview_schedules.approved_by_1', 'a.id')
+            ->leftjoin('users as b', 'interview_schedules.approved_to_offering_by_1', 'b.id')
+            ->where('interview_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepOffering = OfferingSchedule::select('offering_schedules.offering_status as status', 'users.name as approver_1', 'offering_schedules.updated_at as result_updated', 'offering_schedules.result_notes')
+            ->leftjoin('users', 'offering_schedules.approved_by_1', 'users.id')
+            ->where('offering_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepMCU = mcu_schedules::select('mcu_schedules.mcu_status as status', 'users.name as approver_1', 'mcu_schedules.updated_at as result_updated', 'mcu_schedules.result_notes')
+            ->leftjoin('users', 'mcu_schedules.approved_by_1', 'users.id')
+            ->where('mcu_schedules.id_jobapply', $idJobApply)
+            ->first();
+        $stepSign = SigningSchedule::select('signing_schedules.sign_status as status', 'users.name as approver_1', 'signing_schedules.updated_at as result_updated', 'signing_schedules.result_notes')
+            ->leftjoin('users', 'signing_schedules.approved_by_1', 'users.id')
+            ->where('signing_schedules.id_jobapply', $idJobApply)
+            ->first();
+
+        // Latest Apply
+        $latestApply = JobApply::select('job_applies.id as id_last_apply', 'job_applies.id_joblist', 'job_applies.created_at as latest_applied_date', 'job_applies.approved_reason_1')
+            ->where('id_candidate', $idCandidate)
+            ->where('id', '!=', $idJobApply)
+            ->where('created_at', '<', $jobApply->created_at)
+            ->orderBy('created_at', 'desc')
+            ->first();
+            
+        if ($latestApply) {
+            $latestJob = Joblist::where('id', $latestApply->id_joblist)->first();
+            if ($latestJob) {
+                $latestPosition = MstPosition::where('id', $latestJob->id_position)->first();
+                if ($latestPosition) {
+                    $latestDept = MstDepartment::where('id', $latestPosition->id_dept)->first()->dept_name ?? 'N/A';
+                    $latestApply->latest_position = $latestPosition->position_name . ' (' . $latestDept . ')';
+                } else {
+                    $latestApply->latest_position = 'N/A';
+                }
+            } else {
+                $latestApply->latest_position = 'N/A';
+            }
+
+            $latestApply->latest_status = 'REVIEW ADMINISTRATION';
+            $latestApply->latest_notes = $latestApply->approved_reason_1;
+            $toTest = TestSchedule::select('result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toTest) {
+                $latestApply->latest_status = 'TESTED';
+                $latestApply->latest_notes = $toTest->result_notes;
+            }
+            $toInterview = InterviewSchedule::select('interview_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toInterview) {
+                $latestApply->latest_status = 'INTERVIEW';
+                $latestApply->latest_notes = $toInterview->result_notes;
+            }
+            $toOffering = OfferingSchedule::select('offering_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toOffering) {
+                $latestApply->latest_status = 'OFFERING';
+                $latestApply->latest_notes = $toOffering->result_notes;
+            }
+            $toMCU = mcu_schedules::select('mcu_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toMCU) {
+                $latestApply->latest_status = 'MEDICAL CHECK UP	';
+                $latestApply->latest_notes = $toMCU->result_notes;
+            }
+            $toSign = SigningSchedule::select('sign_status', 'result_notes')->where('id_jobapply', $latestApply->idJobApply)->first();
+            if ($toSign) {
+                $latestApply->latest_status = 'SIGNING CONTRACT	';
+                $latestApply->latest_notes = $toSign->result_notes;
+            }
+        } else {
+            $latestApply = null;
+        }
+
         return view('job_applied.applicant_info', compact(
             'idJobList',
             'idJobApply',
@@ -601,7 +690,15 @@ class JoblistController extends Controller
             'expInfo',
             'jobApply',
             'approved_by_1_name',
-            'approved_by_2_name'
+            'approved_by_2_name',
+
+            'stepAdmin',
+            'stepTest',
+            'stepInterview',
+            'stepOffering',
+            'stepMCU',
+            'stepSign',
+            'latestApply'
         ));
     }
 }
