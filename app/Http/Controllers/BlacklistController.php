@@ -36,4 +36,26 @@ class BlacklistController extends Controller
         $this->auditLogs('View List Employee Blacklist');
         return view('blacklist.index');
     }
+    
+    public function detail($id)
+    {
+        $id = decrypt($id);
+        $data = Blacklist::select('blacklists.*', 'employees.*', 'blacklists.created_at as bl_created_at', 'blacklists.updated_at as bl_updated_at',
+                    'mst_positions.position_name', 'mst_departments.dept_name', 'mst_divisions.div_name', 'offices.name as office_name',
+                    'candidate.*', 'main_profile.*')
+                ->leftjoin('employees', 'blacklists.id_emp', 'employees.id')
+                ->leftjoin('mst_positions', 'employees.id_position', 'mst_positions.id')
+                ->leftjoin('mst_departments', 'mst_positions.id_dept', 'mst_departments.id')
+                ->leftjoin('mst_divisions', 'mst_departments.id_div', 'mst_divisions.id')
+                ->leftjoin('offices', 'employees.placement_id', 'offices.id')
+                
+                ->leftjoin('candidate', 'blacklists.id_emp', 'candidate.id_emp')
+                ->leftjoin('main_profile', 'blacklists.id_emp', 'main_profile.id_emp')
+                ->where('blacklists.id', $id)
+                ->first();
+
+        //Audit Log
+        $this->auditLogs('View Detail Employee ID (' . $id . ')');
+        return view('blacklist.detail', compact('data'));
+    }
 }

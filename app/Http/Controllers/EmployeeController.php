@@ -2,30 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Blacklist;
-use App\Models\Candidate;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use App\Imports\EmployeeImport;
 
 // Traits
 use App\Traits\AuditLogsTrait;
 
 // Model
+use App\Models\Blacklist;
 use App\Models\Employee;
 use App\Models\JobApply;
 use App\Models\MainProfile;
+use App\Models\Candidate;
 use App\Models\MstDropdowns;
 use App\Models\User;
 use App\Models\MstDepartment;
 
 // Export
 use App\Exports\EmployeeExport;
+use App\Traits\PhaseLoggable;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
 {
-    use AuditLogsTrait;
+    use AuditLogsTrait, PhaseLoggable;
 
     public function index(Request $request)
     {
@@ -49,9 +51,14 @@ class EmployeeController extends Controller
                 })->toJson();
         }
 
+        $template = (object) [
+            "file_name" => "Import_Employee_Data_MSK.xlsx",
+            "path"      => "assets/file/template/Import_Employee_Data_MSK.xlsx",
+        ];
+
         //Audit Log
         $this->auditLogs('View List Employee');
-        return view('employee.index', compact('listReasons', 'departments'));
+        return view('employee.index', compact('listReasons', 'departments', 'template'));
     }
 
     public function detail($id)
@@ -65,9 +72,12 @@ class EmployeeController extends Controller
             ->where('employees.id', $id)
             ->first();
 
+        $detailCandidate = Candidate::where('id_emp', $id)->first();
+        $detailMainProfile = MainProfile::where('id_emp', $id)->first();
+
         //Audit Log
         $this->auditLogs('View Detail Employee ID (' . $id . ')');
-        return view('employee.detail', compact('data'));
+        return view('employee.detail', compact('data', 'detailCandidate', 'detailMainProfile'));
     }
 
     public function activate($id)
@@ -133,7 +143,7 @@ class EmployeeController extends Controller
             'hie_level' => 'required',
             'join_date' => 'required|date',
             'candidate_name' => 'required|string|max:255',
-            'employee_no' => 'required|string|max:255',
+            'employee_no' => 'required|string|max:5|unique:employees,emp_no',
             'placement_id' => 'required|integer',
             'corporate_email' => 'required|email',
             'report_line' => 'required|email',
@@ -197,7 +207,7 @@ class EmployeeController extends Controller
             DB::commit();
             return redirect()->back()->with(['success' => __('messages.success_submit')]);
         } catch (\Throwable $th) {
-            //throw $th;
+            //dd($th);
             DB::rollback();
             return redirect()->back()->with(['fail' => __('messages.fail_submit')]);
         }
@@ -210,5 +220,74 @@ class EmployeeController extends Controller
         $date = now()->format('Ymd_His');
         $filename = "employee_report_{$date}.xlsx";
         return Excel::download(new EmployeeExport($departmentIds, $status), $filename);
+    }
+
+    public function importData(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx',
+        ]);
+
+        $import = new \App\Imports\EmployeeImport;
+        \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('file'));
+
+        if (count($import->errors) > 0) {
+            return back()->withErrors($import->errors);
+        }
+
+        DB::beginTransaction();
+        try {
+            foreach ($import->validRows as $item) {
+                $emp = Employee::create([
+                    'emp_no' => $item['emp_no'],
+                    'email' => $item['email_office'],
+                    'id_position' => $item['id_position'],
+                    'placement_id' => $item['placement_id'],
+                    'reportline_1' => $item['reportline_1'],
+                    'reportline_2' => $item['reportline_2'],
+                    'reportline_3' => $item['reportline_3'],
+                    'reportline_4' => $item['reportline_4'],
+                    'reportline_5' => $item['reportline_5'],
+                    'is_active' => 1,
+                    'join_date' => $item['join_date'],
+                ]);
+
+                $candidate = Candidate::create([
+                    'id_user' => 0,
+                    'id_emp' => $emp->id,
+                    'candidate_first_name' => $item['first_name'],
+                    'candidate_last_name' => $item['last_name'],
+                    'phone' => $item['phone'],
+                    'email' => $item['email'],
+                    'id_card_no' => $item['id_card_no'],
+                    'tnc_check' => 1,
+                ]);
+
+                MainProfile::create([
+                    'id_candidate' => $candidate->id,
+                    'id_emp' => $emp->id,
+                    'id_card_address' => $item['id_card_address'],
+                    'domicile_address' => $item['domicile_address'],
+                    'birthplace' => $item['birthplace'],
+                    'birthdate' => $item['birthdate'],
+                    'gender' => $item['gender'],
+                    'marriage_status' => $item['marriage_status'],
+                ]);
+
+                //Update Employee
+                Employee::where('id', $emp->id)->update([
+                    'id_candidate' => $candidate->id
+                ]);
+            }
+
+            // Audit Log
+            $this->auditLogs('Import Employee Data');
+
+            DB::commit();
+            return back()->with('success', 'Employee data imported successfully!');
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with(['fail' => 'Import data employee failed!']);
+        }
     }
 }

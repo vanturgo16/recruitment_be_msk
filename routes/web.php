@@ -55,6 +55,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
     Route::controller(DashboardController::class)->group(function () {
         Route::prefix('dashboard')->group(function () {
             Route::get('/', 'index')->name('dashboard');
+            Route::get('/get-data-summary', 'getDataSummary')->name('getDataSummary');
             Route::post('/', 'switchTheme')->name('switchTheme');
         });
     });
@@ -141,12 +142,14 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/deactivate/{id}', 'deactivate')->name('employee.deactivate');
             Route::post('/submit/{id_candidate}', 'submitEmployee')->name('employee.submit');
             Route::get('/export/excel', 'exportExcel')->name('employee.export.excel');
+            Route::post('/import', 'importData')->name('employee.importData');
         });
     });
     // BLACKLIST
     Route::middleware(['role:Admin,Admin HR,Super Admin'])->controller(BlacklistController::class)->group(function () {
         Route::prefix('blacklist')->group(function () {
             Route::get('/', 'index')->name('blacklist.index');
+            Route::get('/detail/{id}', 'detail')->name('blacklist.detail');
             Route::post('/store', 'store')->name('blacklist.store');
             Route::post('/update/{id}', 'update')->name('blacklist.update');
             Route::post('/delete/{id}', 'delete')->name('blacklist.delete');
@@ -177,6 +180,8 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/{id}/info', 'jobAppliedApplicantInfo')->name('jobapplied.applicantinfo'); // detail info per applicant
             Route::post('/{id}/approveadmin', 'jobAppliedApproveAdmin')->name('jobapplied.approveadmin');
             Route::post('/{id}/approvehead', 'jobAppliedApproveHead')->name('jobapplied.approvehead');
+
+            Route::get('/info/{id}', 'jobAppliedApplicantInfo')->name('jobapplied.applicantinfo_public'); 
         });
     });
 
@@ -207,7 +212,8 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/{id}/update', 'update')->name('interview_schedule.update');
             Route::post('/{id}/update/result', 'updateResult')->name('interview_schedule.update.result');
             Route::post('/{id}/delete', 'destroy')->name('interview_schedule.delete');
-            Route::post('submit-test/{id}', 'submitToTest')->name('interview_schedule.submitTest');
+            //Route::post('submit-test/{id}', 'submitToTest')->name('interview_schedule.submitTest');
+            Route::post('submit-offer/{id}', 'submitToOffer')->name('interview_schedule.submitOffer');
         });
     });
 
@@ -221,7 +227,7 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::post('/{id}/update', 'update')->name('test_schedule.update');
             Route::post('/{id}/update/result', 'updateResult')->name('test_schedule.update.result');
             Route::post('/{id}/delete', 'destroy')->name('test_schedule.delete');
-            Route::post('submit-offer/{id}', 'submitToOffer')->name('test_schedule.submitOffer');
+            Route::post('submit-offer/{id}', 'submitToMCU')->name('test_schedule.submitOffer');
         });
     });
 
