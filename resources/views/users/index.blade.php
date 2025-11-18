@@ -62,6 +62,7 @@
                         <th class="align-middle text-center">Role</th>
                         <th class="align-middle text-center">{{ __('messages.login_counter') }}</th>
                         <th class="align-middle text-center">{{ __('messages.last_seen') }}</th>
+                        <th class="align-middle text-center">Enable 2-FA</th>
                         <th class="align-middle text-center">{{ __('messages.account_status') }}</th>
                         <th class="align-middle text-center">{{ __('messages.action') }}</th>
                     </tr>
@@ -131,6 +132,18 @@
                         }
                         return statusLogin + '<br>' + (data ? data : '-');
                     },
+                },
+                {
+                    data: 'is_two_fa',
+                    orderable: true,
+                    className: 'align-top text-center',
+                    render: function(data) {
+                        if (data == 1) {
+                            return '<i class="mdi mdi-check-circle text-success fs-5"></i>';
+                        } else {
+                            return '<i class="mdi mdi-close-circle text-danger fs-5"></i>';
+                        }
+                    }
                 },
                 {
                     data: 'is_active',
