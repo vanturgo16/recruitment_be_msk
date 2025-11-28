@@ -4,9 +4,67 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <div class="col-12 text-center">
-                    <h4 class="text-bold">Candidate User List</h4>
+                <div class="col-4">
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'Admin']))
+                        @if($isEnable2FA)
+                            <button type="button" class="btn btn-danger waves-effect btn-label waves-light" 
+                                data-bs-toggle="modal" data-bs-target="#disable2FA">
+                                <i class="mdi mdi-lock-open-remove label-icon"></i> Disable 2FA
+                            </button>
+                            <div class="modal fade" id="disable2FA" tabindex="-1" aria-labelledby="disable2FALabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-top">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="disable2FALabel"><i class="mdi mdi-lock-open-remove"></i> Disable Two-Factor Authentication</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            Are you sure you want to <b>disable 2FA</b> for <b>All Candidates</b>?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                            <form class="formLoad" action="{{ route('user.disable2faCandidate') }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger waves-effect btn-label waves-light"><i class="mdi mdi-lock-open-remove label-icon"></i>Disable</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <button type="button" class="btn btn-success waves-effect btn-label waves-light" 
+                                data-bs-toggle="modal" data-bs-target="#enable2FA">
+                                <i class="mdi mdi-lock-check label-icon"></i> Enable 2FA
+                            </button>
+                            <div class="modal fade" id="enable2FA" tabindex="-1" aria-labelledby="enable2FALabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-top">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-success text-white">
+                                            <h5 class="modal-title" id="enable2FALabel="><i class="mdi mdi-lock-check"></i> Enable Two-Factor Authentication</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            Are you sure you want to <b>enable 2FA</b> for <b>All Candidates</b>?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                            <form class="formLoad" action="{{ route('user.enable2faCandidate') }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-success waves-effect btn-label waves-light"><i class="mdi mdi-lock-check label-icon"></i>Enable</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
                 </div>
+                <div class="col-4">
+                    <div class="text-center">
+                        <h4 class="text-bold">Candidate User List</h4>
+                    </div>
+                </div>
+                <div class="col-4"></div>
             </div>
         </div>
         <div class="card-body">

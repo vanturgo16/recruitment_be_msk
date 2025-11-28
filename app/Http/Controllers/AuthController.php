@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MstRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+
+use App\Mail\TwoFAMail;
 
 // Model
 use App\Models\User;
+use App\Models\MstRules;
 
 class AuthController extends Controller
 {
@@ -20,7 +24,6 @@ class AuthController extends Controller
 
     public function postlogin(Request $request)
     {
-        //dd('hai');
         $request->validate([
             'captcha_input' => 'required|in:' . session('captcha_code'),
         ], [
@@ -29,8 +32,6 @@ class AuthController extends Controller
         ]);
         
         $email = $request->email;
-        $password = $request->password;
-
         // Validasi apakah password sudah lewat 180 hari sejak last_modified_password_at
         $user = User::where('email', $email)->first();
         if ($user && $user->last_modified_password_at) {
@@ -43,31 +44,129 @@ class AuthController extends Controller
             }
         }
 
-        $credentials = [
-            'email' => $email,
-            'password' => $password
-        ];
-        $dologin = Auth::attempt($credentials);
-        if ($dologin) {
-            $user = User::where('email', $request->email)->first();
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+
+            // Validate Not Candidate & Active
             if ($user->role === 'Candidate') {
                 Auth::logout();
                 return redirect()->route('login')->with('fail', 'Login is not allowed for your role.');
             }
-            if ($user->is_active == 1) {
-                $session = Session::getId();
-                User::where('email', $email)->update([
-                    'last_login' => now(),
-                    'login_counter' => $user->login_counter + 1,
-                    'last_session' => $session,
-                ]);
-                return redirect()->route('dashboard')->with('success', __('messages.success_login'));
-            } else {
-                return redirect()->route('login')->with('fail', 'Your Account Is Innactive, Contact Your Administrator');
+            if ($user->is_active != 1) {
+                Auth::logout();
+                return redirect()->route('login')->with('fail', 'Your Account Is Inactive');
             }
-        } else {
-            return redirect()->route('login')->with('fail', 'Wrong Email or Password');
+
+            // ✅ If user has 2FA enabled
+            if ($user->is_two_fa == 1) {
+                // Get expiration time from rules table
+                $expiredSeconds = MstRules::where('rule_name', 'Expired 2FA Code (in second)')
+                    ->value('rule_value') ?? 120; // default 120s if not found
+
+                // Generate 6-digit random code
+                $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+                // Update user with code and expiry time
+                $user->update([
+                    'two_fa_code' => $code,
+                    'two_fa_expired_at' => Carbon::now()->addSeconds($expiredSeconds),
+                ]);
+
+                // Send to email
+                $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+                if ($development == 1) {
+                    $toemail = MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray();
+                } else {
+                    $toemail = $user->email;
+                }
+                Mail::to($toemail)->send(new TwoFAMail($user, $code, $expiredSeconds));
+
+                Auth::logout(); // logout temporarily until code verified
+                session(['pending_2fa_user' => $user->email]); // keep email to verify later
+
+                return redirect()->route('verify.2fa')->with('info', 'A 2FA code has been sent to your email.');
+            }
+
+            $user->update([
+                'last_login' => now(),
+                'login_counter' => $user->login_counter + 1,
+                'last_session' => Session::getId(),
+            ]);
+
+            // If no 2FA required
+            return redirect()->route('dashboard')->with('success', 'Successfully Entered The Application');
         }
+        
+        return redirect()->route('login')->with('fail', 'Wrong Email or Password');
+    }
+
+    public function show2fa()
+    {
+        if (!session()->has('pending_2fa_user')) {
+            return redirect()->route('login');
+        }
+        return view('auth.two_fa');
+    }
+
+    public function verify2fa(Request $request)
+    {
+        $email = session('pending_2fa_user');
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return redirect()->route('login')->with('fail', 'Invalid session.');
+        }
+
+        if ($user->two_fa_code === $request->two_fa_code && Carbon::now()->lt($user->two_fa_expired_at)) {
+            // ✅ Successful verification
+            Auth::login($user);
+            session()->forget('pending_2fa_user');
+
+            // clear code
+            $user->update([
+                'two_fa_code' => null,
+                'two_fa_expired_at' => null,
+                'last_login' => now(),
+                'login_counter' => $user->login_counter + 1,
+                'last_session' => Session::getId(),
+            ]);
+
+            return redirect()->route('dashboard')->with('success', 'Login successful!');
+        }
+
+        return back()->with('fail', 'Invalid or expired 2FA code.');
+    }
+
+    public function resend2fa()
+    {
+        $email = session('pending_2fa_user');
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return redirect()->route('login')->with('fail', 'Invalid session.');
+        }
+
+        $expiredSeconds = MstRules::where('rule_name', 'Expired 2FA Code (in second)')
+            ->value('rule_value') ?? 120;
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user->update([
+            'two_fa_code' => $code,
+            'two_fa_expired_at' => Carbon::now()->addSeconds($expiredSeconds),
+        ]);
+        
+        // Send to email
+        $development = MstRules::where('rule_name', 'Development')->first()->rule_value;
+        if ($development == 1) {
+            $toemail = MstRules::where('rule_name', 'Email Development')->pluck('rule_value')->toArray();
+        } else {
+            $toemail = $user->email;
+        }
+        Mail::to($toemail)->send(new TwoFAMail($user, $code, $expiredSeconds));
+
+        return back()->with('info', 'A new 2FA code has been sent to your email.');
     }
 
     public function logout()

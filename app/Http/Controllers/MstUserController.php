@@ -38,7 +38,7 @@ class MstUserController extends Controller
     public function datas(Request $request)
     {
         if ($request->ajax()) {
-            $datas = User::where('role', '!=', 'Candidate')->orderBy('last_seen')->get();
+            $datas = User::where('role', '!=', 'Candidate')->orderByDesc('last_seen')->get();
             return DataTables::of($datas)
                 ->addColumn('action', function ($data) {
                     return view('users.action', compact('data'));
@@ -244,40 +244,50 @@ class MstUserController extends Controller
         }
     }
 
-    public function activate($id)
+    public function toggleStatus($id, $field, $value)
     {
         $id = decrypt($id);
-        $data = User::where('id', $id)->first();
+
         DB::beginTransaction();
         try {
-            User::where('id', $id)->update([ 'is_active' => 1 ]);
+            $user = User::findOrFail($id);
+            $user->update([$field => $value]);
 
-            // Audit Log
-            $this->auditLogs('Activate User (' . $data->email . ')');
+            // Log Action
+            if ($field === 'is_active') {
+                $action = $value ? 'Activate' : 'Deactivate';
+            } elseif ($field === 'is_two_fa') {
+                $action = $value ? 'Enable 2FA' : 'Disable 2FA';
+            } else {
+                $action = 'Update';
+            }
+
+            $this->auditLogs("{$action} User ({$user->email})");
+
             DB::commit();
-            return redirect()->back()->with(['success' => __('messages.success_activate') . ' ' . $data->email]);
+            return back()->with('success', "Success {$action} User {$user->email}");
         } catch (Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with(['fail' => __('messages.fail_activate') . ' ' . $data->email . '!']);
+            DB::rollBack();
+            return back()->with('fail', "Failed to {$action} User {$user->email}!");
         }
     }
 
+    public function enable2fa($id)
+    {
+        return $this->toggleStatus($id, 'is_two_fa', 1);
+    }
+    public function disable2fa($id)
+    {
+        return $this->toggleStatus($id, 'is_two_fa', null);
+    }
+
+    public function activate($id)
+    {
+        return $this->toggleStatus($id, 'is_active', 1);
+    }
     public function deactivate($id)
     {
-        $id = decrypt($id);
-        $data = User::where('id', $id)->first();
-        DB::beginTransaction();
-        try {
-            User::where('id', $id)->update([ 'is_active' => 0 ]);
-
-            // Audit Log
-            $this->auditLogs('Deactivate User (' . $data->email . ')');
-            DB::commit();
-            return redirect()->back()->with(['success' => __('messages.success_deactivate') . ' ' . $data->email]);
-        } catch (Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with(['fail' => __('messages.fail_deactivate') . ' ' . $data->email . '!']);
-        }
+        return $this->toggleStatus($id, 'is_active', 0);
     }
 
     public function check_email(Request $request)
@@ -294,12 +304,39 @@ class MstUserController extends Controller
     public function candidates(Request $request)
     {
         if ($request->ajax()) {
-            $datas = User::where('role', 'Candidate')->orderBy('last_seen')->get();
-            return \Yajra\DataTables\Facades\DataTables::of($datas)
-                ->addColumn('action', function ($data) {
-                    return null; // Tidak ada aksi untuk candidate
-                })->toJson();
+            $datas = User::where('role', 'Candidate')->orderByDesc('last_seen')->get();
+            return DataTables::of($datas)->toJson();
         }
-        return view('users.candidates');
+
+        $isEnable2FA = optional(MstRules::where('rule_name', 'Enable 2FA Candidates')->first())->rule_value;
+
+        return view('users.candidates', compact('isEnable2FA'));
+    }
+
+    
+    public function enable2faCandidate()
+    {
+        MstRules::updateOrCreate(
+            ['rule_name' => 'Enable 2FA Candidates'],
+            ['rule_value' => 1]
+        );
+
+        // Audit Log
+        $this->auditLogs('Enable 2FA for Candidates');
+
+        return redirect()->back()->with('success', '2FA has been enabled for Candidates.');
+    }
+
+    public function disable2faCandidate()
+    {
+        MstRules::updateOrCreate(
+            ['rule_name' => 'Enable 2FA Candidates'],
+            ['rule_value' => 0]
+        );
+
+        // Audit Log
+        $this->auditLogs('Disable 2FA for Candidates');
+
+        return redirect()->back()->with('success', '2FA has been disabled for Candidates.');
     }
 }
