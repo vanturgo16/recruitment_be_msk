@@ -6,6 +6,22 @@
     <ul class="dropdown-menu dropdown-menu2" aria-labelledby="btnGroupDrop{{ $data->id }}">
         <li><a class="dropdown-item drpdwn" href="{{ route('user.edit', encrypt($data->id)) }}"><span class="mdi mdi-file-edit"></span> | {{ __('messages.edit') }}</a></li>
         <li><a class="dropdown-item drpdwn" href="#" data-bs-toggle="modal" data-bs-target="#reset{{ $data->id }}"><span class="mdi mdi-update"></span> | {{ __('messages.reset') }} Password</a></li>
+        
+        {{-- Enable/Disable Two-Factor Authentication --}}
+        @if($data->is_two_fa == 1)
+            <li>
+                <a class="dropdown-item drpdwn-dgr" href="#" data-bs-toggle="modal" data-bs-target="#disable2FA{{ $data->id }}">
+                    <span class="mdi mdi-lock-open-remove"></span> | Disable 2FA
+                </a>
+            </li>
+        @else
+            <li>
+                <a class="dropdown-item drpdwn-scs" href="#" data-bs-toggle="modal" data-bs-target="#enable2FA{{ $data->id }}">
+                    <span class="mdi mdi-lock-check"></span> | Enable 2FA
+                </a>
+            </li>
+        @endif
+        
         @if($data->is_active == 0)
             <li><a class="dropdown-item drpdwn-scs" href="#" data-bs-toggle="modal" data-bs-target="#activate{{ $data->id }}"><span class="mdi mdi-check-circle"></span> | {{ __('messages.activate') }}</a></li>
         @else
@@ -41,6 +57,49 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enable 2FA Modal -->
+    <div class="modal fade" id="enable2FA{{ $data->id }}" tabindex="-1" aria-labelledby="enable2FALabel{{ $data->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="enable2FALabel{{ $data->id }}"><i class="mdi mdi-lock-check"></i> Enable Two-Factor Authentication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    Are you sure you want to <b>enable 2FA</b> for <b>{{ $data->name }}</b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <form class="formLoad" action="{{ route('user.enable2fa', encrypt($data->id)) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-success waves-effect btn-label waves-light"><i class="mdi mdi-lock-check label-icon"></i>Enable</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Disable 2FA Modal -->
+    <div class="modal fade" id="disable2FA{{ $data->id }}" tabindex="-1" aria-labelledby="disable2FALabel{{ $data->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="disable2FALabel{{ $data->id }}"><i class="mdi mdi-lock-open-remove"></i> Disable Two-Factor Authentication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    Are you sure you want to <b>disable 2FA</b> for <b>{{ $data->name }}</b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <form class="formLoad" action="{{ route('user.disable2fa', encrypt($data->id)) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-danger waves-effect btn-label waves-light"><i class="mdi mdi-lock-open-remove label-icon"></i>Disable</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

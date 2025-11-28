@@ -32,6 +32,11 @@ Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::get('/captcha/generate', [CaptchaController::class, 'generate'])->name('captcha.generate');
 Route::post('auth/login', [AuthController::class, 'postlogin'])->name('postlogin')->middleware("throttle:5,2");
 
+// 2FA
+Route::get('/verify-2fa', [AuthController::class, 'show2fa'])->name('verify.2fa');
+Route::post('/verify-2fa', [AuthController::class, 'verify2fa'])->name('verify.2fa.post');
+Route::post('/resend-2fa', [AuthController::class, 'resend2fa'])->name('resend.2fa');
+
 // Ubah Password
 Route::get('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
 Route::post('/password/update', [AuthController::class, 'updatePassword'])->name('password.update');
@@ -70,11 +75,15 @@ Route::middleware([Authenticate::class, NoCache::class, UpdateLastSeen::class])-
             Route::get('/edit/{id}', 'edit')->name('user.edit');
             Route::post('/update/{id}', 'update')->name('user.update');
             Route::post('/reset/{id}', 'reset')->name('user.reset');
+            Route::post('/enable2fa/{id}', 'enable2fa')->name('user.enable2fa');
+            Route::post('/disable2fa/{id}', 'disable2fa')->name('user.disable2fa');
             Route::post('/activate/{id}', 'activate')->name('user.activate');
             Route::post('/deactivate/{id}', 'deactivate')->name('user.deactivate');
             Route::post('/delete/{id}', 'delete')->name('user.delete');
             Route::post('/check_email_employee', 'check_email')->name('user.check_email_employee');
             Route::get('/candidates', 'candidates')->name('user.candidates');
+            Route::post('/enable2faCandidate', 'enable2faCandidate')->name('user.enable2faCandidate');
+            Route::post('/disable2faCandidate', 'disable2faCandidate')->name('user.disable2faCandidate');
         });
     });
     // RULE CONFIGURATION
