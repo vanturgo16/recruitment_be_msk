@@ -85,7 +85,7 @@
                         <i class="mdi mdi-clipboard-list"></i><span>{{ __('messages.job_list') }}</span>
                     </a>
                 </li>
-                @if (in_array(auth()->user()->hie_level, ['2','3']))
+                @if( (auth()->user()->role == 'Admin HR' && in_array(auth()->user()->hie_level, ['3','4'])) || (in_array(auth()->user()->role, ['Super Admin', 'Admin', 'Employee']) && in_array(auth()->user()->hie_level, ['2','3'])) )
                     <li>
                         <a href="{{ route('jobapplied.index') }}" class="{{ request()->is('job-applied*') ? 'bg-light active' : '' }}">
                             <i class="mdi mdi-clipboard-check"></i><span>Job Applied</span>
