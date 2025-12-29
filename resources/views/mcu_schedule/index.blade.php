@@ -141,11 +141,11 @@
                                     </ul>
                                     @endif
                                     @if ($schedule->mcu_status == '1')
-                                        @if ($isEmployeeHead && $schedule->ready_sign != '1')
+                                        {{-- @if ($isEmployeeHead && $schedule->ready_sign != '1')
                                             <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitSignModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Sign</a>
-                                        @else
+                                        @else --}}
                                             <span class="badge bg-success">PASSED</span>
-                                        @endif
+                                        {{-- @endif --}}
                                     @elseif ($schedule->mcu_status == '2')
                                         <span class="badge bg-danger">REJECTED</span>
                                     @endif
