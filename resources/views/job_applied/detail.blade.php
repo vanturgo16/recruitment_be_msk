@@ -203,9 +203,9 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                     <div class="modal-body">
-                                                        <input type="hidden" name="id_position" value="{{ $datas[0]['id_position'] }}">
-                                                        <input type="hidden" name="hie_level" value="{{ $datas[0]['hie_level'] }}">
-                                                        <input type="hidden" name="id_jobApply" value="{{ $datas[0]['id'] }}">
+                                                        <input type="hidden" name="id_position" value="{{ $data->id_position }}">
+                                                        <input type="hidden" name="hie_level" value="{{ $data->hie_level }}">
+                                                        <input type="hidden" name="id_jobApply" value="{{ $data->id }}">
                                                         <div class="mb-3">
                                                             <label class="form-label">Join Date</label>
                                                             <input type="date" class="form-control" value="" name="join_date" required>
