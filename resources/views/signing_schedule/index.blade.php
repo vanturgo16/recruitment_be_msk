@@ -138,11 +138,11 @@
                                     </ul>
                                     @endif
                                     @if ($schedule->sign_status == '1')
-                                        @if ($isEmployeeHead && $schedule->ready_hired != '1')
+                                        {{-- @if ($isEmployeeHead && $schedule->ready_hired != '1')
                                             <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitHiredModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to Hired</a>
-                                        @else
+                                        @else --}}
                                             <span class="badge bg-success">PASSED</span>
-                                        @endif
+                                        {{-- @endif --}}
                                     @elseif ($schedule->sign_status == '2')
                                         <span class="badge bg-danger">REJECTED</span>
                                     @endif

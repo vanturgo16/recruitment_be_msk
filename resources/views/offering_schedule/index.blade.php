@@ -141,11 +141,11 @@
                                     </ul>
                                     @endif
                                     @if ($schedule->offering_status == '1')
-                                        @if ($isEmployeeHead && $schedule->ready_mcu != '1')
+                                        {{-- @if ($isEmployeeHead && $schedule->ready_mcu != '1')
                                             <a class="btn btn-success btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#submitMCUModal{{ $schedule->id }}"><i class="fas fa-check"></i> Submit to MCU</a>
-                                        @else
+                                        @else --}}
                                             <span class="badge bg-success">PASSED</span>
-                                        @endif
+                                        {{-- @endif --}}
                                     @elseif ($schedule->offering_status == '2')
                                         <span class="badge bg-danger">REJECTED</span>
                                     @endif
