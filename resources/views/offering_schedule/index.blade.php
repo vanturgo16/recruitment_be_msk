@@ -178,7 +178,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="offering_address{{ $schedule->id }}" class="form-label">Testing Address</label>
-                                                <input type="text" name="offering_address" id="offering_address{{ $schedule->id }}" class="form-control" value="{{ $schedule->offering_address }}" required>
+                                                <input type="text" name="offering_address" id="offering_address{{ $schedule->id }}" class="form-control" value="{{ $schedule->offering_address }}" readonly required>
                                             </div>
                                             <div class="mb-3">
                                                 <label for="offering_notes{{ $schedule->id }}" class="form-label">Testing Notes</label>

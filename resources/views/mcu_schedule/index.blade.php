@@ -178,7 +178,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="mcu_address{{ $schedule->id }}" class="form-label">Testing Address</label>
-                                                <input type="text" name="mcu_address" id="mcu_address{{ $schedule->id }}" class="form-control" value="{{ $schedule->mcu_address }}" required>
+                                                <input type="text" name="mcu_address" id="mcu_address{{ $schedule->id }}" class="form-control" value="{{ $schedule->mcu_address }}" readonly required>
                                             </div>
                                             <div class="mb-3">
                                                 <label for="mcu_notes{{ $schedule->id }}" class="form-label">Testing Notes</label>
