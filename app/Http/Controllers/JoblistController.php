@@ -288,6 +288,7 @@ class JoblistController extends Controller
         $employee = Employee::whereIn('id_position', function ($query) use ($deptId) {
             $query->select('id')
                 ->from('mst_positions')
+                ->where('hie_level', '<=', '2') //hanya sampai dept head
                 ->where('id_dept', $deptId);
         })->pluck('email', 'id');
         return response()->json($employee);
