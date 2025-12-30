@@ -89,11 +89,16 @@ class JoblistController extends Controller
 
         DB::beginTransaction();
         try {
+            //make sure id_emp ada di table users dulu
+            if (!User::where('id_emp', $request->position_req_user)->exists()) {
+                return redirect()->back()->with(['fail' => __('messages.fail_request_user')]);
+            }
+
             $store = Joblist::create([
                 'id_position' => $request->id_position,
                 'rec_date_start' => $request->rec_date_start,
                 'rec_date_end' => $request->rec_date_end,
-                'jobdesc' => $request->jobdesc,
+                'jobdescx' => $request->jobdesc,
                 'requirement' => $request->requirement,
                 'min_education' => $request->min_education,
                 'min_yoe' => $request->min_yoe,

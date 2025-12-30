@@ -74,6 +74,7 @@ return [
     'fail_deactivate' => 'Failed to Deactivate :',
     'fail_delete' => 'Failed to Delete Data',
     'fail_switch_theme' => 'Failed to Switch Theme!',
+    'fail_request_user' => 'The selected position request user is not found or invalid.',
     'success_login' => 'Successfully Entered The Application',
     'success_add' => 'Success Add Data',
     'success_update' => 'Success Updated Data',

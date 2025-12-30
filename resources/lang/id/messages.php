@@ -67,6 +67,7 @@ return [
     'fail_deactivate' => 'Gagal Menonaktifkan : ',
     'fail_delete' => 'Gagal Menghapus Data',
     'fail_switch_theme' => 'Gagal Mengganti Tema!',
+    'fail_request_user' => 'User permintaan posisi yang dipilih tidak ditemukan atau tidak valid.',
     'success_login' => 'Berhasil Masuk ke Aplikasi',
     'success_add' => 'Berhasil Menambahkan Data',
     'success_update' => 'Berhasil Memperbarui Data',
