@@ -8,6 +8,7 @@ use App\Mail\NotificationSchedule;
 use App\Models\OfferingSchedule;
 use App\Models\JobApply;
 use App\Models\MstRules;
+use App\Models\Office;
 use App\Traits\PhaseLoggable;
 use App\Traits\UserTrait;
 use Illuminate\Http\Request;
@@ -67,7 +68,12 @@ class OfferingScheduleController extends Controller
                 $applicant_name = $jobapply->candidate ? $jobapply->candidate->candidate_first_name . ' ' . $jobapply->candidate->candidate_last_name : '-';
             }
         }
-        return view('offering_schedule.create', compact('id_jobapply', 'applicant_name', 'position_name', 'jobapply'));
+
+        //lokasi Offering ambil dari master office -> main dealer
+        $location = Office::where('type', 'Main Dealer')->first();
+        $location_offering_value = $location ? $location->name . ', ' . $location->address . ', ' . $location->subdistrict . ', ' . $location->district . ', ' . $location->city . ', ' . $location->province . ', ' . $location->postal_code : '';
+
+        return view('offering_schedule.create', compact('id_jobapply', 'applicant_name', 'position_name', 'jobapply', 'location_offering_value'));
     }
 
     public function store(Request $request)
