@@ -23,7 +23,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="offering_address" class="form-label">Offering Address</label>
-                    <input type="text" name="offering_address" id="offering_address" class="form-control" required>
+                    <input type="text" name="offering_address" id="offering_address" value="{{ $location_offering_value }}" class="form-control" readonly required>
                 </div>
                 <div class="mb-3">
                     <label for="offering_notes" class="form-label">Offering Notes</label>

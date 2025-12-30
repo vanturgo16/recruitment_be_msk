@@ -67,7 +67,11 @@ class McuSchedulesController extends Controller
                 $applicant_name = $jobapply->candidate ? $jobapply->candidate->candidate_first_name . ' ' . $jobapply->candidate->candidate_last_name : '-';
             }
         }
-        return view('mcu_schedule.create', compact('id_jobapply', 'applicant_name', 'position_name', 'jobapply'));
+
+        //location MCU from rules
+        $location = MstRules::where('rule_name', 'MCU Location')->first();
+        $location_mcu_value = $location->rule_value ?? '';
+        return view('mcu_schedule.create', compact('id_jobapply', 'applicant_name', 'position_name', 'jobapply', 'location_mcu_value'));
     }
 
     public function store(Request $request)

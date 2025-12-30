@@ -23,7 +23,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="mcu_address" class="form-label">MCU Address</label>
-                    <input type="text" name="mcu_address" id="mcu_address" class="form-control" required>
+                    <input type="text" name="mcu_address" id="mcu_address" value="{{ $location_mcu_value }}" class="form-control" readonly required>
                 </div>
                 <div class="mb-3">
                     <label for="mcu_notes" class="form-label">MCU Notes</label>
